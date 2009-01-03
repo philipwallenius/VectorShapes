@@ -4,26 +4,32 @@ import com.saintshape.controller.Controller;
 import com.saintshape.model.Model;
 import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.observer.ModelObserver;
-import com.saintshape.view.event.MouseEventHandler;
-import com.saintshape.view.event.Selection;
+import com.saintshape.view.event.handlers.MouseEventHandler;
+import com.saintshape.view.event.handlers.entity.Selection;
 import com.saintshape.view.menu.StatusBar;
 import com.saintshape.view.menu.side.SideMenu;
 import com.saintshape.view.menu.side.Tool;
 import com.saintshape.view.menu.top.TopMenu;
 import javafx.beans.binding.Bindings;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  *
@@ -68,17 +74,22 @@ public class View implements ModelObserver {
         initialize();
     }
 
+    /**
+     * Initializes the View
+     */
     public void initialize() {
         primaryStage.setTitle(APPLICATION_NAME);
+        primaryStage.getIcons().add(new Image("logo.png"));
         group = new Group();
         selectionGroup = new Group();
         controls = new VBox();
-        sideMenu = new SideMenu(this, model);
+        sideMenu = new SideMenu(this, model, controller);
         controls.getChildren().addAll(sideMenu);
         canvasHolder = new StackPane(group);
         scrollPane = new ScrollPane(canvasHolder);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setStyle("-fx-focus-color: transparent;");
 
         // center the drawing canvas
         canvasHolder.minWidthProperty().bind(Bindings.createDoubleBinding(() ->
@@ -91,7 +102,7 @@ public class View implements ModelObserver {
         mouseEventHandler.register(model.getRootCanvas());
 
         borderPane = new BorderPane();
-        topMenu = new TopMenu(controller);
+        topMenu = new TopMenu(this, controller);
         statusBar = new StatusBar();
         borderPane.setTop(topMenu);
         borderPane.setLeft(controls);
@@ -100,7 +111,7 @@ public class View implements ModelObserver {
         scene = new Scene(borderPane, WINDOW_WIDTH, WINDOW_HEIGHT);
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             public void handle(KeyEvent ke) {
-                if (ke.getCode() == KeyCode.ESCAPE) {
+                if (ke.getCode() == KeyCode.ESCAPE || ke.getCode() == KeyCode.ENTER) {
                     mouseEventHandler.deselect();
                 }
                 if (ke.getCode() == KeyCode.DELETE || ke.getCode() == KeyCode.BACK_SPACE) {
@@ -134,12 +145,18 @@ public class View implements ModelObserver {
         return sideMenu.getColorPicker();
     }
 
+    /**
+     * Draws checked canvas background
+     * @param canvas to draw checked background on
+     * @return Returns a Canvas with drawn checked background
+     */
     private Canvas drawCheckedBackground(Canvas canvas) {
         int checkerPatternSize = 10;
         double width = Math.ceil(canvas.getWidth());
         double height = Math.ceil(canvas.getHeight());
         double yNum = height/checkerPatternSize;
         double xNum = width/checkerPatternSize;
+
         GraphicsContext gc = canvas.getGraphicsContext2D();
 
         int currY = 0;
@@ -182,6 +199,9 @@ public class View implements ModelObserver {
         return canvas;
     }
 
+    /**
+     * Updates view
+     */
     @Override
     public void update() {
         primaryStage.setTitle(APPLICATION_NAME + " - " + model.getName());
@@ -191,6 +211,10 @@ public class View implements ModelObserver {
         group.getChildren().add(selectionGroup);
     }
 
+    /**
+     * Updates view
+     * @param model
+     */
     @Override
     public void update(Model model) {
 
@@ -219,4 +243,128 @@ public class View implements ModelObserver {
     public void deselect() {
         mouseEventHandler.deselect();
     }
+
+    /**
+     * Changes cursor
+     * @param cursor to set
+     */
+    public void changeCursor(Cursor cursor) {
+        controller.getRootCanvas().setCursor(cursor);
+        for(Node node : model.getNodes()) {
+            node.setCursor(cursor);
+        }
+    }
+
+    /**
+     * Displays unsaved changes dialog
+     * @return Returns a Boolean with user choice
+     */
+    public Boolean unsavedChangesDialog() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Unsaved Changes");
+        alert.setHeaderText("Do you want to save the changes you made to "+model.getName()+"?");
+        alert.setContentText("Your changes will be lost if you don't save them.");
+
+        ButtonType buttonTypeDontSave = new ButtonType("Don't Save");
+        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType buttonTypeSave = new ButtonType("Save");
+
+        alert.getButtonTypes().setAll(buttonTypeDontSave, buttonTypeCancel, buttonTypeSave);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonTypeDontSave){
+            return false;
+        } else if (result.get() == buttonTypeSave) {
+            return true;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Save model with Save As... Dialog
+     */
+    public void saveAsDialog() {
+
+        try {
+            controller.saveModel(true);
+        } catch(Exception exception) {
+            exception.printStackTrace();
+            showError("Save Error", "Error", "Failed to save vector drawing.");
+        }
+
+    }
+
+    /**
+     * Save model without Save As... Dialog
+     */
+    public void save() {
+
+        try {
+            controller.saveModel(false);
+        } catch(Exception exception) {
+            exception.printStackTrace();
+            showError("Save Error", "Error", "Failed to save vector drawing.");
+        }
+
+    }
+
+    /**
+     * Display an error popup to user
+     * @param title for popup
+     * @param headerText for popup
+     * @param desc for popup
+     */
+    public void showError(String title, String headerText, String desc) {
+        // show error to user
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(desc);
+        alert.show();
+    }
+
+    /**
+     * Shows import image dialog to user
+     */
+    public void showImportImageDialog() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Import Image");
+
+        // filter file types
+        FileChooser.ExtensionFilter extFilterAll = new FileChooser.ExtensionFilter("*", "*.JPG", "*.JPEG", "*.PNG");
+        FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.JPG");
+        FileChooser.ExtensionFilter extFilterJPEG = new FileChooser.ExtensionFilter("JPEG files (*.jpeg)", "*.JPEG");
+        FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.PNG");
+        fileChooser.getExtensionFilters().addAll(extFilterAll, extFilterJPG, extFilterJPEG, extFilterPNG);
+
+        File file = fileChooser.showOpenDialog(controller.getPrimaryStage());
+
+        if (file != null) {
+            try {
+                // import image to canvas
+                controller.importImage(file);
+            } catch(IOException exception) {
+                showError("Import Error", "Error", "Failed to import image: " + file.getName());
+            }
+        }
+    }
+
+    /**
+     * Shows Save As... Dialog to user
+     * @param name of the project
+     * @return Returns the File to save model to
+     */
+    public File showSaveDialog(String name) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save As...");
+        fileChooser.setInitialFileName(name+".svg");
+
+        // filter file types
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("svg files (*.svg)", "*.svg");
+        fileChooser.getExtensionFilters().add(extFilter);
+
+        return fileChooser.showSaveDialog(controller.getPrimaryStage());
+    }
+
 }

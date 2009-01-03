@@ -1,9 +1,11 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.handlers;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
+import com.saintshape.view.event.handlers.entity.MouseClick;
 import com.saintshape.view.menu.side.Tool;
+import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Line;
 
@@ -49,7 +51,7 @@ public class LineEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMouseMove(MouseEvent event) {
-
+        view.changeCursor(Cursor.CROSSHAIR);
     }
 
     @Override
@@ -79,8 +81,12 @@ public class LineEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMouseRelease(MouseEvent event) {
-        HistoryUtil.getInstance().addHistoryPoint();
-        view.selectNode(line);
+        if(Math.abs(line.getStartX()-line.getEndX()) < 1 && Math.abs(line.getStartY()-line.getEndY()) < 1) {
+            controller.removeNode(line);
+        } else {
+            HistoryUtil.getInstance().addHistoryPoint();
+            view.selectNode(line);
+        }
         line = null;
     }
 }

@@ -5,13 +5,20 @@ import com.saintshape.model.shape.Ellipse;
 import com.saintshape.model.shape.Line;
 import com.saintshape.model.shape.Rectangle;
 import com.saintshape.observer.ModelObserver;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,22 +36,25 @@ public class Model {
     private boolean hasUnsavedChanges;
     private List<ModelObserver> observers;
     private HistoryUtil historyUtil;
+    private File file;
+    private BooleanProperty fileProperty;
 
     /**
      * Constructor
      */
     public Model() {
-        hasUnsavedChanges = true;
+        hasUnsavedChanges = false;
         rootCanvas = new Canvas();
         nodes = new ArrayList<>();
         observers = new ArrayList<>();
         historyUtil = HistoryUtil.getInstance();
-        historyUtil.setModel(this);
+        fileProperty = new SimpleBooleanProperty(true);
     }
 
     public void reset() {
         name = "";
         nodes.clear();
+        setFile(null);
         historyUtil.resetHistory();
     }
 
@@ -90,6 +100,9 @@ public class Model {
         }
     }
 
+    /**
+     * Notifies observers of changes
+     */
     public void notifyObservers() {
         for(ModelObserver observer : observers) {
             observer.update();
@@ -105,12 +118,20 @@ public class Model {
         this.nodes = nodes;
     }
 
+    /**
+     * Adds new shape/image to model
+     * @param node to add to model
+     */
     public void addNode(Node node) {
         addColorChangeListener(node);
         nodes.add(node);
         notifyObservers();
     }
 
+    /**
+     * Listen to color changes of nodes so that we can support undo and redo
+     * @param node
+     */
     private void addColorChangeListener(Node node) {
         // Add history point if color of shape is changed
         if(node instanceof Shape) {
@@ -124,15 +145,28 @@ public class Model {
         }
     }
 
+    /**
+     * Removes node from model
+     * @param node to remove from model
+     */
     public void removeNode(Node node) {
         nodes.remove(node);
         notifyObservers();
     }
 
+    /**
+     * Clones all nodes in model
+     * @return List with all node clones
+     */
     public List<Node> cloneNodes() {
         return cloneNodes(nodes);
     }
 
+    /**
+     * Clones all nodes in list passed to it
+     * @param nodesToClone nodes to clone
+     * @return List with all node clones
+     */
     public List<Node> cloneNodes(List<Node> nodesToClone) {
         List<Node> result = new ArrayList<>(nodesToClone.size());
         for(Node node : nodesToClone) {
@@ -142,9 +176,52 @@ public class Model {
                 result.add(((Ellipse) node).clone());
             } else if(node instanceof Line) {
                 result.add(((Line) node).clone());
+            } else if(node instanceof ImageView) {
+                ImageView oldImage = (ImageView)node;
+                ImageView newImageView = new ImageView(oldImage.getImage());
+                newImageView.setX(oldImage.getX());
+                newImageView.setY(oldImage.getY());
+                newImageView.setFitWidth(oldImage.getFitWidth());
+                newImageView.setFitHeight(oldImage.getFitHeight());
+                newImageView.getTransforms().addAll(oldImage.getTransforms());
+                result.add(newImageView);
             }
         }
         return result;
     }
 
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+        if(file != null) {
+            fileProperty.setValue(false);
+        }
+    }
+
+    public ObservableBooleanValue getFileProperty() {
+        return fileProperty;
+    }
+
+    public void moveUp(Node node) {
+        int currentIndex = nodes.indexOf(node);
+        if(currentIndex != nodes.size()-1) {
+            nodes.remove(currentIndex);
+            nodes.add(currentIndex + 1, node);
+            HistoryUtil.getInstance().addHistoryPoint();
+            notifyObservers();
+        }
+    }
+
+    public void moveDown(Node node) {
+        int currentIndex = nodes.indexOf(node);
+        if(currentIndex != 0) {
+            nodes.remove(currentIndex);
+            nodes.add(currentIndex - 1, node);
+            HistoryUtil.getInstance().addHistoryPoint();
+            notifyObservers();
+        }
+    }
 }

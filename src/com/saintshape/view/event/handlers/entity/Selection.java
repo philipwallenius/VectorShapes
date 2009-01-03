@@ -1,7 +1,10 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.handlers.entity;
 
 import javafx.scene.Cursor;
+import javafx.scene.ImageCursor;
 import javafx.scene.Node;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ public class Selection extends Rectangle {
     private List<Point> resizePoints;
     private Point rotatePoint;
     private Node shape;
+    private Image rotateCursorImage;
 
     public Selection(Node shape) {
         this.shape = shape;
@@ -34,16 +38,41 @@ public class Selection extends Rectangle {
             bindToEllipse((Ellipse)shape);
         } else if(shape instanceof Line) {
             bindToLine((Line)shape);
+        } else if(shape instanceof ImageView) {
+            bindToImageView((ImageView)shape);
         }
         createResizePoints();
+        rotateCursorImage = new Image("rotate_cw.png");
         createRotatePoint();
+
+    }
+
+    private void bindToImageView(ImageView imageView) {
+        setFill(Color.TRANSPARENT);
+        setStroke(Color.DEEPSKYBLUE);
+        setStrokeWidth(1);
+        setX(imageView.getX());
+        setY(imageView.getY());
+        setWidth(imageView.getFitWidth());
+        setHeight(imageView.getFitHeight());
+
+        // bind position
+        imageView.xProperty().bind(xProperty());
+        imageView.yProperty().bind(yProperty());
+
+        // bind size
+        imageView.fitWidthProperty().bind(widthProperty());
+        imageView.fitHeightProperty().bind(heightProperty());
+
+        // add all transforms to selection
+        getTransforms().addAll(imageView.getTransforms());
     }
 
     private void createRotatePoint() {
         rotatePoint = new Point(this, "ROTATE", Color.GREENYELLOW);
         rotatePoint.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
         rotatePoint.centerYProperty().bind(yProperty().add(heightProperty().divide(2)));
-        rotatePoint.setCursor(Cursor.H_RESIZE);
+        rotatePoint.setCursor(new ImageCursor(rotateCursorImage,rotateCursorImage.getWidth()/2,rotateCursorImage.getHeight()/2));
 
         // add all transforms to selection
         rotatePoint.getTransforms().addAll(getTransforms());

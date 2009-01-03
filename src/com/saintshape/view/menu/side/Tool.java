@@ -7,5 +7,5 @@ package com.saintshape.view.menu.side;
  * Created by 150019538 on 02/11/15.
  */
 public enum Tool {
-    SELECT, LINE, RECTANGLE, ELLIPSE
+    SELECT, LINE, RECTANGLE, PARALLELOGRAM, ELLIPSE
 }

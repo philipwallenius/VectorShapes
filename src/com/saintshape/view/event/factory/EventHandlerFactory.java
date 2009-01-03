@@ -2,7 +2,7 @@ package com.saintshape.view.event.factory;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.view.View;
-import com.saintshape.view.event.*;
+import com.saintshape.view.event.handlers.*;
 import com.saintshape.view.menu.side.Tool;
 
 /**
@@ -14,12 +14,14 @@ import com.saintshape.view.menu.side.Tool;
 public class EventHandlerFactory {
 
     private RectangleEventHandler rectangleEventHandler;
+    private ParallelogramEventHandler parallelogramEventHandler;
     private EllipseEventHandler ellipseEventHandler;
     private SelectEventHandler selectEventHandler;
     private LineEventHandler lineEventHandler;
 
     public EventHandlerFactory(View view, Controller controller, MouseEventHandler mouseEventHandler) {
         rectangleEventHandler = new RectangleEventHandler(view, controller, mouseEventHandler);
+        parallelogramEventHandler = new ParallelogramEventHandler(view, controller, mouseEventHandler);
         ellipseEventHandler = new EllipseEventHandler(view, controller, mouseEventHandler);
         selectEventHandler = new SelectEventHandler(view, controller, mouseEventHandler);
         lineEventHandler = new LineEventHandler(view, controller, mouseEventHandler);
@@ -35,6 +37,10 @@ public class EventHandlerFactory {
         switch (tool) {
             case RECTANGLE : {
                 eventHandler = rectangleEventHandler;
+                break;
+            }
+            case PARALLELOGRAM: {
+                eventHandler = parallelogramEventHandler;
                 break;
             }
             case ELLIPSE : {

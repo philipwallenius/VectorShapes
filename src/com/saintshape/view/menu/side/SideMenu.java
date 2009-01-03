@@ -1,10 +1,13 @@
 package com.saintshape.view.menu.side;
 
+import com.saintshape.controller.Controller;
 import com.saintshape.model.Model;
 import com.saintshape.view.View;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -22,19 +25,23 @@ import java.util.Iterator;
  */
 public class SideMenu extends VBox {
 
+    private final static int SIDEMENU_WIDTH = 150;
     private TitledPane titledPaneTools;
+    private VBox otherTools;
     private TitledPane titledPaneNodes;
     private ColorPicker colorPicker;
     private ToggleGroup toggleGroup;
     private Model model;
     private View view;
+    private Controller controller;
 
     /**
      * Constructor that initializes the drawing tools and colorpicker
      */
-    public SideMenu(View view, Model model) {
+    public SideMenu(View view, Model model, Controller controller) {
         this.view = view;
         this.model = model;
+        this.controller = controller;
         initialize();
     }
 
@@ -46,10 +53,25 @@ public class SideMenu extends VBox {
         colorPicker = createColorPicker();
         titledPaneNodes = createNodesList();
         getChildren().addAll(titledPaneTools, colorPicker, titledPaneNodes);
+        setPrefWidth(SIDEMENU_WIDTH);
+    }
+
+    private VBox createOtherTools() {
+        VBox vBox = new VBox();
+
+        Button buttonImage = new Button("Image...");
+        HBox.setHgrow(buttonImage, Priority.ALWAYS);
+        buttonImage.setMaxWidth(Double.MAX_VALUE);
+        buttonImage.setOnAction(event -> view.showImportImageDialog());
+        buttonImage.disableProperty().bind(controller.getWorkSpaceEmpty());
+
+        vBox.getChildren().addAll(buttonImage);
+
+        return vBox;
     }
 
     private TitledPane createNodesList() {
-        return new NodesList(view, model);
+        return new NodesList(view, model, controller);
     }
 
     /**
@@ -82,21 +104,30 @@ public class SideMenu extends VBox {
         buttonRectangle.setToggleGroup(toggleGroup);
         buttonRectangle.setUserData(Tool.RECTANGLE);
 
-        ToggleButton buttonCircle = new ToggleButton("Circle");
+        ToggleButton buttonParallelogram = new ToggleButton("Parallelogram");
+        buttonParallelogram.setToggleGroup(toggleGroup);
+        buttonParallelogram.setUserData(Tool.PARALLELOGRAM);
+
+        ToggleButton buttonCircle = new ToggleButton("Ellipse");
         buttonCircle.setToggleGroup(toggleGroup);
         buttonCircle.setUserData(Tool.ELLIPSE);
 
         HBox.setHgrow(buttonSelect, Priority.ALWAYS);
         HBox.setHgrow(buttonLine, Priority.ALWAYS);
         HBox.setHgrow(buttonRectangle, Priority.ALWAYS);
+        HBox.setHgrow(buttonParallelogram, Priority.ALWAYS);
         HBox.setHgrow(buttonCircle, Priority.ALWAYS);
         buttonSelect.setMaxWidth(Double.MAX_VALUE);
         buttonLine.setMaxWidth(Double.MAX_VALUE);
         buttonRectangle.setMaxWidth(Double.MAX_VALUE);
+        buttonParallelogram.setMaxWidth(Double.MAX_VALUE);
         buttonCircle.setMaxWidth(Double.MAX_VALUE);
 
+
+        otherTools = createOtherTools();
+
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(buttonSelect, buttonLine, buttonRectangle, buttonCircle);
+        vbox.getChildren().addAll(buttonSelect, buttonLine, buttonRectangle, buttonParallelogram, buttonCircle, otherTools);
 
         TitledPane titledPane = new TitledPane("Tools", vbox);
 

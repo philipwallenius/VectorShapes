@@ -1,4 +1,4 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.handlers.entity;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;

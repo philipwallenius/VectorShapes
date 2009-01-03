@@ -1,4 +1,4 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.handlers.entity;
 
 /**
  * Created by 150019538 on 02/11/15.

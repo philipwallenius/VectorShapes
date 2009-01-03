@@ -2,6 +2,7 @@ package com.saintshape.view.dialog;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.main.Saintshape;
+import com.saintshape.view.View;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -42,10 +43,12 @@ public class NewDialog extends Stage {
     private Label labelName, labelWidth, labelHeight, labelWidthUnit, labelHeightUnit;
     private TextField inputName, inputWidth, inputHeight;
     private Button buttonOK, buttonCancel;
+    private View view;
     private Controller controller;
 
-    public NewDialog(Controller controller, Stage parentStage) {
+    public NewDialog(View view, Controller controller, Stage parentStage) {
         super();
+        this.view = view;
         this.controller = controller;
         this.parentStage = parentStage;
         initialize();
@@ -73,6 +76,15 @@ public class NewDialog extends Stage {
         hbox.getChildren().add(gridInputs);
         hbox.getChildren().add(gridButtons);
         scene = new Scene(hbox);
+        scene.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() {
+            public void handle(javafx.scene.input.KeyEvent ke) {
+                if (ke.getCode() == KeyCode.ESCAPE) {
+                    close();
+                } else if(ke.getCode() == KeyCode.ENTER) {
+                    okAction();
+                }
+            }
+        });
         setScene(scene);
         show();
         requestFocus();
@@ -168,38 +180,7 @@ public class NewDialog extends Stage {
         buttonOK.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                double width;
-                double height;
-                String name = inputName.getText().trim();
-
-                // Validate name input
-                if(name.length() == 0) {
-                    showInvalidInputAlert("Invalid Input", "Please enter a name for the project.");
-                    inputName.requestFocus();
-                    return;
-                }
-
-                // Validate width input
-                try {
-                    width = Double.parseDouble(inputWidth.getText());
-                } catch (NumberFormatException e) {
-                    showInvalidInputAlert("Invalid Input", "Invalid numeric entry. Width must be a number.");
-                    inputWidth.requestFocus();
-                    return;
-                }
-
-                // Validate height input
-                try {
-                    height = Double.parseDouble(inputHeight.getText());
-                } catch(NumberFormatException e) {
-                    showInvalidInputAlert("Invalid Input", "Invalid numeric entry. Height must be a number.");
-                    inputHeight.requestFocus();
-                    return;
-                }
-
-                // Create a new project with the inputs and close this dialog
-                controller.newProject(name, width, height);
-                close();
+                okAction();
             }
         });
         buttonCancel.setOnAction(new EventHandler<ActionEvent>() {
@@ -213,6 +194,46 @@ public class NewDialog extends Stage {
         gridPane.add(buttonCancel, 0, 2);
 
         return gridPane;
+    }
+
+    private void okAction() {
+        double width;
+        double height;
+        String name = inputName.getText().trim();
+
+        // Validate name input
+        if(name.length() == 0) {
+            showInvalidInputAlert("Invalid Input", "Please enter a name for the project.");
+            inputName.requestFocus();
+            return;
+        }
+
+        // Validate width input
+        try {
+            width = Double.parseDouble(inputWidth.getText());
+        } catch (NumberFormatException e) {
+            showInvalidInputAlert("Invalid Input", "Invalid numeric entry. Width must be a number.");
+            inputWidth.requestFocus();
+            return;
+        }
+
+        // Validate height input
+        try {
+            height = Double.parseDouble(inputHeight.getText());
+        } catch(NumberFormatException e) {
+            showInvalidInputAlert("Invalid Input", "Invalid numeric entry. Height must be a number.");
+            inputHeight.requestFocus();
+            return;
+        }
+
+        // Create a new project with the inputs and close this dialog
+        try {
+            controller.newProject(name, width, height);
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.showError("Error", "Error", "Unable to save drawing");
+        }
+        close();
     }
 
     /**
@@ -246,6 +267,13 @@ public class NewDialog extends Stage {
         hbox.setAlignment(Pos.BOTTOM_CENTER);
         vbox.getChildren().addAll(label, hbox);
         Scene scene = new Scene(vbox);
+        scene.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() {
+            public void handle(javafx.scene.input.KeyEvent ke) {
+                if (ke.getCode() == KeyCode.ESCAPE || ke.getCode() == KeyCode.ENTER) {
+                    close();
+                }
+            }
+        });
         stage.setScene(scene);
 
         stage.show();

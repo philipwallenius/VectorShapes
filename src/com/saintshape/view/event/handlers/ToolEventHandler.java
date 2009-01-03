@@ -1,4 +1,4 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.handlers;
 
 import javafx.scene.input.MouseEvent;
 

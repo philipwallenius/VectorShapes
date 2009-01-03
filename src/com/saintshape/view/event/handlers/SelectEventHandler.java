@@ -1,8 +1,10 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.handlers;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
+import com.saintshape.view.event.handlers.entity.MouseClick;
+import com.saintshape.view.event.handlers.entity.Selection;
 import com.saintshape.view.menu.side.Tool;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,6 +14,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -56,7 +59,7 @@ public class SelectEventHandler implements ToolEventHandler {
         mouseClick.y = event.getY();
 
         // change cursor
-        if(source instanceof Shape) {
+        if(source instanceof Shape || source instanceof ImageView) {
             source.setCursor(Cursor.CLOSED_HAND);
         }
 
@@ -73,6 +76,10 @@ public class SelectEventHandler implements ToolEventHandler {
             Line line = (Line)source;
             clickDiffX = mouseClick.x-(Math.min(line.getStartX(), line.getEndX()));
             clickDiffY = mouseClick.y-(Math.min(line.getStartY(), line.getEndY()));
+        } else if(source instanceof ImageView) {
+            ImageView image = (ImageView)source;
+            clickDiffX = mouseClick.x-(image.getX());
+            clickDiffY = mouseClick.y-(image.getY());
         }
 
         // if shape clicked, select it
@@ -120,6 +127,7 @@ public class SelectEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMouseMove(MouseEvent event) {
+        view.changeCursor(Cursor.OPEN_HAND);
     }
 
     @Override
@@ -162,7 +170,7 @@ public class SelectEventHandler implements ToolEventHandler {
         colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
             @Override
             public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
-                if(selection != null) {
+                if(selection != null && selection.getShape() instanceof Shape) {
                     Shape s = (Shape)selection.getShape();
                     if(s instanceof Line) {
                         s.setStroke(newValue);

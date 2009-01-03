@@ -1,6 +1,9 @@
 package com.saintshape.model.shape;
 
 /**
+ *
+ * Line class that makes Lines cloneable
+ *
  * Created by 150019538 on 10/11/15.
  */
 public class Line extends javafx.scene.shape.Line {

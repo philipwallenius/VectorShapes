@@ -1,6 +1,9 @@
 package com.saintshape.model.shape;
 
 /**
+ *
+ * Rectangle class that makes Rectangles cloneable
+ *
  * Created by 150019538 on 10/11/15.
  */
 public class Rectangle extends javafx.scene.shape.Rectangle {

@@ -5,6 +5,9 @@ import javafx.scene.transform.Transform;
 import java.util.List;
 
 /**
+ *
+ * Ellipse class that makes Ellipses cloneable
+ *
  * Created by 150019538 on 10/11/15.
  */
 public class Ellipse extends javafx.scene.shape.Ellipse {

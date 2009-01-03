@@ -1,14 +1,19 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.handlers;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
+import com.saintshape.view.event.handlers.entity.MouseClick;
+import com.saintshape.view.event.handlers.entity.Point;
+import com.saintshape.view.event.handlers.entity.Selection;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 
 /**
+ *
+ * This class handles rotate events for the select tool
+ *
  * Created by 150019538 on 08/11/15.
  */
 public class RotateEventHandler {
@@ -17,11 +22,12 @@ public class RotateEventHandler {
     private Controller controller;
     private boolean rotated = false;
     private MouseClick click = new MouseClick();
-    private double selX, selY, pX, pY, deltaX, deltaY, d2, predeg;
+    private double selX, selY, pX, pY, deltaX, deltaY, d2, previouslyRotated;
 
     public RotateEventHandler(View view, Controller controller) {
         this.view = view;
         this.controller = controller;
+
     }
 
     public void register(Point point) {
@@ -41,13 +47,12 @@ public class RotateEventHandler {
                 selX = point.getSelection().getX();
                 selY = point.getSelection().getY();
 
-                Rectangle rectangle = point.getSelection();
-
-                pX = rectangle.getX()+(rectangle.getWidth()/2);
-                pY = rectangle.getY()+(rectangle.getHeight()/2);
+                // keep track of original x and y
+                pX = event.getSceneX();
+                pY = event.getSceneY();
                 deltaX = 0;
                 deltaY = 0;
-                predeg = 0;
+                previouslyRotated = 0;
             }
 
         }
@@ -56,10 +61,6 @@ public class RotateEventHandler {
     public EventHandler<MouseEvent> mouseReleaseEventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
-            if(event.getSource() instanceof Point) {
-                Point point = (Point) event.getSource();
-                point.getTransforms().add(new Rotate(d2, pX, pY));
-            }
             if(rotated) {
                 HistoryUtil.getInstance().addHistoryPoint();
             }
@@ -77,31 +78,47 @@ public class RotateEventHandler {
                     if(rectangle != null ) {
 
                         // get current mouse coordinates
-                        double currentX = event.getX();
-                        double currentY = event.getY();
+                        double currentX = event.getSceneX();
+                        double currentY = event.getSceneY();
+
+                        // calculate move movement
                         deltaX = currentX-pX;
                         deltaY = currentY-pY;
 
-                        double radians = Math.atan2(deltaY, deltaX);
-                        double d = Math.toDegrees(((-90 * Math.PI) / 180) - radians);
-                        if(d < 0){
-                            d += 360;
-                        }
-                        d2 = 360-d;
-                        Rotate rotationTransform = new Rotate(d2, rectangle.getX()+(rectangle.getWidth()/2), rectangle.getY()+(rectangle.getHeight()/2));
+                        // calculate rotation degrees
+                        double angles = angleFromDeltas(deltaX, deltaY);
+
+                        // apply rotation transform diff since last rotation
+                        Rotate rotationTransform = new Rotate(angles- previouslyRotated, rectangle.getX()+(rectangle.getWidth()/2), rectangle.getY()+(rectangle.getHeight()/2));
                         rectangle.getTransforms().add(rotationTransform);
                         rectangle.getShape().getTransforms().add(rotationTransform);
                         for(Point p : rectangle.getResizePoints()) {
                             p.getTransforms().add(rotationTransform);
                         }
                         rectangle.getRotatePoint().getTransforms().add(rotationTransform);
-                        predeg = d2;
+                        previouslyRotated += (angles- previouslyRotated);
                         rotated = true;
                     }
                 }
             }
         }
     };
+
+    /**
+     * calculates angle between two points, deltaX and deltaY (mouse movement)
+     * @param deltaX to use in calculation
+     * @param deltaY to use in calculation
+     * @return Returns angle difference between coordinates
+     */
+    private double angleFromDeltas(double deltaX, double deltaY) {
+
+        double radians = Math.atan2(deltaY, deltaX);
+        double d = Math.toDegrees(radians);
+        if(d < 0){
+            d += 360;
+        }
+        return d;
+    }
 
 
 }

@@ -1,13 +1,20 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.handlers;
 
 import com.saintshape.controller.Controller;
+import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
+import com.saintshape.view.event.handlers.entity.MouseClick;
+import com.saintshape.view.event.handlers.entity.Point;
+import com.saintshape.view.event.handlers.entity.Selection;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 
 import java.util.List;
 
 /**
+ *
+ * This class handles resize mouse events for the select tool
+ *
  * Created by 150019538 on 08/11/15.
  */
 public class ResizeEventHandler {
@@ -22,6 +29,7 @@ public class ResizeEventHandler {
     private double selectionY;
     private double clickDiffX;
     private double clickDiffY;
+    private boolean resized = false;
 
     public ResizeEventHandler(View view, Controller controller) {
         this.view = view;
@@ -32,12 +40,14 @@ public class ResizeEventHandler {
         for(Point point : points) {
             point.setOnMousePressed(mousePressEventHandler);
             point.setOnMouseDragged(mouseDragEventHandler);
+            point.setOnMouseReleased(mouseReleaseEventHandler);
         }
     }
 
     public EventHandler<MouseEvent> mousePressEventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
+            resized = false;
             click.x = event.getX();
             click.y = event.getY();
             if (event.getSource() instanceof Point) {
@@ -51,6 +61,16 @@ public class ResizeEventHandler {
                 clickDiffX = click.x-(point.getCenterX());
                 clickDiffY = click.y-(point.getCenterY());
             }
+        }
+    };
+
+    public EventHandler<MouseEvent> mouseReleaseEventHandler = new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+            if(resized) {
+                HistoryUtil.getInstance().addHistoryPoint();
+            }
+            resized = false;
         }
     };
 
@@ -165,6 +185,7 @@ public class ResizeEventHandler {
                     }
                 }
             }
+            resized = true;
         }
     };
 

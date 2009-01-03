@@ -1,9 +1,11 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.handlers;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
+import com.saintshape.view.event.handlers.entity.MouseClick;
 import com.saintshape.view.menu.side.Tool;
+import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
@@ -50,13 +52,19 @@ public class RectangleEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMouseRelease(MouseEvent event) {
-        HistoryUtil.getInstance().addHistoryPoint();
-        view.selectNode(selected);
+        if(selected.getWidth() < 1 || selected.getHeight() < 1) {
+            controller.removeNode(selected);
+        } else {
+            HistoryUtil.getInstance().addHistoryPoint();
+            view.selectNode(selected);
+        }
         selected = null;
     };
 
     @Override
-    public void handleMouseMove(MouseEvent event) {}
+    public void handleMouseMove(MouseEvent event) {
+        view.changeCursor(Cursor.CROSSHAIR);
+    }
 
     @Override
     public void handleMouseDrag(MouseEvent event) {

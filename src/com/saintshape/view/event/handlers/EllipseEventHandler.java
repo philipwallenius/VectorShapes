@@ -1,9 +1,11 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.handlers;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
+import com.saintshape.view.event.handlers.entity.MouseClick;
 import com.saintshape.view.menu.side.Tool;
+import javafx.scene.Cursor;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Ellipse;
 
@@ -48,13 +50,19 @@ public class EllipseEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMouseRelease(MouseEvent event) {
+        if (ellipse.getRadiusX() < 1 || ellipse.getRadiusY() < 1) {
+            controller.removeNode(ellipse);
+        } else {
             HistoryUtil.getInstance().addHistoryPoint();
             view.selectNode(ellipse);
-            ellipse = null;
         }
+        ellipse = null;
+    }
 
     @Override
-    public void handleMouseMove(MouseEvent event) {}
+    public void handleMouseMove(MouseEvent event) {
+        view.changeCursor(Cursor.CROSSHAIR);
+    }
 
     @Override
     public void handleMouseDrag(MouseEvent event) {
