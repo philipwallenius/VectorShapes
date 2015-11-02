@@ -76,10 +76,13 @@ public class View implements ModelObserver {
     }
 
     public void createMouseListeners() {
+        final MouseDelta delta = new MouseDelta();
         model.getRootCanvas().addEventHandler(MouseEvent.MOUSE_PRESSED,
                 new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent t) {
+                        delta.x = t.getX();
+                        delta.y = t.getY();
                         if(sideMenu.getSelectedTool() == Tool.RECTANGLE) {
                             selectedShape = new Rectangle(t.getX(), t.getY(), 0, 0);
                             selectedShape.setFill(sideMenu.getSelectedColor());
@@ -99,9 +102,38 @@ public class View implements ModelObserver {
             @Override
             public void handle(MouseEvent event) {
                 if(selectedShape != null) {
+
+                    // set the size of the shape
                     Rectangle r = (Rectangle)selectedShape;
-                    r.setHeight(event.getY());
-                    r.setWidth(event.getX());
+                    if((event.getX()-delta.x) >= 0) {
+                        r.setWidth(event.getX()-delta.x);
+                    } else {
+                        r.setX(event.getX());
+                        r.setWidth(delta.x-event.getX());
+                    }
+                    if((event.getY()-delta.y) >= 0) {
+                        r.setHeight(event.getY() - delta.y);
+                    } else {
+                        r.setY(event.getY());
+                        r.setHeight(delta.y - event.getY());
+                    }
+
+                    // make sure bounds don't go outside the canvas
+                    if(event.getX() > model.getRootCanvas().getWidth()) {
+                        r.setWidth(model.getRootCanvas().getWidth() - r.getX());
+                    }
+                    if(event.getX() < 0) {
+                        r.setX(0);
+                        r.setWidth(0+delta.x);
+                    }
+                    if(event.getY() > model.getRootCanvas().getHeight()) {
+                        r.setHeight(model.getRootCanvas().getHeight()-r.getY());
+                    }
+                    if(event.getY() < 0) {
+                        r.setY(0);
+                        r.setHeight(0+delta.y);
+                    }
+
                 }
             }
         });
