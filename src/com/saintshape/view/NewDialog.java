@@ -1,5 +1,6 @@
 package com.saintshape.view;
 
+import com.saintshape.controller.Controller;
 import com.saintshape.main.Saintshape;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -37,11 +38,11 @@ public class NewDialog extends Stage {
     private Label labelName, labelWidth, labelHeight, labelWidthUnit, labelHeightUnit;
     private TextField inputName, inputWidth, inputHeight;
     private Button buttonOK, buttonCancel;
-    private Saintshape view;
+    private Controller controller;
 
-    public NewDialog(Saintshape view, Stage parentStage) {
+    public NewDialog(Controller controller, Stage parentStage) {
         super();
-        this.view = view;
+        this.controller = controller;
         this.parentStage = parentStage;
         initialize();
     }
@@ -192,7 +193,7 @@ public class NewDialog extends Stage {
                 }
 
                 // Create a new project with the inputs and close this dialog
-                view.createNewProject(name, width, height);
+                controller.newProject(name, width, height);
                 close();
             }
         });
