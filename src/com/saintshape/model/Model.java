@@ -20,6 +20,7 @@ public class Model {
 
     public Model() {
         hasUnsavedChanges = true;
+        rootCanvas = new Canvas();
         shapes = new ArrayList<Shape>();
         observers = new ArrayList<ModelObserver>();
     }

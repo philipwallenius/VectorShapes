@@ -56,28 +56,26 @@ public class View implements ModelObserver {
         StackPane canvasHolder = new StackPane(group);
         final ScrollPane scrollPane = new ScrollPane(canvasHolder);
 
+        // Register control
+        addMouseListeners();
+
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(createMenuBar());
         borderPane.setLeft(controls);
         borderPane.setCenter(scrollPane);
         Scene scene = new Scene(borderPane, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        createRootCanvas();
-
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    public void createRootCanvas() {
-        Canvas canvas = new Canvas();
-        canvas.addEventHandler(MouseEvent.MOUSE_CLICKED,
+    public void addMouseListeners() {
+        model.getRootCanvas().addEventHandler(MouseEvent.MOUSE_CLICKED,
                 new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent t) {
                         controller.createShape(selectedColor, t.getX(), t.getY());
                     }
                 });
-        model.setRootCanvas(canvas);
     }
 
     private List<Node> createControlPanel() {
