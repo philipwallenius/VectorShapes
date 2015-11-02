@@ -1,4 +1,4 @@
-package com.saintshape.view;
+package com.saintshape.view.dialog;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.main.Saintshape;
@@ -222,7 +222,7 @@ public class NewDialog extends Stage {
         stage.setResizable(false);
         stage.initStyle(StageStyle.UTILITY);
         stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initOwner(parentStage);
+        stage.initOwner(this);
 
         VBox vbox = new VBox(10);
         vbox.setPadding(new Insets(20, 20, 20, 20));

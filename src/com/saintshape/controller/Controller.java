@@ -12,6 +12,12 @@ import org.w3c.dom.css.Rect;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ * MVC Controller responsible for application logic
+ *
+ * Created by 150019538 on 01/11/15.
+ */
 public class Controller {
 
     private Model model;
@@ -48,5 +54,10 @@ public class Controller {
 
     public Stage getPrimaryStage() {
         return primaryStage;
+    }
+
+    public void addShape(Shape selectedShape) {
+        model.getShapes().add(selectedShape);
+        model.notifyObservers();
     }
 }

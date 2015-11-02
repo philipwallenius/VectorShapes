@@ -8,7 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by philipwallenius on 01/11/15.
+ *
+ * MVC Model representing the state of the application. It is the observable.
+ *
+ * Created by 150019538 on 01/11/15.
  */
 public class Model {
 
@@ -18,6 +21,9 @@ public class Model {
     private boolean hasUnsavedChanges;
     private List<ModelObserver> observers;
 
+    /**
+     * Constructor
+     */
     public Model() {
         hasUnsavedChanges = true;
         rootCanvas = new Canvas();

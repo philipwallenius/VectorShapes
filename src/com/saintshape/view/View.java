@@ -3,6 +3,9 @@ package com.saintshape.view;
 import com.saintshape.controller.Controller;
 import com.saintshape.model.Model;
 import com.saintshape.observer.ModelObserver;
+import com.saintshape.view.menu.side.SideMenu;
+import com.saintshape.view.menu.side.Tool;
+import com.saintshape.view.menu.top.TopMenu;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -12,9 +15,14 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 
 /**
+ *
+ * MVC View responsible for GUI. This class observes the Model class.
+ *
  * Created by 150019538 on 01/11/15.
  */
 public class View implements ModelObserver {
@@ -27,10 +35,17 @@ public class View implements ModelObserver {
 
     private Stage primaryStage;
     private Group group;
+    private Shape selectedShape;
 
     private SideMenu sideMenu;
     private TopMenu topMenu;
 
+    /**
+     * Constructor that initializes the view and creates the main window
+     * @param controller responsible for business logic
+     * @param model representing the state of application
+     * @param primaryStage from java fx
+     */
     public View(Controller controller, Model model, Stage primaryStage) {
         this.controller = controller;
         this.model = model;
@@ -47,8 +62,8 @@ public class View implements ModelObserver {
         StackPane canvasHolder = new StackPane(group);
         final ScrollPane scrollPane = new ScrollPane(canvasHolder);
 
-        // Register control
-        addMouseListeners();
+        // Register mouse events
+        createMouseListeners();
 
         BorderPane borderPane = new BorderPane();
         topMenu = new TopMenu(controller);
@@ -60,14 +75,36 @@ public class View implements ModelObserver {
         primaryStage.show();
     }
 
-    public void addMouseListeners() {
-        model.getRootCanvas().addEventHandler(MouseEvent.MOUSE_CLICKED,
+    public void createMouseListeners() {
+        model.getRootCanvas().addEventHandler(MouseEvent.MOUSE_PRESSED,
                 new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent t) {
-                        controller.createShape(sideMenu.getSelectedColor(), t.getX(), t.getY());
+                        if(sideMenu.getSelectedTool() == Tool.RECTANGLE) {
+                            selectedShape = new Rectangle(t.getX(), t.getY(), 0, 0);
+                            selectedShape.setFill(sideMenu.getSelectedColor());
+                            controller.addShape(selectedShape);
+                        }
                     }
                 });
+        model.getRootCanvas().addEventHandler(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(selectedShape != null) {
+                    selectedShape = null;
+                }
+            }
+        });
+        model.getRootCanvas().addEventHandler(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if(selectedShape != null) {
+                    Rectangle r = (Rectangle)selectedShape;
+                    r.setHeight(event.getY());
+                    r.setWidth(event.getX());
+                }
+            }
+        });
     }
 
     private Canvas drawCheckedBackground(Canvas canvas) {
@@ -121,6 +158,7 @@ public class View implements ModelObserver {
 
     @Override
     public void update() {
+        primaryStage.setTitle(APPLICATION_NAME + " - " + model.getName());
         group.getChildren().clear();
         group.getChildren().add(drawCheckedBackground(model.getRootCanvas()));
         group.getChildren().addAll(model.getShapes());
