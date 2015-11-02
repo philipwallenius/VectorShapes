@@ -3,12 +3,8 @@ package com.saintshape.view;
 import com.saintshape.controller.Controller;
 import com.saintshape.model.Model;
 import com.saintshape.observer.ModelObserver;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -18,11 +14,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Created by philipwallenius on 01/11/15.
+ * Created by 150019538 on 01/11/15.
  */
 public class View implements ModelObserver {
 
@@ -34,12 +27,9 @@ public class View implements ModelObserver {
 
     private Stage primaryStage;
     private Group group;
-    private Tool selectedTool;
-    private Color selectedColor;
 
-    public enum Tool {
-        LINE, RECTANGLE, CIRCLE
-    }
+    private SideMenu sideMenu;
+    private TopMenu topMenu;
 
     public View(Controller controller, Model model, Stage primaryStage) {
         this.controller = controller;
@@ -52,7 +42,8 @@ public class View implements ModelObserver {
         primaryStage.setTitle(APPLICATION_NAME);
         group = new Group();
         VBox controls = new VBox();
-        controls.getChildren().addAll(createControlPanel());
+        sideMenu = new SideMenu();
+        controls.getChildren().addAll(sideMenu);
         StackPane canvasHolder = new StackPane(group);
         final ScrollPane scrollPane = new ScrollPane(canvasHolder);
 
@@ -60,7 +51,8 @@ public class View implements ModelObserver {
         addMouseListeners();
 
         BorderPane borderPane = new BorderPane();
-        borderPane.setTop(createMenuBar());
+        topMenu = new TopMenu(controller);
+        borderPane.setTop(topMenu);
         borderPane.setLeft(controls);
         borderPane.setCenter(scrollPane);
         Scene scene = new Scene(borderPane, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -73,88 +65,9 @@ public class View implements ModelObserver {
                 new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent t) {
-                        controller.createShape(selectedColor, t.getX(), t.getY());
+                        controller.createShape(sideMenu.getSelectedColor(), t.getX(), t.getY());
                     }
                 });
-    }
-
-    private List<Node> createControlPanel() {
-        List<Node> nodes = new ArrayList<Node>(2);
-
-        final ToggleButton buttonLine = new ToggleButton("Line");
-        ToggleButton buttonRectangle = new ToggleButton("Rectangle");
-        ToggleButton buttonCircle = new ToggleButton("Circle");
-        final ToggleGroup toolGroup = new ToggleGroup();
-        buttonLine.setToggleGroup(toolGroup);
-        buttonLine.setUserData(Tool.LINE);
-        buttonLine.setSelected(true);
-        selectedTool = Tool.LINE;
-        buttonRectangle.setToggleGroup(toolGroup);
-        buttonRectangle.setUserData(Tool.RECTANGLE);
-        buttonCircle.setToggleGroup(toolGroup);
-        buttonCircle.setUserData(Tool.CIRCLE);
-
-        toolGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>(){
-            public void changed(ObservableValue<? extends Toggle> ov,
-                                Toggle toggle, Toggle new_toggle) {
-                if (new_toggle != null) {
-                    Tool t = (Tool)toolGroup.getSelectedToggle().getUserData();
-                    System.out.println("Current tool is: " + t);
-                    selectedTool = t;
-                }
-            }
-        });
-
-        HBox.setHgrow(buttonLine, Priority.ALWAYS);
-        HBox.setHgrow(buttonRectangle, Priority.ALWAYS);
-        HBox.setHgrow(buttonCircle, Priority.ALWAYS);
-        buttonLine.setMaxWidth(Double.MAX_VALUE);
-        buttonRectangle.setMaxWidth(Double.MAX_VALUE);
-        buttonCircle.setMaxWidth(Double.MAX_VALUE);
-
-        VBox tools = new VBox();
-        tools.getChildren().addAll(buttonLine, buttonRectangle, buttonCircle);
-
-        TitledPane titledPaneTools = new TitledPane("Tools", tools);
-        final ColorPicker colorPicker = new ColorPicker();
-        selectedColor = colorPicker.getValue();
-        colorPicker.setMaxWidth(Double.MAX_VALUE);
-        colorPicker.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.out.println("Color picker color: " + colorPicker.getValue());
-                selectedColor = colorPicker.getValue();
-            }
-        });
-        nodes.add(titledPaneTools);
-        nodes.add(colorPicker);
-        return nodes;
-    }
-
-    private MenuBar createMenuBar() {
-        MenuBar menuBar = new MenuBar();
-        Menu menuFile = new Menu("File");
-        MenuItem menuItemNew = new MenuItem("New...");
-        MenuItem menuItemExit = new MenuItem("Quit " + APPLICATION_NAME);
-        MenuItem menuItemSave = new MenuItem("Save");
-        MenuItem menuItemSaveAs = new MenuItem("Save As...");
-        menuFile.getItems().addAll(menuItemNew, menuItemSave, menuItemSaveAs, menuItemExit);
-        menuBar.getMenus().add(menuFile);
-
-        menuItemNew.setOnAction(new EventHandler<ActionEvent>() {
-            public void handle(ActionEvent t) {
-                new NewDialog(controller, primaryStage);
-            }
-        });
-
-        menuItemExit.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                System.exit(0);
-            }
-        });
-
-        return menuBar;
     }
 
     private Canvas drawCheckedBackground(Canvas canvas) {

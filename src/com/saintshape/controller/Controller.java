@@ -46,4 +46,7 @@ public class Controller {
         model.notifyObservers();
     }
 
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
 }

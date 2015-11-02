@@ -242,6 +242,7 @@ public class NewDialog extends Stage {
         vbox.getChildren().addAll(label, hbox);
         Scene scene = new Scene(vbox);
         stage.setScene(scene);
+
         stage.show();
 
     }
