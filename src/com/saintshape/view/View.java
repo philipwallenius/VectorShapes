@@ -6,6 +6,7 @@ import com.saintshape.observer.ModelObserver;
 import com.saintshape.view.menu.side.SideMenu;
 import com.saintshape.view.menu.side.Tool;
 import com.saintshape.view.menu.top.TopMenu;
+import javafx.beans.binding.Bindings;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -59,10 +60,19 @@ public class View implements ModelObserver {
         VBox controls = new VBox();
         sideMenu = new SideMenu();
         controls.getChildren().addAll(sideMenu);
-        StackPane canvasHolder = new StackPane(group);
+        final StackPane canvasHolder = new StackPane(group);
         final ScrollPane scrollPane = new ScrollPane(canvasHolder);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
-        // Register mouse events
+        // center the drawing canvas
+        canvasHolder.minWidthProperty().bind(Bindings.createDoubleBinding(() ->
+                scrollPane.getViewportBounds().getWidth(), scrollPane.viewportBoundsProperty()));
+        canvasHolder.minHeightProperty().bind(Bindings.createDoubleBinding(() ->
+                scrollPane.getViewportBounds().getHeight(), scrollPane.viewportBoundsProperty()));
+
+
+        // register mouse events
         createMouseListeners();
 
         BorderPane borderPane = new BorderPane();
@@ -103,7 +113,7 @@ public class View implements ModelObserver {
             public void handle(MouseEvent event) {
                 if(selectedShape != null) {
 
-                    // set the size of the shape
+                    // set the size of the selected shape
                     Rectangle r = (Rectangle)selectedShape;
                     if((event.getX()-delta.x) >= 0) {
                         r.setWidth(event.getX()-delta.x);
