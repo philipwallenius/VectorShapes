@@ -71,6 +71,7 @@ public class NewDialog extends Stage {
         scene = new Scene(hbox);
         setScene(scene);
         show();
+        requestFocus();
 
     }
 

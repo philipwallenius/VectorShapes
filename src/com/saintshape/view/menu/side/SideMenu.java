@@ -15,7 +15,7 @@ import javafx.scene.paint.Color;
 public class SideMenu extends VBox {
 
     private ToggleGroup toggleGroup;
-    private ToggleButton buttonLine, buttonRectangle, buttonCircle;
+    private ToggleButton buttonSelect, buttonLine, buttonRectangle, buttonCircle;
     private VBox vbox;
     private TitledPane titledPaneTools;
     private ColorPicker colorPicker;
@@ -44,10 +44,14 @@ public class SideMenu extends VBox {
 
         toggleGroup = new ToggleGroup();
 
+        buttonSelect = new ToggleButton("Select");
+        buttonSelect.setToggleGroup(toggleGroup);
+        buttonSelect.setUserData(Tool.SELECT);
+        buttonSelect.setSelected(true);
+
         buttonLine = new ToggleButton("Line");
         buttonLine.setToggleGroup(toggleGroup);
         buttonLine.setUserData(Tool.LINE);
-        buttonLine.setSelected(true);
 
         buttonRectangle = new ToggleButton("Rectangle");
         buttonRectangle.setToggleGroup(toggleGroup);
@@ -57,15 +61,17 @@ public class SideMenu extends VBox {
         buttonCircle.setToggleGroup(toggleGroup);
         buttonCircle.setUserData(Tool.CIRCLE);
 
+        HBox.setHgrow(buttonSelect, Priority.ALWAYS);
         HBox.setHgrow(buttonLine, Priority.ALWAYS);
         HBox.setHgrow(buttonRectangle, Priority.ALWAYS);
         HBox.setHgrow(buttonCircle, Priority.ALWAYS);
+        buttonSelect.setMaxWidth(Double.MAX_VALUE);
         buttonLine.setMaxWidth(Double.MAX_VALUE);
         buttonRectangle.setMaxWidth(Double.MAX_VALUE);
         buttonCircle.setMaxWidth(Double.MAX_VALUE);
 
         vbox = new VBox();
-        vbox.getChildren().addAll(buttonLine, buttonRectangle, buttonCircle);
+        vbox.getChildren().addAll(buttonSelect, buttonLine, buttonRectangle, buttonCircle);
 
         titledPaneTools = new TitledPane("Tools", vbox);
 
