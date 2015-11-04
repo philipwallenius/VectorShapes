@@ -93,7 +93,7 @@ public class SideMenu extends VBox {
      * @return Returns a colorpicker
      */
     private ColorPicker createColorPicker() {
-        ColorPicker picker = new ColorPicker();
+        ColorPicker picker = new ColorPicker(Color.BLACK);
         picker.setMaxWidth(Double.MAX_VALUE);
         return picker;
     }
