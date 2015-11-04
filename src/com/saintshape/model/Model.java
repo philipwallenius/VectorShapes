@@ -1,6 +1,7 @@
 package com.saintshape.model;
 
 import com.saintshape.observer.ModelObserver;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.shape.Shape;
 
@@ -17,7 +18,7 @@ public class Model {
 
     private String name;
     private Canvas rootCanvas;
-    private List<Shape> shapes;
+    private List<Node> nodes;
     private boolean hasUnsavedChanges;
     private List<ModelObserver> observers;
 
@@ -27,8 +28,13 @@ public class Model {
     public Model() {
         hasUnsavedChanges = true;
         rootCanvas = new Canvas();
-        shapes = new ArrayList<Shape>();
+        nodes = new ArrayList<Node>();
         observers = new ArrayList<ModelObserver>();
+    }
+
+    public void reset() {
+        name = "";
+        nodes.clear();
     }
 
     public String getName() {
@@ -37,6 +43,7 @@ public class Model {
 
     public void setName(String name) {
         this.name = name;
+        notifyObservers();
     }
 
     public Canvas getRootCanvas() {
@@ -47,7 +54,13 @@ public class Model {
         this.rootCanvas = rootCanvas;
     }
 
-    public boolean isHasUnsavedChanges() {
+    public void setDimensions(double width, double height) {
+        rootCanvas.setWidth(width);
+        rootCanvas.setHeight(height);
+        notifyObservers();
+    }
+
+    public boolean hasUnsavedChanges() {
         return hasUnsavedChanges;
     }
 
@@ -69,15 +82,26 @@ public class Model {
     public void notifyObservers() {
         for(ModelObserver observer : observers) {
             observer.update();
+            observer.update(this);
         }
     }
 
-    public List<Shape> getShapes() {
-        return shapes;
+    public List<Node> getNodes() {
+        return nodes;
     }
 
-    public void setShapes(List<Shape> shapes) {
-        this.shapes = shapes;
+    public void setNodes(List<Node> nodes) {
+        this.nodes = nodes;
+    }
+
+    public void addNode(Node node) {
+        nodes.add(node);
+        notifyObservers();
+    }
+
+    public void removeNode(Node node) {
+        nodes.remove(node);
+        notifyObservers();
     }
 
 }

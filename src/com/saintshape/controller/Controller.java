@@ -2,14 +2,13 @@ package com.saintshape.controller;
 
 import com.saintshape.model.Model;
 import com.saintshape.view.View;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
-import org.w3c.dom.css.Rect;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,32 +31,29 @@ public class Controller {
 
     public void newProject(String name, double width, double height) {
 
-        if(model.isHasUnsavedChanges()) {
+        if(model.hasUnsavedChanges()) {
             // TODO: prompt save changes
         }
 
-        model.getShapes().clear();
+        model.reset();
         model.setName(name);
-        model.getRootCanvas().setWidth(width);
-        model.getRootCanvas().setHeight(height);
-
-
-        model.notifyObservers();
-    }
-
-    public void createShape(Color color, double x, double y) {
-        Rectangle r = new Rectangle(x, y, 10, 10);
-        r.setFill(color);
-        model.getShapes().add(r);
-        model.notifyObservers();
+        model.setDimensions(width, height);
     }
 
     public Stage getPrimaryStage() {
         return primaryStage;
     }
 
-    public void addShape(Shape selectedShape) {
-        model.getShapes().add(selectedShape);
-        model.notifyObservers();
+    public void addNode(Node node) {
+        model.addNode(node);
     }
+
+    public Canvas getRootCanvas() {
+        return model.getRootCanvas();
+    }
+
+    public List<Node> getNodes() {
+        return model.getNodes();
+    }
+
 }

@@ -7,6 +7,7 @@ import com.saintshape.model.Model;
  */
 public interface ModelObserver {
 
-    public void update();
+    void update();
+    void update(Model model);
 
 }

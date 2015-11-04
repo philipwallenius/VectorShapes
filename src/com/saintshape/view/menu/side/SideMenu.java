@@ -1,5 +1,7 @@
 package com.saintshape.view.menu.side;
 
+import com.saintshape.model.Model;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -14,16 +16,18 @@ import javafx.scene.paint.Color;
  */
 public class SideMenu extends VBox {
 
-    private ToggleGroup toggleGroup;
-    private ToggleButton buttonSelect, buttonLine, buttonRectangle, buttonCircle;
-    private VBox vbox;
     private TitledPane titledPaneTools;
+    private TitledPane titledPaneNodes;
     private ColorPicker colorPicker;
+    private ToggleGroup toggleGroup;
+    private ListView<NodeItem> listView;
+    private Model model;
 
     /**
      * Constructor that initializes the drawing tools and colorpicker
      */
-    public SideMenu() {
+    public SideMenu(Model model) {
+        this.model = model;
         initialize();
     }
 
@@ -31,9 +35,14 @@ public class SideMenu extends VBox {
      * Initializes the side menu by creating the tool buttons and a color picker
      */
     private void initialize() {
-        TitledPane titledPaneTools = createTools();
-        ColorPicker colorPicker = createColorPicker();
-        getChildren().addAll(titledPaneTools, colorPicker);
+        titledPaneTools = createTools();
+        colorPicker = createColorPicker();
+        titledPaneNodes = createNodesList();
+        getChildren().addAll(titledPaneTools, colorPicker, titledPaneNodes);
+    }
+
+    private TitledPane createNodesList() {
+        return new NodesList(model);
     }
 
     /**
@@ -44,22 +53,22 @@ public class SideMenu extends VBox {
 
         toggleGroup = new ToggleGroup();
 
-        buttonSelect = new ToggleButton("Select");
+        ToggleButton buttonSelect = new ToggleButton("Select");
         buttonSelect.setToggleGroup(toggleGroup);
         buttonSelect.setUserData(Tool.SELECT);
         buttonSelect.setSelected(true);
 
-        buttonLine = new ToggleButton("Line");
+        ToggleButton buttonLine = new ToggleButton("Line");
         buttonLine.setToggleGroup(toggleGroup);
         buttonLine.setUserData(Tool.LINE);
 
-        buttonRectangle = new ToggleButton("Rectangle");
+        ToggleButton buttonRectangle = new ToggleButton("Rectangle");
         buttonRectangle.setToggleGroup(toggleGroup);
         buttonRectangle.setUserData(Tool.RECTANGLE);
 
-        buttonCircle = new ToggleButton("Circle");
+        ToggleButton buttonCircle = new ToggleButton("Circle");
         buttonCircle.setToggleGroup(toggleGroup);
-        buttonCircle.setUserData(Tool.CIRCLE);
+        buttonCircle.setUserData(Tool.ELLIPSE);
 
         HBox.setHgrow(buttonSelect, Priority.ALWAYS);
         HBox.setHgrow(buttonLine, Priority.ALWAYS);
@@ -70,12 +79,12 @@ public class SideMenu extends VBox {
         buttonRectangle.setMaxWidth(Double.MAX_VALUE);
         buttonCircle.setMaxWidth(Double.MAX_VALUE);
 
-        vbox = new VBox();
+        VBox vbox = new VBox();
         vbox.getChildren().addAll(buttonSelect, buttonLine, buttonRectangle, buttonCircle);
 
-        titledPaneTools = new TitledPane("Tools", vbox);
+        TitledPane titledPane = new TitledPane("Tools", vbox);
 
-        return titledPaneTools;
+        return titledPane;
 
     }
 
@@ -84,9 +93,9 @@ public class SideMenu extends VBox {
      * @return Returns a colorpicker
      */
     private ColorPicker createColorPicker() {
-        colorPicker = new ColorPicker();
-        colorPicker.setMaxWidth(Double.MAX_VALUE);
-        return colorPicker;
+        ColorPicker picker = new ColorPicker();
+        picker.setMaxWidth(Double.MAX_VALUE);
+        return picker;
     }
 
     public Tool getSelectedTool() {
@@ -97,4 +106,11 @@ public class SideMenu extends VBox {
         return colorPicker.getValue();
     }
 
+    public void addNode(String name, Node node) {
+        listView.getItems().add(new NodeItem(name, node));
+    }
+
+    public void removeNode(NodeItem nodeItem) {
+        listView.getItems().remove(nodeItem);
+    }
 }
