@@ -17,6 +17,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 
@@ -45,6 +46,7 @@ public class View implements ModelObserver {
     private SideMenu sideMenu;
     private TopMenu topMenu;
     private MouseEventHandler mouseEventHandler;
+    private Group selectionGroup;
 
     /**
      * Constructor that initializes the view and creates the main window
@@ -64,6 +66,7 @@ public class View implements ModelObserver {
     public void initialize() {
         primaryStage.setTitle(APPLICATION_NAME);
         group = new Group();
+        selectionGroup = new Group();
         controls = new VBox();
         sideMenu = new SideMenu(model);
         controls.getChildren().addAll(sideMenu);
@@ -155,6 +158,8 @@ public class View implements ModelObserver {
         group.getChildren().clear();
         group.getChildren().add(drawCheckedBackground(model.getRootCanvas()));
         group.getChildren().addAll(model.getNodes());
+        group.getChildren().add(selectionGroup);
+
     }
 
     @Override
@@ -162,4 +167,7 @@ public class View implements ModelObserver {
 
     }
 
+    public Group getSelectionGroup() {
+        return selectionGroup;
+    }
 }
