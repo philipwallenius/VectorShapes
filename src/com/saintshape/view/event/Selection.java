@@ -9,10 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
-import javafx.scene.shape.StrokeType;
+import javafx.scene.shape.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,34 +19,30 @@ import java.util.List;
  */
 public class Selection extends Rectangle {
 
+    public static int BORDER_MARGIN = 5;
     private List<Anchor> anchors;
     private Node shape;
-    private View view;
 
-    public Selection(View view, Node shape) {
-        this.view = view;
+    public Selection(Node shape) {
         this.shape = shape;
         initialize();
     }
 
     public void initialize() {
 
-//        subscribeToColorPicker();
-
         anchors = new ArrayList<>();
         if(shape instanceof Rectangle) {
             Rectangle rectangle = (Rectangle)shape;
-            view.setSelectedColor((Color)rectangle.getFill());
             setFill(Color.TRANSPARENT);
             setStroke(Color.DEEPSKYBLUE);
             setStrokeWidth(1);
-            setX(rectangle.getX() - 5);
-            setY(rectangle.getY() - 5);
-            setWidth(rectangle.getWidth() + 10);
-            setHeight(rectangle.getHeight() + 10);
+            setX(rectangle.getX() - BORDER_MARGIN);
+            setY(rectangle.getY() - BORDER_MARGIN);
+            setWidth(rectangle.getWidth() + (BORDER_MARGIN*2));
+            setHeight(rectangle.getHeight() + (BORDER_MARGIN*2));
 
-            rectangle.xProperty().bind(xProperty().add(5));
-            rectangle.yProperty().bind(yProperty().add(5));
+            rectangle.xProperty().bind(xProperty().add(BORDER_MARGIN));
+            rectangle.yProperty().bind(yProperty().add(BORDER_MARGIN));
 
             Anchor anchor = new Anchor("1", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()));
             Anchor anchor2 = new Anchor("2", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()));
@@ -61,7 +54,88 @@ public class Selection extends Rectangle {
             anchor2.centerYProperty().bind(yProperty());
             anchor3.centerXProperty().bind(xProperty());
             anchor3.centerYProperty().bind(yProperty().add(getHeight()));
-            anchor4.centerXProperty().bind(xProperty().add(getHeight()));
+            anchor4.centerXProperty().bind(xProperty().add(getWidth()));
+            anchor4.centerYProperty().bind(yProperty().add(getHeight()));
+            anchors.add(anchor);
+            anchors.add(anchor2);
+            anchors.add(anchor3);
+            anchors.add(anchor4);
+        } else if(shape instanceof Ellipse) {
+            Ellipse ellipse = (Ellipse)shape;
+            setFill(Color.TRANSPARENT);
+            setStroke(Color.DEEPSKYBLUE);
+            setStrokeWidth(1);
+            setX(ellipse.getCenterX() - ellipse.getRadiusX() - BORDER_MARGIN);
+            setY(ellipse.getCenterY() - ellipse.getRadiusY() - BORDER_MARGIN);
+            setWidth((ellipse.getRadiusX()*2) + (BORDER_MARGIN*2));
+            setHeight((ellipse.getRadiusY()*2) + (BORDER_MARGIN*2));
+
+            ellipse.centerXProperty().bind(xProperty().add(BORDER_MARGIN).add(ellipse.radiusXProperty()));
+            ellipse.centerYProperty().bind(yProperty().add(BORDER_MARGIN).add(ellipse.radiusYProperty()));
+
+            Anchor anchor = new Anchor("1", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()));
+            Anchor anchor2 = new Anchor("2", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()));
+            Anchor anchor3 = new Anchor("3", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()+getHeight()));
+            Anchor anchor4 = new Anchor("4", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()+getHeight()));
+            anchor.centerXProperty().bind(xProperty());
+            anchor.centerYProperty().bind(yProperty());
+            anchor2.centerXProperty().bind(xProperty().add(getWidth()));
+            anchor2.centerYProperty().bind(yProperty());
+            anchor3.centerXProperty().bind(xProperty());
+            anchor3.centerYProperty().bind(yProperty().add(getHeight()));
+            anchor4.centerXProperty().bind(xProperty().add(getWidth()));
+            anchor4.centerYProperty().bind(yProperty().add(getHeight()));
+            anchors.add(anchor);
+            anchors.add(anchor2);
+            anchors.add(anchor3);
+            anchors.add(anchor4);
+        } else if(shape instanceof Line) {
+            Line line = (Line)shape;
+            setFill(Color.TRANSPARENT);
+            setStroke(Color.DEEPSKYBLUE);
+            setStrokeWidth(1);
+
+            if(line.getStartX() < line.getEndX()) {
+                setX(line.getStartX() - BORDER_MARGIN);
+            } else {
+                setX(line.getEndX() - BORDER_MARGIN);
+            }
+            if(line.getStartY() < line.getEndY()) {
+                setY(line.getStartY() - BORDER_MARGIN);
+            } else {
+                setY(line.getEndY() - BORDER_MARGIN);
+            }
+
+            setWidth(Math.abs(line.getStartX()-line.getEndX()) + (BORDER_MARGIN*2));
+            setHeight(Math.abs(line.getStartY()-line.getEndY()) + (BORDER_MARGIN*2));
+
+            if(line.getStartX() < line.getEndX()) {
+                line.startXProperty().bind(xProperty().add(BORDER_MARGIN));
+                line.endXProperty().bind(xProperty().add(getWidth()).subtract(BORDER_MARGIN));
+            } else {
+                line.startXProperty().bind(xProperty().add(getWidth()).subtract(BORDER_MARGIN));
+                line.endXProperty().bind(xProperty().add(BORDER_MARGIN));
+            }
+
+            if(line.getStartY() < line.getEndY()) {
+                line.startYProperty().bind(yProperty().add(BORDER_MARGIN));
+                line.endYProperty().bind(yProperty().add(getHeight()).subtract(BORDER_MARGIN));
+            } else {
+                line.startYProperty().bind(yProperty().add(getHeight()).subtract(BORDER_MARGIN));
+                line.endYProperty().bind(yProperty().add(BORDER_MARGIN));
+            }
+
+            Anchor anchor = new Anchor("1", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()));
+            Anchor anchor2 = new Anchor("2", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()));
+            Anchor anchor3 = new Anchor("3", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()+getHeight()));
+            Anchor anchor4 = new Anchor("4", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()+getHeight()));
+            anchor.centerXProperty().bind(xProperty());
+            anchor.centerYProperty().bind(yProperty());
+            anchor2.centerXProperty().bind(xProperty().add(getWidth()));
+            anchor2.centerYProperty().bind(yProperty());
+            anchor3.centerXProperty().bind(xProperty());
+            anchor3.centerYProperty().bind(yProperty().add(getHeight()));
+            anchor4.centerXProperty().bind(xProperty().add(getWidth()));
             anchor4.centerYProperty().bind(yProperty().add(getHeight()));
             anchors.add(anchor);
             anchors.add(anchor2);
@@ -69,19 +143,6 @@ public class Selection extends Rectangle {
             anchors.add(anchor4);
         }
     }
-
-//    private void subscribeToColorPicker() {
-//        ColorPicker colorPicker = view.getColorPicker();
-//        colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-//            @Override
-//            public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
-//                if(shape instanceof Shape) {
-//                    Shape s = (Shape)shape;
-//                    s.setFill(newValue);
-//                }
-//            }
-//        });
-//    }
 
     public List<Anchor> getAnchors() {
         return anchors;
@@ -93,7 +154,7 @@ public class Selection extends Rectangle {
 
     class Anchor extends Circle {
         Anchor(String id, DoubleProperty x, DoubleProperty y) {
-            super(x.get(), y.get(), 5);
+            super(x.get(), y.get(), BORDER_MARGIN);
             setId(id);
             setFill(Color.GOLD.deriveColor(1, 1, 1, 0.5));
             setStroke(Color.GOLD);

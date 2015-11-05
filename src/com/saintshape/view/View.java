@@ -166,7 +166,6 @@ public class View implements ModelObserver {
         group.getChildren().add(drawCheckedBackground(model.getRootCanvas()));
         group.getChildren().addAll(model.getNodes());
         group.getChildren().add(selectionGroup);
-
     }
 
     @Override
@@ -176,5 +175,9 @@ public class View implements ModelObserver {
 
     public Group getSelectionGroup() {
         return selectionGroup;
+    }
+
+    public ToggleGroup getTools() {
+        return sideMenu.getTools();
     }
 }

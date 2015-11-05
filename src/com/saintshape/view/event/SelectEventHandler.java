@@ -12,12 +12,12 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
-import javafx.scene.shape.StrokeType;
+import javafx.scene.shape.*;
+import sun.java2d.pipe.RegionClipSpanIterator;
 
 /**
  * Created by 150019538 on 04/11/15.
@@ -30,8 +30,9 @@ public class SelectEventHandler implements ToolEventHandler {
     private MouseClick mouseClick;
     private MouseEventHandler mouseEventHandler;
     public Selection selection;
+    private Color previousColor;
 
-    private double selectedOriginalX, selectedOriginalY;
+    private double selectedOriginalX, selectedOriginalY, clickDiffX, clickDiffY;
 
     public SelectEventHandler(View view, Controller controller, MouseEventHandler mouseEventHandler) {
         this.view = view;
@@ -39,34 +40,72 @@ public class SelectEventHandler implements ToolEventHandler {
         this.mouseEventHandler = mouseEventHandler;
         mouseClick = new MouseClick();
         subscribeToColorPicker();
+        subscribeToTools();
     }
 
     @Override
     public void handleMousePress(MouseEvent event) {
-
         // keep track of mouse movements
         mouseClick.x = event.getX();
         mouseClick.y = event.getY();
 
-        Object source = event.getSource();
+        Node source = (Node)event.getSource();
+
+        int selectionBoundary = 5;
+        if(source instanceof Rectangle) {
+            Rectangle rectangle = (Rectangle)source;
+            clickDiffX = mouseClick.x-(rectangle.getX()+selectionBoundary);
+            clickDiffY = mouseClick.y-(rectangle.getY()+selectionBoundary);
+        } else if(source instanceof Ellipse) {
+            Ellipse ellipse = (Ellipse)source;
+            clickDiffX = mouseClick.x-(ellipse.getCenterX()-ellipse.getRadiusX());
+            clickDiffY = mouseClick.y-(ellipse.getCenterY()-ellipse.getRadiusY());
+        } else if(source instanceof Line) {
+            Line line = (Line)source;
+            clickDiffX = mouseClick.x-(Math.min(line.getStartX(), line.getEndX()));
+            clickDiffY = mouseClick.y-(Math.min(line.getStartY(), line.getEndY()));
+        }
+
+
 
         if(!(source instanceof Selection)) {
-
-            if(source instanceof Canvas) {
-                selection = null;
-                selected = null;
-                view.getSelectionGroup().getChildren().clear();
-            } else if (source instanceof Rectangle) {
-                Rectangle rectangle = ((Rectangle) source);
+            clearSelection();
+            if (source instanceof Rectangle) {
+                Rectangle rectangle = (Rectangle) source;
                 selectedOriginalX = rectangle.getX();
                 selectedOriginalY = rectangle.getY();
-                selection = new Selection(view, rectangle);
+                selection = new Selection(rectangle);
                 mouseEventHandler.register(selection);
                 selected = selection;
                 view.getSelectionGroup().getChildren().clear();
                 view.getSelectionGroup().getChildren().add(selection);
                 view.getSelectionGroup().getChildren().addAll(selection.getAnchors());
-
+                previousColor = view.getSelectedColor();
+                view.setSelectedColor((Color)rectangle.getFill());
+            } else if(source instanceof Ellipse) {
+                Ellipse ellipse = (Ellipse)source;
+                selection = new Selection(ellipse);
+                selectedOriginalX = selection.getX();
+                selectedOriginalY = selection.getY();
+                mouseEventHandler.register(selection);
+                selected = selection;
+                view.getSelectionGroup().getChildren().clear();
+                view.getSelectionGroup().getChildren().add(selection);
+                view.getSelectionGroup().getChildren().addAll(selection.getAnchors());
+                previousColor = view.getSelectedColor();
+                view.setSelectedColor((Color)ellipse.getFill());
+            } else if(source instanceof Line) {
+                Line line = (Line)source;
+                selection = new Selection(line);
+                selectedOriginalX = selection.getX();
+                selectedOriginalY = selection.getY();
+                mouseEventHandler.register(selection);
+                selected = selection;
+                view.getSelectionGroup().getChildren().clear();
+                view.getSelectionGroup().getChildren().add(selection);
+                view.getSelectionGroup().getChildren().addAll(selection.getAnchors());
+                previousColor = view.getSelectedColor();
+                view.setSelectedColor((Color)line.getStroke());
             }
         } else {
             Rectangle rectangle = ((Rectangle) source);
@@ -74,6 +113,16 @@ public class SelectEventHandler implements ToolEventHandler {
             selectedOriginalY = rectangle.getY();
         }
 
+
+    }
+
+    public void clearSelection() {
+        view.getSelectionGroup().getChildren().clear();
+        selection = null;
+        selected = null;
+        if(previousColor != null) {
+            view.setSelectedColor(previousColor);
+        }
     }
 
     @Override
@@ -90,16 +139,83 @@ public class SelectEventHandler implements ToolEventHandler {
     public void handleMouseDrag(MouseEvent event) {
         if(selected != null && event.isPrimaryButtonDown()) {
 
+            // get current mouse position
             double currentX = event.getX();
             double currentY = event.getY();
 
-            double offsetX = currentX - mouseClick.x;
-            double offsetY = currentY - mouseClick.y;
+            if(selection.getShape() instanceof Rectangle) {
+                Rectangle rectangle = (Rectangle)selected;
 
-            if(selected instanceof Rectangle) {
-                Rectangle rectangle = ((Rectangle)selected);
+                // Make sure x-position not outside of canvas
+                if(currentX-clickDiffX < 0) {
+                    currentX = currentX + (Math.abs(0-(currentX-clickDiffX)));
+                } else if(((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX)+currentX > controller.getRootCanvas().getWidth()) {
+                    currentX = currentX - (Math.abs(controller.getRootCanvas().getWidth()-(currentX+((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX))));
+                }
+
+                // Make sure y-position not outside of canvas
+                if(currentY-clickDiffY < 0) {
+                    currentY = currentY + (Math.abs(0-(currentY-clickDiffY)));
+                } else if(((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY)+currentY > controller.getRootCanvas().getHeight()) {
+                    currentY = currentY - (Math.abs(controller.getRootCanvas().getHeight()-(currentY+((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY))));
+                }
+
+                // Calculate rectangle movement
+                double offsetX = currentX - mouseClick.x;
+                double offsetY = currentY - mouseClick.y;
+
+                // Update movement
                 rectangle.setX(selectedOriginalX+offsetX);
                 rectangle.setY(selectedOriginalY+offsetY);
+
+            } else if(selection.getShape() instanceof Ellipse) {
+                Rectangle rectangle = (Rectangle)selected;
+
+                // Make sure x-position not outside of canvas
+                if(currentX-clickDiffX < 0) {
+                    currentX = currentX + (Math.abs(0-(currentX-clickDiffX)));
+                } else if(((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX)+currentX > controller.getRootCanvas().getWidth()) {
+                    currentX = currentX - (Math.abs(controller.getRootCanvas().getWidth()-(currentX+((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX))));
+                }
+
+                // Make sure y-position not outside of canvas
+                if(currentY-clickDiffY < 0) {
+                    currentY = currentY + (Math.abs(0-(currentY-clickDiffY)));
+                } else if(((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY)+currentY > controller.getRootCanvas().getHeight()) {
+                    currentY = currentY - (Math.abs(controller.getRootCanvas().getHeight()-(currentY+((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY))));
+                }
+
+                // Calculate rectangle movement
+                double offsetX = currentX - mouseClick.x;
+                double offsetY = currentY - mouseClick.y;
+
+                // Update movement
+                rectangle.setX(selectedOriginalX + offsetX);
+                rectangle.setY(selectedOriginalY + offsetY);
+            } else if(selection.getShape() instanceof Line) {
+                Rectangle rectangle = (Rectangle)selected;
+
+                // Make sure x-position not outside of canvas
+                if(currentX-clickDiffX < 0) {
+                    currentX = currentX + (Math.abs(0-(currentX-clickDiffX)));
+                } else if(((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX)+currentX > controller.getRootCanvas().getWidth()) {
+                    currentX = currentX - (Math.abs(controller.getRootCanvas().getWidth()-(currentX+((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX))));
+                }
+
+                // Make sure y-position not outside of canvas
+                if(currentY-clickDiffY < 0) {
+                    currentY = currentY + (Math.abs(0-(currentY-clickDiffY)));
+                } else if(((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY)+currentY > controller.getRootCanvas().getHeight()) {
+                    currentY = currentY - (Math.abs(controller.getRootCanvas().getHeight()-(currentY+((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY))));
+                }
+
+                // Calculate rectangle movement
+                double offsetX = currentX - mouseClick.x;
+                double offsetY = currentY - mouseClick.y;
+
+                // Update movement
+                rectangle.setX(selectedOriginalX + offsetX);
+                rectangle.setY(selectedOriginalY + offsetY);
             }
 
         }
@@ -110,25 +226,36 @@ public class SelectEventHandler implements ToolEventHandler {
         colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
             @Override
             public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
-                if(selected instanceof Shape) {
-                    Shape s = (Shape)selection.getShape();
-                    s.setFill(newValue);
+                if(selected != null) {
+                    if(selected instanceof Shape) {
+                        Shape s = (Shape)selection.getShape();
+                        if(s instanceof Line) {
+                            s.setStroke(newValue);
+                        } else {
+                            s.setFill(newValue);
+                        }
+                    }
+                } else {
+                    previousColor = newValue;
                 }
             }
         });
     }
 
-//    class Anchor extends Circle {
-//        Anchor(String id, DoubleProperty x, DoubleProperty y) {
-//            super(x.get(), y.get(), 5);
-//            setId(id);
-//            setFill(Color.GOLD.deriveColor(1, 1, 1, 0.5));
-//            setStroke(Color.GOLD);
-//            setStrokeWidth(1);
-//            setStrokeType(StrokeType.OUTSIDE);
-//
-//            x.bind(centerXProperty());
-//            y.bind(centerYProperty());
-//        }
-//    }
+    public void subscribeToTools() {
+        ToggleGroup toggleGroup = view.getTools();
+        toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            @Override
+            public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+                if(newValue.getUserData() != Tool.SELECT) {
+                    selected = null;
+                    selection = null;
+                    view.getSelectionGroup().getChildren().clear();
+                    if(previousColor != null) {
+                        view.setSelectedColor(previousColor);
+                    }
+                }
+            }
+        });
+    }
 }

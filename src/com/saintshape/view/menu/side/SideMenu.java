@@ -66,11 +66,12 @@ public class SideMenu extends VBox {
 
                 if (newToggle == null) {
                     toggle.setSelected(true);
-                } else {
-                    if(newToggle.getUserData() != Tool.SELECT) {
-                        view.getSelectionGroup().getChildren().clear();
-                    }
                 }
+//                else {
+//                    if(newToggle.getUserData() != Tool.SELECT) {
+//                        view.getSelectionGroup().getChildren().clear();
+//                    }
+//                }
             }
         });
 
@@ -116,12 +117,6 @@ public class SideMenu extends VBox {
     private ColorPicker createColorPicker() {
         ColorPicker picker = new ColorPicker(Color.BLACK);
         picker.setMaxWidth(Double.MAX_VALUE);
-        picker.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
-            }
-        });
         return picker;
     }
 
@@ -147,5 +142,9 @@ public class SideMenu extends VBox {
 
     public void setSelectedColor(Color color) {
         colorPicker.setValue(color);
+    }
+
+    public ToggleGroup getTools() {
+        return toggleGroup;
     }
 }
