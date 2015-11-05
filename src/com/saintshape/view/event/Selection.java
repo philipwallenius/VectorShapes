@@ -47,22 +47,22 @@ public class Selection extends Rectangle {
             rectangle.widthProperty().bind(widthProperty().subtract(BORDER_MARGIN*2));
             rectangle.heightProperty().bind(heightProperty().subtract(BORDER_MARGIN*2));
 
-            Point point = new Point(this, "1", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()));
-            Point point2 = new Point(this, "2", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()));
-            Point point3 = new Point(this, "3", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()+getHeight()));
-            Point point4 = new Point(this, "4", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()+getHeight()));
+            Point point = new Point(this, "1", getX(), getY());
+            Point point2 = new Point(this, "2", getX()+getWidth(), getY());
+            Point point3 = new Point(this, "3", getX(), getY()+getHeight());
+            Point point4 = new Point(this, "4", getX()+getWidth(), getY()+getHeight());
 
             point.centerXProperty().bind(xProperty());
             point.centerYProperty().bind(yProperty());
 
-            point2.centerXProperty().bind(xProperty().add(getWidth()));
+            point2.centerXProperty().bind(xProperty().add(widthProperty()));
             point2.centerYProperty().bind(yProperty());
 
             point3.centerXProperty().bind(xProperty());
-            point3.centerYProperty().bind(yProperty().add(getHeight()));
+            point3.centerYProperty().bind(yProperty().add(heightProperty()));
 
-            point4.centerXProperty().bind(xProperty().add(getWidth()));
-            point4.centerYProperty().bind(yProperty().add(getHeight()));
+            point4.centerXProperty().bind(xProperty().add(widthProperty()));
+            point4.centerYProperty().bind(yProperty().add(heightProperty()));
 
             points.add(point);
             points.add(point2);
@@ -86,18 +86,18 @@ public class Selection extends Rectangle {
             ellipse.radiusXProperty().bind(widthProperty().divide(2).subtract(BORDER_MARGIN));
             ellipse.radiusYProperty().bind(heightProperty().divide(2).subtract(BORDER_MARGIN));
 
-            Point point = new Point(this, "1", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()));
-            Point point2 = new Point(this, "2", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()));
-            Point point3 = new Point(this, "3", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()+getHeight()));
-            Point point4 = new Point(this, "4", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()+getHeight()));
+            Point point = new Point(this, "1", getX(), getY());
+            Point point2 = new Point(this, "2", getX()+getWidth(), getY());
+            Point point3 = new Point(this, "3", getX(), getY()+getHeight());
+            Point point4 = new Point(this, "4", getX()+getWidth(), getY()+getHeight());
             point.centerXProperty().bind(xProperty());
             point.centerYProperty().bind(yProperty());
-            point2.centerXProperty().bind(xProperty().add(getWidth()));
+            point2.centerXProperty().bind(xProperty().add(widthProperty()));
             point2.centerYProperty().bind(yProperty());
             point3.centerXProperty().bind(xProperty());
-            point3.centerYProperty().bind(yProperty().add(getHeight()));
-            point4.centerXProperty().bind(xProperty().add(getWidth()));
-            point4.centerYProperty().bind(yProperty().add(getHeight()));
+            point3.centerYProperty().bind(yProperty().add(heightProperty()));
+            point4.centerXProperty().bind(xProperty().add(widthProperty()));
+            point4.centerYProperty().bind(yProperty().add(heightProperty()));
             points.add(point);
             points.add(point2);
             points.add(point3);
@@ -125,50 +125,36 @@ public class Selection extends Rectangle {
             // bind position
             if(line.getStartX() < line.getEndX()) {
                 line.startXProperty().bind(xProperty().add(BORDER_MARGIN));
-                line.endXProperty().bind(xProperty().add(getWidth()).subtract(BORDER_MARGIN));
+                line.endXProperty().bind(xProperty().add(widthProperty()).subtract(BORDER_MARGIN));
             } else {
-                line.startXProperty().bind(xProperty().add(getWidth()).subtract(BORDER_MARGIN));
+                line.startXProperty().bind(xProperty().add(widthProperty()).subtract(BORDER_MARGIN));
                 line.endXProperty().bind(xProperty().add(BORDER_MARGIN));
             }
 
             if(line.getStartY() < line.getEndY()) {
                 line.startYProperty().bind(yProperty().add(BORDER_MARGIN));
-                line.endYProperty().bind(yProperty().add(getHeight()).subtract(BORDER_MARGIN));
+                line.endYProperty().bind(yProperty().add(heightProperty()).subtract(BORDER_MARGIN));
             } else {
-                line.startYProperty().bind(yProperty().add(getHeight()).subtract(BORDER_MARGIN));
+                line.startYProperty().bind(yProperty().add(heightProperty()).subtract(BORDER_MARGIN));
                 line.endYProperty().bind(yProperty().add(BORDER_MARGIN));
             }
 
             // bind size
-//            if(line.getStartX() < line.getEndX()) {
-//                line.startXProperty().bind(widthProperty().add(BORDER_MARGIN));
-//                line.endXProperty().bind(widthProperty().add(getWidth()).subtract(BORDER_MARGIN));
-//            } else {
-//                line.startXProperty().bind(xProperty().add(getWidth()).subtract(BORDER_MARGIN));
-//                line.endXProperty().bind(xProperty().add(BORDER_MARGIN));
-//            }
-//
-//            if(line.getStartY() < line.getEndY()) {
-//                line.startYProperty().bind(yProperty().add(BORDER_MARGIN));
-//                line.endYProperty().bind(yProperty().add(getHeight()).subtract(BORDER_MARGIN));
-//            } else {
-//                line.startYProperty().bind(yProperty().add(getHeight()).subtract(BORDER_MARGIN));
-//                line.endYProperty().bind(yProperty().add(BORDER_MARGIN));
-//            }
+            // perhaps not needed for lines?
 
 
-            Point point = new Point(this, "1", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()));
-            Point point2 = new Point(this, "2", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()));
-            Point point3 = new Point(this, "3", new SimpleDoubleProperty(getX()), new SimpleDoubleProperty(getY()+getHeight()));
-            Point point4 = new Point(this, "4", new SimpleDoubleProperty(getX()+getWidth()), new SimpleDoubleProperty(getY()+getHeight()));
+            Point point = new Point(this, "1", getX(), getY());
+            Point point2 = new Point(this, "2", getX()+getWidth(), getY());
+            Point point3 = new Point(this, "3", getX(), getY()+getHeight());
+            Point point4 = new Point(this, "4", getX()+getWidth(), getY()+getHeight());
             point.centerXProperty().bind(xProperty());
             point.centerYProperty().bind(yProperty());
-            point2.centerXProperty().bind(xProperty().add(getWidth()));
+            point2.centerXProperty().bind(xProperty().add(widthProperty()));
             point2.centerYProperty().bind(yProperty());
             point3.centerXProperty().bind(xProperty());
-            point3.centerYProperty().bind(yProperty().add(getHeight()));
-            point4.centerXProperty().bind(xProperty().add(getWidth()));
-            point4.centerYProperty().bind(yProperty().add(getHeight()));
+            point3.centerYProperty().bind(yProperty().add(heightProperty()));
+            point4.centerXProperty().bind(xProperty().add(widthProperty()));
+            point4.centerYProperty().bind(yProperty().add(heightProperty()));
             points.add(point);
             points.add(point2);
             points.add(point3);
@@ -209,16 +195,14 @@ public class Selection extends Rectangle {
                         Selection rectangle = (Selection)point.getSelection();
                         if (event.isPrimaryButtonDown()) {
                             if(rectangle != null ) {
+                                double wi = click.x-event.getX();
+                                double hi = click.y-event.getY();
+                                if(event.isShiftDown()) {
+                                    wi = Math.min(wi, hi);
+                                    hi = Math.min(wi, hi);
+                                }
+
                                 if(point.getId().equals("1")) {
-
-                                    double wi = click.x-event.getX();
-                                    double hi = click.y-event.getY();
-
-                                    if(event.isShiftDown()) {
-                                        wi = Math.min(wi, hi);
-                                        hi = Math.min(wi, hi);
-                                    }
-
                                     if(wi > 0) {
                                         rectangle.setX(xx-Math.abs(wi));
                                     } else {
@@ -232,6 +216,28 @@ public class Selection extends Rectangle {
                                     rectangle.setWidth(ww+wi);
                                     rectangle.setHeight(hh+hi);
 
+                                } else if(point.getId().equals("2")) {
+                                    if(hi > 0) {
+                                        rectangle.setY(yy-Math.abs(hi));
+                                    } else {
+                                        rectangle.setY(yy+Math.abs(hi));
+                                    }
+                                    rectangle.setWidth(ww-wi);
+                                    rectangle.setHeight(hh+hi);
+
+                                } else if(point.getId().equals("3")) {
+
+                                    if(wi > 0) {
+                                        rectangle.setX(xx-Math.abs(wi));
+                                    } else {
+                                        rectangle.setX(xx+Math.abs(wi));
+                                    }
+                                    rectangle.setWidth(ww+wi);
+                                    rectangle.setHeight(hh-hi);
+
+                                } else if(point.getId().equals("4")) {
+                                    rectangle.setWidth(ww-wi);
+                                    rectangle.setHeight(hh-hi);
                                 }
                             }
                         }
@@ -256,11 +262,9 @@ public class Selection extends Rectangle {
 
         private Rectangle selection;
 
-        Point(Rectangle selection, String id, DoubleProperty x, DoubleProperty y) {
-            super(x.get(), y.get(), BORDER_MARGIN);
+        Point(Rectangle selection, String id, double x, double y) {
+            super(x, y, BORDER_MARGIN);
             this.selection = selection;
-            x.bind(centerXProperty());
-            y.bind(centerYProperty());
             setStrokeWidth(1);
             setId(id);
             setFill(Color.GOLD.deriveColor(1, 1, 1, 0.5));

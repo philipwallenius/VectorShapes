@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/saintshape/view/event/SelectEventHandler.java" afterPath="$PROJECT_DIR$/src/com/saintshape/view/event/SelectEventHandler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/com/saintshape/view/event/Selection.java" afterPath="$PROJECT_DIR$/src/com/saintshape/view/event/Selection.java" />
     </list>
     <ignored path="JavaFxApplication.iws" />
@@ -116,16 +115,16 @@
       <file leaf-file-name="Selection.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/com/saintshape/view/event/Selection.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="2.827112" vertical-offset="1831" max-vertical-offset="4230">
-              <caret line="218" column="62" selection-start-line="218" selection-start-column="62" selection-end-line="218" selection-end-column="62" />
+            <state vertical-scroll-proportion="-0.6502947" vertical-offset="3391" max-vertical-offset="4290">
+              <caret line="204" column="63" selection-start-line="204" selection-start-column="63" selection-end-line="204" selection-end-column="63" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#11271#11272#0" expanded="true" />
-                <element signature="e#11300#11301#0" expanded="true" />
-                <element signature="e#11330#11331#0" expanded="true" />
-                <element signature="e#11358#11359#0" expanded="true" />
-                <element signature="e#12013#12014#0" expanded="true" />
-                <element signature="e#12053#12054#0" expanded="true" />
+                <element signature="e#11000#11001#0" expanded="true" />
+                <element signature="e#11029#11030#0" expanded="true" />
+                <element signature="e#11059#11060#0" expanded="true" />
+                <element signature="e#11087#11088#0" expanded="true" />
+                <element signature="e#11636#11637#0" expanded="true" />
+                <element signature="e#11676#11677#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -882,12 +881,12 @@
       <workItem from="1446636394020" duration="21268000" />
       <workItem from="1446668113926" duration="13719000" />
       <workItem from="1446715912936" duration="758000" />
-      <workItem from="1446716813267" duration="32689000" />
+      <workItem from="1446716813267" duration="36841000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="130782000" />
+    <option name="totallyTimeSpent" value="134934000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="6" y="25" width="1440" height="831" extended-state="6" />
@@ -1334,16 +1333,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/saintshape/view/event/Selection.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.827112" vertical-offset="1831" max-vertical-offset="4230">
-          <caret line="218" column="62" selection-start-line="218" selection-start-column="62" selection-end-line="218" selection-end-column="62" />
+        <state vertical-scroll-proportion="-0.6502947" vertical-offset="3391" max-vertical-offset="4290">
+          <caret line="204" column="63" selection-start-line="204" selection-start-column="63" selection-end-line="204" selection-end-column="63" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#11271#11272#0" expanded="true" />
-            <element signature="e#11300#11301#0" expanded="true" />
-            <element signature="e#11330#11331#0" expanded="true" />
-            <element signature="e#11358#11359#0" expanded="true" />
-            <element signature="e#12013#12014#0" expanded="true" />
-            <element signature="e#12053#12054#0" expanded="true" />
+            <element signature="e#11000#11001#0" expanded="true" />
+            <element signature="e#11029#11030#0" expanded="true" />
+            <element signature="e#11059#11060#0" expanded="true" />
+            <element signature="e#11087#11088#0" expanded="true" />
+            <element signature="e#11636#11637#0" expanded="true" />
+            <element signature="e#11676#11677#0" expanded="true" />
           </folding>
         </state>
       </provider>
