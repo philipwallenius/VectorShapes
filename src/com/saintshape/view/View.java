@@ -68,7 +68,7 @@ public class View implements ModelObserver {
         group = new Group();
         selectionGroup = new Group();
         controls = new VBox();
-        sideMenu = new SideMenu(model);
+        sideMenu = new SideMenu(this, model);
         controls.getChildren().addAll(sideMenu);
         canvasHolder = new StackPane(group);
         scrollPane = new ScrollPane(canvasHolder);
@@ -103,6 +103,14 @@ public class View implements ModelObserver {
         return sideMenu.getSelectedColor();
     }
 
+    public void setSelectedColor(Color color) {
+        sideMenu.setSelectedColor(color);
+    }
+
+    public ColorPicker getColorPicker() {
+        return sideMenu.getColorPicker();
+    }
+
     private Canvas drawCheckedBackground(Canvas canvas) {
         int checkerPatternSize = 10;
         double width = Math.ceil(canvas.getWidth());
@@ -126,7 +134,6 @@ public class View implements ModelObserver {
                 color = true;
             }
             for(int x = 0; x < xNum; x++) {
-
 
                 gc.fillRect(currX, currY, checkerPatternSize, checkerPatternSize);
                 currX += checkerPatternSize;

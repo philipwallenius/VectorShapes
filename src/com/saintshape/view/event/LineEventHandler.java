@@ -34,7 +34,8 @@ public class LineEventHandler implements ToolEventHandler {
         if (selected == null) {
             if (view.getSelectedTool() == Tool.LINE) {
                 selected = new Line(event.getX(), event.getY(), event.getX(), event.getY());
-                selected.setFill(view.getSelectedColor());
+                selected.setStroke(view.getSelectedColor());
+                selected.setStrokeWidth(2);
                 mouseEventHandler.register(selected);
                 controller.addNode(selected);
             }

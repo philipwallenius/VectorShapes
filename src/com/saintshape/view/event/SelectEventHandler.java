@@ -10,6 +10,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -27,7 +29,7 @@ public class SelectEventHandler implements ToolEventHandler {
     private Controller controller;
     private MouseClick mouseClick;
     private MouseEventHandler mouseEventHandler;
-    private Rectangle outline;
+    public Selection selection;
 
     private double selectedOriginalX, selectedOriginalY;
 
@@ -36,6 +38,7 @@ public class SelectEventHandler implements ToolEventHandler {
         this.controller = controller;
         this.mouseEventHandler = mouseEventHandler;
         mouseClick = new MouseClick();
+        subscribeToColorPicker();
     }
 
     @Override
@@ -45,35 +48,30 @@ public class SelectEventHandler implements ToolEventHandler {
         mouseClick.x = event.getX();
         mouseClick.y = event.getY();
 
-        // create a new shape if not already done
-        if(view.getSelectedTool() == Tool.SELECT) {
-            selected = (Node)event.getSource();
+        Object source = event.getSource();
 
-        }
+        if(!(source instanceof Selection)) {
 
-        if(selected instanceof Rectangle) {
-            Rectangle rectangle = ((Rectangle)selected);
+            if(source instanceof Canvas) {
+                selection = null;
+                selected = null;
+                view.getSelectionGroup().getChildren().clear();
+            } else if (source instanceof Rectangle) {
+                Rectangle rectangle = ((Rectangle) source);
+                selectedOriginalX = rectangle.getX();
+                selectedOriginalY = rectangle.getY();
+                selection = new Selection(view, rectangle);
+                mouseEventHandler.register(selection);
+                selected = selection;
+                view.getSelectionGroup().getChildren().clear();
+                view.getSelectionGroup().getChildren().add(selection);
+                view.getSelectionGroup().getChildren().addAll(selection.getAnchors());
+
+            }
+        } else {
+            Rectangle rectangle = ((Rectangle) source);
             selectedOriginalX = rectangle.getX();
             selectedOriginalY = rectangle.getY();
-
-            outline = new Rectangle(rectangle.getX()-5, rectangle.getY()-5, rectangle.getWidth() + 10, rectangle.getHeight() + 10);
-            outline.setFill(Color.TRANSPARENT);
-            outline.setStroke(Color.GRAY);
-            Anchor anchor = new Anchor("1", new SimpleDoubleProperty(outline.getX()), new SimpleDoubleProperty(outline.getY()));
-            Anchor anchor2 = new Anchor("2", new SimpleDoubleProperty(outline.getX()+outline.getWidth()), new SimpleDoubleProperty(outline.getY()));
-            anchor.setCursor(Cursor.NW_RESIZE);
-            outline.setStrokeWidth(2);
-            outline.xProperty().bind(rectangle.xProperty());
-            outline.yProperty().bind(rectangle.yProperty());
-            controller.addNode(outline);
-            controller.addNode(anchor);
-            controller.addNode(anchor2);
-            anchor.centerXProperty().bind(outline.xProperty());
-            anchor.centerYProperty().bind(outline.yProperty());
-            anchor2.centerXProperty().bind(outline.xProperty());
-            anchor2.centerYProperty().bind(outline.yProperty());
-            view.getSelectionGroup().getChildren().clear();
-            view.getSelectionGroup().getChildren().addAll(outline, anchor);
         }
 
     }
@@ -107,18 +105,30 @@ public class SelectEventHandler implements ToolEventHandler {
         }
     }
 
-    // an anchor displayed around a point.
-    class Anchor extends Circle {
-        Anchor(String id, DoubleProperty x, DoubleProperty y) {
-            super(x.get(), y.get(), 5);
-            setId(id);
-            setFill(Color.GOLD.deriveColor(1, 1, 1, 0.5));
-            setStroke(Color.GOLD);
-            setStrokeWidth(1);
-            setStrokeType(StrokeType.OUTSIDE);
-
-            x.bind(centerXProperty());
-            y.bind(centerYProperty());
-        }
+    private void subscribeToColorPicker() {
+        ColorPicker colorPicker = view.getColorPicker();
+        colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
+            @Override
+            public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
+                if(selected instanceof Shape) {
+                    Shape s = (Shape)selection.getShape();
+                    s.setFill(newValue);
+                }
+            }
+        });
     }
+
+//    class Anchor extends Circle {
+//        Anchor(String id, DoubleProperty x, DoubleProperty y) {
+//            super(x.get(), y.get(), 5);
+//            setId(id);
+//            setFill(Color.GOLD.deriveColor(1, 1, 1, 0.5));
+//            setStroke(Color.GOLD);
+//            setStrokeWidth(1);
+//            setStrokeType(StrokeType.OUTSIDE);
+//
+//            x.bind(centerXProperty());
+//            y.bind(centerYProperty());
+//        }
+//    }
 }
