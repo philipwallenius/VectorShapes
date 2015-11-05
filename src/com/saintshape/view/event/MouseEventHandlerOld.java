@@ -1,6 +1,7 @@
-package com.saintshape.view;
+package com.saintshape.view.event;
 
 import com.saintshape.controller.Controller;
+import com.saintshape.view.View;
 import com.saintshape.view.menu.side.Tool;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -13,17 +14,17 @@ import javafx.scene.shape.Shape;
 /**
  * Created by 150019538 on 03/11/15.
  */
-public class MouseEventHandler {
+public class MouseEventHandlerOld {
 
     private View view;
     private Shape selectedShape;
     private Controller controller;
-    private MouseDelta delta;
+    private MouseClick mouseClick;
 
-    public MouseEventHandler(View view, Controller controller) {
+    public MouseEventHandlerOld(View view, Controller controller) {
         this.view = view;
         this.controller = controller;
-        delta = new MouseDelta();
+        mouseClick = new MouseClick();
     }
 
     public void register(Node node) {
@@ -39,8 +40,8 @@ public class MouseEventHandler {
         public void handle(MouseEvent event) {
 
             // keep track of mouse movements
-            delta.x = event.getX();
-            delta.y = event.getY();
+            mouseClick.x = event.getX();
+            mouseClick.y = event.getY();
 
             // create a new shape if not already done
             if(selectedShape == null) {
@@ -52,22 +53,18 @@ public class MouseEventHandler {
                 }
                 if(view.getSelectedTool() == Tool.ELLIPSE) {
                     selectedShape = new Ellipse(event.getX(), event.getY(), 0, 0);
-//                    selectedShape.setFill(view.getSelectedColor());
-                    selectedShape.setStroke(view.getSelectedColor());
+                    selectedShape.setFill(view.getSelectedColor());
                     register(selectedShape);
                     controller.addNode(selectedShape);
                 }
-
             }
 
         }
     };
 
     public EventHandler<MouseEvent> resizeOnMouseReleasedEventHandler = new EventHandler<MouseEvent>() {
-
         @Override
         public void handle(MouseEvent event) {
-
             // unselect shape when mouse released
             selectedShape = null;
         }
@@ -94,120 +91,103 @@ public class MouseEventHandler {
             } else if(currentX > controller.getRootCanvas().getWidth()) {
                 currentX = controller.getRootCanvas().getWidth();
             }
+
             if(currentY < 0) {
                 currentY = 0;
             } else if(currentY > controller.getRootCanvas().getHeight()) {
                 currentY = controller.getRootCanvas().getHeight();
             }
 
+            double width = Math.abs(currentX - mouseClick.x);
+            double height = Math.abs(currentY - mouseClick.y);
 
             if(selectedShape != null && event.isPrimaryButtonDown()) {
 
                 if(selectedShape instanceof Rectangle) {
+
                     Rectangle rectangle = (Rectangle)selectedShape;
 
-                    // Resize shape based on mouse movement
                     if(event.isShiftDown()) {
 
-                        double d = Math.abs(delta.x - currentX);
+                        width = Math.min(width, height);
+                        height = Math.min(width, height);
 
-                        if ((currentX - delta.x) >= 0) {
-                            rectangle.setX(delta.x);
-                            rectangle.setWidth(d);
+                        if ((currentX - mouseClick.x) >= 0) {
+                            rectangle.setX(mouseClick.x);
+                            rectangle.setWidth(width);
                         } else {
-                            rectangle.setX(delta.x-d);
-                            rectangle.setWidth(d);
+                            rectangle.setX(mouseClick.x - width);
+                            rectangle.setWidth(width);
                         }
 
-                        if ((currentY - delta.y) >= 0) {
-//                            if((delta.y+d) > controller.getRootCanvas().getHeight()) {
-//                                d -= ((delta.y+d)-controller.getRootCanvas().getHeight());
-//                            }
-                            rectangle.setY(delta.y);
-                            rectangle.setHeight(d);
+                        if ((currentY - mouseClick.y) >= 0) {
+                            rectangle.setY(mouseClick.y);
+                            rectangle.setHeight(height);
                         } else {
-//                            if((delta.y-d) < 0) {
-//                                d += Math.abs(0-(delta.y-d));
-//                            }
-                            rectangle.setY(delta.y-d);
-                            rectangle.setHeight(d);
+                            rectangle.setY(mouseClick.y - height);
+                            rectangle.setHeight(height);
                         }
-
-
 
                     } else {
-                        if ((currentX - delta.x) >= 0) {
-                            rectangle.setX(delta.x);
-                            rectangle.setWidth(currentX - delta.x);
+                        if ((currentX - mouseClick.x) >= 0) {
+                            rectangle.setX(mouseClick.x);
+                            rectangle.setWidth(width);
                         } else {
                             rectangle.setX(currentX);
-                            rectangle.setWidth(delta.x - currentX);
+                            rectangle.setWidth(width);
                         }
-                        if ((currentY - delta.y) >= 0) {
-                            rectangle.setY(delta.y);
-                            rectangle.setHeight(currentY - delta.y);
+                        if ((currentY - mouseClick.y) >= 0) {
+                            rectangle.setY(mouseClick.y);
+                            rectangle.setHeight(height);
                         } else {
                             rectangle.setY(currentY);
-                            rectangle.setHeight(delta.y - currentY);
+                            rectangle.setHeight(height);
                         }
                     }
 
-                    // make sure bounds don't go outside the canvas
-//                    if (event.getX() > controller.getRootCanvas().getWidth()) {
-//                        rectangle.setWidth(controller.getRootCanvas().getWidth() - rectangle.getX());
-//                    }
-//                    if (event.getX() < 0) {
-//                        rectangle.setX(0);
-//                        rectangle.setWidth(0 + delta.x);
-//                    }
-//                    if (event.getY() > controller.getRootCanvas().getHeight()) {
-//                        rectangle.setHeight(controller.getRootCanvas().getHeight() - rectangle.getY());
-//                    }
-//                    if (event.getY() < 0) {
-//                        rectangle.setY(0);
-//                        rectangle.setHeight(0 + delta.y);
-//                    }
                 }
 
                 if(selectedShape instanceof Ellipse) {
                     Ellipse ellipse = (Ellipse)selectedShape;
 
                     if(event.isShiftDown()) {
-                        double d = Math.abs(delta.x - currentX);
 
-                        if ((currentX - delta.x) >= 0) {
-                            ellipse.setCenterX(delta.x + (d / 2));
-                            ellipse.setRadiusX(Math.abs(d) / 2);
+                        width = Math.min(width, height);
+                        height = Math.min(width, height);
+
+                        if ((currentX - mouseClick.x) >= 0) {
+                            ellipse.setCenterX(mouseClick.x + (width / 2));
+                            ellipse.setRadiusX(Math.abs(width) / 2);
                         } else {
-                            ellipse.setCenterX(delta.x - (d / 2));
-                            ellipse.setRadiusX(Math.abs(d) / 2);
+                            ellipse.setCenterX(mouseClick.x - (width / 2));
+                            ellipse.setRadiusX(Math.abs(width) / 2);
                         }
 
-                        if ((currentY - delta.y) >= 0) {
-                            ellipse.setCenterY(delta.y + (d / 2));
-                            ellipse.setRadiusY(Math.abs(d) / 2);
+                        if ((currentY - mouseClick.y) >= 0) {
+                            ellipse.setCenterY(mouseClick.y + (height / 2));
+                            ellipse.setRadiusY(Math.abs(height) / 2);
                         } else {
-                            ellipse.setCenterY(delta.y - (d / 2));
-                            ellipse.setRadiusY(Math.abs(d) / 2);
+                            ellipse.setCenterY(mouseClick.y - (height / 2));
+                            ellipse.setRadiusY(Math.abs(height) / 2);
                         }
 
 
                     } else {
 
-                        if ((currentX - delta.x) >= 0) {
-                            ellipse.setCenterX(delta.x + (Math.abs(delta.x - currentX) / 2));
-                            ellipse.setRadiusX(Math.abs(currentX - delta.x) / 2);
+                        if ((currentX - mouseClick.x) >= 0) {
+                            ellipse.setCenterX(mouseClick.x + (width / 2));
+                            ellipse.setRadiusX(width / 2);
                         } else {
-                            ellipse.setCenterX(delta.x - (Math.abs(delta.x - currentX) / 2));
-                            ellipse.setRadiusX(Math.abs(currentX - delta.x) / 2);
+                            ellipse.setCenterX(mouseClick.x - (width / 2));
+                            ellipse.setRadiusX(width / 2);
                         }
 
-                        if ((currentY - delta.y) >= 0) {
-                            ellipse.setCenterY(delta.y + (Math.abs(delta.y - currentY) / 2));
-                            ellipse.setRadiusY(Math.abs(currentY - delta.y) / 2);
+                        if ((currentY - mouseClick.y) >= 0) {
+                            ellipse.setCenterY(mouseClick.y + (height / 2));
+                            ellipse.setRadiusY(height / 2);
                         } else {
-                            ellipse.setCenterY(delta.y - (Math.abs(delta.y - currentY) / 2));
-                            ellipse.setRadiusY(Math.abs(currentY - delta.y) / 2);
+                            ellipse.setCenterY(mouseClick.y - (height / 2));
+                            ellipse.setRadiusY(height / 2);
                         }
                     }
 

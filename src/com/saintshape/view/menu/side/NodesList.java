@@ -69,7 +69,7 @@ public class NodesList extends TitledPane implements ModelObserver {
         myObservableList.clear();
         int i = 0;
         for(Node node : nodes) {
-            myObservableList.add(new NodeItem("Object " + i, node));
+            myObservableList.add(new NodeItem(node.getTypeSelector() + " " + i, node));
             i++;
         }
         if(listView.getItems().size() > 0) {

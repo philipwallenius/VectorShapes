@@ -3,12 +3,14 @@ package com.saintshape.view;
 import com.saintshape.controller.Controller;
 import com.saintshape.model.Model;
 import com.saintshape.observer.ModelObserver;
+import com.saintshape.view.event.EllipseEventHandler;
+import com.saintshape.view.event.MouseEventHandler;
+import com.saintshape.view.event.RectangleEventHandler;
 import com.saintshape.view.menu.side.SideMenu;
 import com.saintshape.view.menu.side.Tool;
 import com.saintshape.view.menu.top.TopMenu;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -27,7 +29,7 @@ import javafx.stage.Stage;
 public class View implements ModelObserver {
 
     private final static String APPLICATION_NAME = "Saintshape";
-    private final static int WINDOW_WIDTH = 600, WINDOW_HEIGHT = 400;
+    private final static int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
 
     private Controller controller;
     private Model model;
@@ -35,7 +37,10 @@ public class View implements ModelObserver {
     private Stage primaryStage;
     private StackPane canvasHolder;
     private Group group;
-    private Shape selectedShape;
+    private BorderPane borderPane;
+    private Scene scene;
+    private ScrollPane scrollPane;
+    private VBox controls;
 
     private SideMenu sideMenu;
     private TopMenu topMenu;
@@ -51,17 +56,19 @@ public class View implements ModelObserver {
         this.controller = controller;
         this.model = model;
         this.primaryStage = primaryStage;
-
-        model.registerObserver(this);
-
         this.primaryStage = primaryStage;
+        model.registerObserver(this);
+        initialize();
+    }
+
+    public void initialize() {
         primaryStage.setTitle(APPLICATION_NAME);
         group = new Group();
-        VBox controls = new VBox();
+        controls = new VBox();
         sideMenu = new SideMenu(model);
         controls.getChildren().addAll(sideMenu);
         canvasHolder = new StackPane(group);
-        final ScrollPane scrollPane = new ScrollPane(canvasHolder);
+        scrollPane = new ScrollPane(canvasHolder);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
 
@@ -71,17 +78,16 @@ public class View implements ModelObserver {
         canvasHolder.minHeightProperty().bind(Bindings.createDoubleBinding(() ->
                 scrollPane.getViewportBounds().getHeight(), scrollPane.viewportBoundsProperty()));
 
-
         // register mouse events
         mouseEventHandler = new MouseEventHandler(this, controller);
         mouseEventHandler.register(model.getRootCanvas());
 
-        BorderPane borderPane = new BorderPane();
+        borderPane = new BorderPane();
         topMenu = new TopMenu(controller);
         borderPane.setTop(topMenu);
         borderPane.setLeft(controls);
         borderPane.setCenter(scrollPane);
-        Scene scene = new Scene(borderPane, WINDOW_WIDTH, WINDOW_HEIGHT);
+        scene = new Scene(borderPane, WINDOW_WIDTH, WINDOW_HEIGHT);
         primaryStage.setScene(scene);
         primaryStage.show();
     }
