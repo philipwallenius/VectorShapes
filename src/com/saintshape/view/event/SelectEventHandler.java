@@ -3,21 +3,15 @@ package com.saintshape.view.event;
 import com.saintshape.controller.Controller;
 import com.saintshape.view.View;
 import com.saintshape.view.menu.side.Tool;
-import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-import sun.java2d.pipe.RegionClipSpanIterator;
 
 /**
  * Created by 150019538 on 04/11/15.
@@ -79,7 +73,7 @@ public class SelectEventHandler implements ToolEventHandler {
                 selected = selection;
                 view.getSelectionGroup().getChildren().clear();
                 view.getSelectionGroup().getChildren().add(selection);
-                view.getSelectionGroup().getChildren().addAll(selection.getAnchors());
+                view.getSelectionGroup().getChildren().addAll(selection.getPoints());
                 previousColor = view.getSelectedColor();
                 view.setSelectedColor((Color)rectangle.getFill());
             } else if(source instanceof Ellipse) {
@@ -91,7 +85,7 @@ public class SelectEventHandler implements ToolEventHandler {
                 selected = selection;
                 view.getSelectionGroup().getChildren().clear();
                 view.getSelectionGroup().getChildren().add(selection);
-                view.getSelectionGroup().getChildren().addAll(selection.getAnchors());
+                view.getSelectionGroup().getChildren().addAll(selection.getPoints());
                 previousColor = view.getSelectedColor();
                 view.setSelectedColor((Color)ellipse.getFill());
             } else if(source instanceof Line) {
@@ -103,7 +97,7 @@ public class SelectEventHandler implements ToolEventHandler {
                 selected = selection;
                 view.getSelectionGroup().getChildren().clear();
                 view.getSelectionGroup().getChildren().add(selection);
-                view.getSelectionGroup().getChildren().addAll(selection.getAnchors());
+                view.getSelectionGroup().getChildren().addAll(selection.getPoints());
                 previousColor = view.getSelectedColor();
                 view.setSelectedColor((Color)line.getStroke());
             }
