@@ -106,8 +106,7 @@ public class SelectEventHandler implements ToolEventHandler {
             selectedOriginalX = rectangle.getX();
             selectedOriginalY = rectangle.getY();
         }
-
-
+        
     }
 
     public void clearSelection() {
@@ -137,80 +136,29 @@ public class SelectEventHandler implements ToolEventHandler {
             double currentX = event.getX();
             double currentY = event.getY();
 
-            if(selection.getShape() instanceof Rectangle) {
-                Rectangle rectangle = (Rectangle)selected;
+            Rectangle rectangle = (Rectangle)selected;
 
-                // Make sure x-position not outside of canvas
-                if(currentX-clickDiffX < 0) {
-                    currentX = currentX + (Math.abs(0-(currentX-clickDiffX)));
-                } else if(((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX)+currentX > controller.getRootCanvas().getWidth()) {
-                    currentX = currentX - (Math.abs(controller.getRootCanvas().getWidth()-(currentX+((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX))));
-                }
-
-                // Make sure y-position not outside of canvas
-                if(currentY-clickDiffY < 0) {
-                    currentY = currentY + (Math.abs(0-(currentY-clickDiffY)));
-                } else if(((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY)+currentY > controller.getRootCanvas().getHeight()) {
-                    currentY = currentY - (Math.abs(controller.getRootCanvas().getHeight()-(currentY+((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY))));
-                }
-
-                // Calculate rectangle movement
-                double offsetX = currentX - mouseClick.x;
-                double offsetY = currentY - mouseClick.y;
-
-                // Update movement
-                rectangle.setX(selectedOriginalX+offsetX);
-                rectangle.setY(selectedOriginalY+offsetY);
-
-            } else if(selection.getShape() instanceof Ellipse) {
-                Rectangle rectangle = (Rectangle)selected;
-
-                // Make sure x-position not outside of canvas
-                if(currentX-clickDiffX < 0) {
-                    currentX = currentX + (Math.abs(0-(currentX-clickDiffX)));
-                } else if(((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX)+currentX > controller.getRootCanvas().getWidth()) {
-                    currentX = currentX - (Math.abs(controller.getRootCanvas().getWidth()-(currentX+((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX))));
-                }
-
-                // Make sure y-position not outside of canvas
-                if(currentY-clickDiffY < 0) {
-                    currentY = currentY + (Math.abs(0-(currentY-clickDiffY)));
-                } else if(((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY)+currentY > controller.getRootCanvas().getHeight()) {
-                    currentY = currentY - (Math.abs(controller.getRootCanvas().getHeight()-(currentY+((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY))));
-                }
-
-                // Calculate rectangle movement
-                double offsetX = currentX - mouseClick.x;
-                double offsetY = currentY - mouseClick.y;
-
-                // Update movement
-                rectangle.setX(selectedOriginalX + offsetX);
-                rectangle.setY(selectedOriginalY + offsetY);
-            } else if(selection.getShape() instanceof Line) {
-                Rectangle rectangle = (Rectangle)selected;
-
-                // Make sure x-position not outside of canvas
-                if(currentX-clickDiffX < 0) {
-                    currentX = currentX + (Math.abs(0-(currentX-clickDiffX)));
-                } else if(((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX)+currentX > controller.getRootCanvas().getWidth()) {
-                    currentX = currentX - (Math.abs(controller.getRootCanvas().getWidth()-(currentX+((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX))));
-                }
-
-                // Make sure y-position not outside of canvas
-                if(currentY-clickDiffY < 0) {
-                    currentY = currentY + (Math.abs(0-(currentY-clickDiffY)));
-                } else if(((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY)+currentY > controller.getRootCanvas().getHeight()) {
-                    currentY = currentY - (Math.abs(controller.getRootCanvas().getHeight()-(currentY+((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY))));
-                }
-
-                // Calculate rectangle movement
-                double offsetX = currentX - mouseClick.x;
-                double offsetY = currentY - mouseClick.y;
-
-                // Update movement
-                rectangle.setX(selectedOriginalX + offsetX);
-                rectangle.setY(selectedOriginalY + offsetY);
+            // Make sure x-position not outside of canvas
+            if(currentX-clickDiffX < 0) {
+                currentX = currentX + (Math.abs(0-(currentX-clickDiffX)));
+            } else if(((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX)+currentX > controller.getRootCanvas().getWidth()) {
+                currentX = currentX - (Math.abs(controller.getRootCanvas().getWidth()-(currentX+((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX))));
             }
+
+            // Make sure y-position not outside of canvas
+            if(currentY-clickDiffY < 0) {
+                currentY = currentY + (Math.abs(0-(currentY-clickDiffY)));
+            } else if(((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY)+currentY > controller.getRootCanvas().getHeight()) {
+                currentY = currentY - (Math.abs(controller.getRootCanvas().getHeight()-(currentY+((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY))));
+            }
+
+            // Calculate rectangle movement
+            double offsetX = currentX - mouseClick.x;
+            double offsetY = currentY - mouseClick.y;
+
+            // Update movement
+            rectangle.setX(selectedOriginalX+offsetX);
+            rectangle.setY(selectedOriginalY+offsetY);
 
         }
     }

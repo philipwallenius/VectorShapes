@@ -140,8 +140,7 @@ public class Selection extends Rectangle {
             }
 
             // bind size
-            // perhaps not needed for lines?
-
+            // not needed for line
 
             Point point = new Point(this, "1", getX(), getY());
             Point point2 = new Point(this, "2", getX()+getWidth(), getY());
