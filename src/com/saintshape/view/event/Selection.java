@@ -1,6 +1,7 @@
 package com.saintshape.view.event;
 
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -123,15 +124,19 @@ public class Selection extends Rectangle {
 
         point.centerXProperty().bind(xProperty());
         point.centerYProperty().bind(yProperty());
+        point.setCursor(Cursor.NW_RESIZE);
 
         point2.centerXProperty().bind(xProperty().add(widthProperty()));
         point2.centerYProperty().bind(yProperty());
+        point2.setCursor(Cursor.NE_RESIZE);
 
         point3.centerXProperty().bind(xProperty());
         point3.centerYProperty().bind(yProperty().add(heightProperty()));
+        point3.setCursor(Cursor.SW_RESIZE);
 
         point4.centerXProperty().bind(xProperty().add(widthProperty()));
         point4.centerYProperty().bind(yProperty().add(heightProperty()));
+        point4.setCursor(Cursor.SE_RESIZE);
 
         points.add(point);
         points.add(point2);

@@ -5,7 +5,9 @@ import com.saintshape.view.View;
 import com.saintshape.view.menu.side.Tool;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
@@ -22,12 +24,10 @@ import javafx.scene.shape.*;
 public class SelectEventHandler implements ToolEventHandler {
 
     private View view;
-    private Node selected;
     private Controller controller;
     private MouseClick mouseClick;
     private MouseEventHandler mouseEventHandler;
     public Selection selection;
-    private Color previousColor;
 
     private double selectedOriginalX, selectedOriginalY, clickDiffX, clickDiffY;
 
@@ -43,18 +43,17 @@ public class SelectEventHandler implements ToolEventHandler {
     @Override
     public void handleMousePress(MouseEvent event) {
 
+        Node source = (Node)event.getSource();
+
         // keep track of mouse movements
         mouseClick.x = event.getX();
         mouseClick.y = event.getY();
 
-        Node source = (Node)event.getSource();
-
+        // get the offset between click xy and shape xy
         if(source instanceof Rectangle) {
             Rectangle rectangle = (Rectangle)source;
             clickDiffX = mouseClick.x-(rectangle.getX());
             clickDiffY = mouseClick.y-(rectangle.getY());
-//            clickDiffX = mouseClick.x-(rectangle.getX()+Selection.BORDER_MARGIN);
-//            clickDiffY = mouseClick.y-(rectangle.getY()+Selection.BORDER_MARGIN);
         } else if(source instanceof Ellipse) {
             Ellipse ellipse = (Ellipse)source;
             clickDiffX = mouseClick.x-(ellipse.getCenterX()-ellipse.getRadiusX());
@@ -65,81 +64,64 @@ public class SelectEventHandler implements ToolEventHandler {
             clickDiffY = mouseClick.y-(Math.min(line.getStartY(), line.getEndY()));
         }
 
-        if(!(source instanceof Selection)) {
+        // if shape clicked, select it
+        if(!(source instanceof Selection || source instanceof Canvas)) {
             clearSelection();
-            if (source instanceof Rectangle) {
-                Rectangle rectangle = (Rectangle) source;
-                selectedOriginalX = rectangle.getX();
-                selectedOriginalY = rectangle.getY();
-                selection = new Selection(rectangle);
-                mouseEventHandler.register(selection);
-                selected = selection;
-                view.getSelectionGroup().getChildren().clear();
-                view.getSelectionGroup().getChildren().add(selection);
-                view.getSelectionGroup().getChildren().addAll(selection.getPoints());
-                previousColor = view.getSelectedColor();
-                view.setSelectedColor((Color)rectangle.getFill());
-            } else if(source instanceof Ellipse) {
-                Ellipse ellipse = (Ellipse)source;
-                selection = new Selection(ellipse);
-                selectedOriginalX = selection.getX();
-                selectedOriginalY = selection.getY();
-                mouseEventHandler.register(selection);
-                selected = selection;
-                view.getSelectionGroup().getChildren().clear();
-                view.getSelectionGroup().getChildren().add(selection);
-                view.getSelectionGroup().getChildren().addAll(selection.getPoints());
-                previousColor = view.getSelectedColor();
-                view.setSelectedColor((Color)ellipse.getFill());
-            } else if(source instanceof Line) {
-                Line line = (Line)source;
-                selection = new Selection(line);
-                selectedOriginalX = selection.getX();
-                selectedOriginalY = selection.getY();
-                mouseEventHandler.register(selection);
-                selected = selection;
-                view.getSelectionGroup().getChildren().clear();
-                view.getSelectionGroup().getChildren().add(selection);
-                view.getSelectionGroup().getChildren().addAll(selection.getPoints());
-                previousColor = view.getSelectedColor();
-                view.setSelectedColor((Color)line.getStroke());
-            }
-        } else {
-            Rectangle rectangle = ((Rectangle) source);
-            selectedOriginalX = rectangle.getX();
-            selectedOriginalY = rectangle.getY();
+            selection = createSelection(source);
+            selection.setCursor(Cursor.OPEN_HAND);
         }
-        
+
+        // save shape's original coordinates for drag handling
+        if(selection != null) {
+            selectedOriginalX = selection.getX();
+            selectedOriginalY = selection.getY();
+        }
+
+        // deselect if user clicked on canvas
+        if(source instanceof Canvas) {
+            clearSelection();
+        }
+
+    }
+
+    public Selection createSelection(Node source) {
+        Selection result = new Selection(source);
+        mouseEventHandler.register(result);
+        view.getSelectionGroup().getChildren().clear();
+        view.getSelectionGroup().getChildren().add(result);
+        view.getSelectionGroup().getChildren().addAll(result.getPoints());
+        if(source instanceof Line) {
+            view.setSelectedColor((Color)((Line)source).getStroke());
+        } else if(source instanceof Shape) {
+            view.setSelectedColor((Color)((Shape)source).getFill());
+        }
+        return result;
     }
 
     public void clearSelection() {
         view.getSelectionGroup().getChildren().clear();
         selection = null;
-        selected = null;
-        if(previousColor != null) {
-            view.setSelectedColor(previousColor);
+    }
+
+    @Override
+    public void handleMouseMove(MouseEvent event) {}
+
+    @Override
+    public void handleMouseRelease(MouseEvent event) {
+        if(selection != null) {
+            selection.setCursor(Cursor.OPEN_HAND);
         }
     }
 
     @Override
-    public void handleMouseMove(MouseEvent event) {
-
-    }
-
-    @Override
-    public void handleMouseRelease(MouseEvent event) {
-
-    }
-
-    @Override
     public void handleMouseDrag(MouseEvent event) {
-        if(selected != null && event.isPrimaryButtonDown()) {
-
+        if(selection != null && event.isPrimaryButtonDown()) {
+            selection.setCursor(Cursor.CLOSED_HAND);
             // get current mouse position
             double currentX = event.getX();
             double currentY = event.getY();
 
-            Rectangle rectangle = (Rectangle)selected;
+            Rectangle rectangle = selection;
 
             // Make sure x-position not outside of canvas
             if(currentX-clickDiffX < 0) {
@@ -166,39 +148,37 @@ public class SelectEventHandler implements ToolEventHandler {
         }
     }
 
+    /**
+     * Listens to color changes in the colorpicker and changes color of shape if one is selected
+     */
     private void subscribeToColorPicker() {
         ColorPicker colorPicker = view.getColorPicker();
         colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
             @Override
             public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
-                if(selected != null) {
-                    if(selected instanceof Shape) {
-                        Shape s = (Shape)selection.getShape();
-                        if(s instanceof Line) {
-                            s.setStroke(newValue);
-                        } else {
-                            s.setFill(newValue);
-                        }
+                if(selection != null) {
+                    Shape s = (Shape)selection.getShape();
+                    if(s instanceof Line) {
+                        s.setStroke(newValue);
+                    } else {
+                        s.setFill(newValue);
                     }
-                } else {
-                    previousColor = newValue;
                 }
             }
         });
     }
 
+    /**
+     * Listens to tool changes and deselects any selection if tool is changed
+     */
     public void subscribeToTools() {
         ToggleGroup toggleGroup = view.getTools();
         toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override
             public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
                 if(newValue.getUserData() != Tool.SELECT) {
-                    selected = null;
                     selection = null;
                     view.getSelectionGroup().getChildren().clear();
-                    if(previousColor != null) {
-                        view.setSelectedColor(previousColor);
-                    }
                 }
             }
         });
