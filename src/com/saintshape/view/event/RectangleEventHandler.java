@@ -7,6 +7,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 
 /**
+ *
+ * This class handles events for the rectangle tool
+ *
  * Created by 150019538 on 04/11/15.
  */
 public class RectangleEventHandler implements ToolEventHandler {
@@ -24,15 +27,17 @@ public class RectangleEventHandler implements ToolEventHandler {
         mouseClick = new MouseClick();
     }
 
+    @Override
     public void handleMousePress(MouseEvent event) {
 
         // keep track of mouse movements
         mouseClick.x = event.getX();
         mouseClick.y = event.getY();
 
-        // create a new shape if not already done
+
         if(selected == null) {
             if(view.getSelectedTool() == Tool.RECTANGLE) {
+                // create a new rectangle, set its color and register it to event handler
                 selected = new Rectangle(event.getX(), event.getY(), 0, 0);
                 selected.setFill(view.getSelectedColor());
                 mouseEventHandler.register(selected);
@@ -42,38 +47,41 @@ public class RectangleEventHandler implements ToolEventHandler {
 
     };
 
+    @Override
     public void handleMouseRelease(MouseEvent event) {
+        // deselect the shape when mouse released
         selected = null;
     };
 
+    @Override
+    public void handleMouseMove(MouseEvent event) {}
 
-    public void handleMouseMove(MouseEvent event) {
-
-    }
-
+    @Override
     public void handleMouseDrag(MouseEvent event) {
 
+        // get current mouse coordinates
         double currentX = event.getX();
         double currentY = event.getY();
 
-        // make sure mouse is within bounds
+        // make sure mouse stays within bounds
         if(currentX < 0) {
             currentX = 0;
         } else if(currentX > controller.getRootCanvas().getWidth()) {
             currentX = controller.getRootCanvas().getWidth();
         }
-
         if(currentY < 0) {
             currentY = 0;
         } else if(currentY > controller.getRootCanvas().getHeight()) {
             currentY = controller.getRootCanvas().getHeight();
         }
 
+        // calculate width and height based on mouse movement
         double width = Math.abs(currentX - mouseClick.x);
         double height = Math.abs(currentY - mouseClick.y);
 
         if(selected != null && event.isPrimaryButtonDown()) {
 
+            // fix ratio if shift is pressed
             if(event.isShiftDown()) {
 
                 width = Math.min(width, height);
@@ -111,7 +119,6 @@ public class RectangleEventHandler implements ToolEventHandler {
                     selected.setHeight(height);
                 }
             }
-
 
         }
 

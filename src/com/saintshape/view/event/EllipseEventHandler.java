@@ -7,12 +7,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Ellipse;
 
 /**
+ *
+ * This class handles events for the ellipse tool
+ *
  * Created by 150019538 on 04/11/15.
  */
 public class EllipseEventHandler implements ToolEventHandler {
 
     private View view;
-    private Ellipse selected;
+    private Ellipse ellipse;
     private Controller controller;
     private MouseClick mouseClick;
     private MouseEventHandler mouseEventHandler;
@@ -24,6 +27,7 @@ public class EllipseEventHandler implements ToolEventHandler {
         mouseClick = new MouseClick();
     }
 
+    @Override
     public void handleMousePress(MouseEvent event) {
 
         // keep track of mouse movements
@@ -31,84 +35,89 @@ public class EllipseEventHandler implements ToolEventHandler {
         mouseClick.y = event.getY();
 
         // create a new shape if not already done
-        if (selected == null) {
+        if (ellipse == null) {
             if (view.getSelectedTool() == Tool.ELLIPSE) {
-                selected = new Ellipse(event.getX(), event.getY(), 0, 0);
-                selected.setFill(view.getSelectedColor());
-                mouseEventHandler.register(selected);
-                controller.addNode(selected);
+                ellipse = new Ellipse(event.getX(), event.getY(), 0, 0);
+                ellipse.setFill(view.getSelectedColor());
+                mouseEventHandler.register(ellipse);
+                controller.addNode(ellipse);
             }
         }
     }
 
+    @Override
     public void handleMouseRelease(MouseEvent event) {
-            selected = null;
+            // deselect when mouse press is released
+            ellipse = null;
         }
 
-    public void handleMouseMove(MouseEvent event) {
-    }
+    @Override
+    public void handleMouseMove(MouseEvent event) {}
 
+    @Override
     public void handleMouseDrag(MouseEvent event) {
 
+        // get current mouse coordinates
         double currentX = event.getX();
         double currentY = event.getY();
 
-        // make sure mouse is within bounds
+        // make sure mouse stays within bounds
         if(currentX < 0) {
             currentX = 0;
         } else if(currentX > controller.getRootCanvas().getWidth()) {
             currentX = controller.getRootCanvas().getWidth();
         }
-
         if(currentY < 0) {
             currentY = 0;
         } else if(currentY > controller.getRootCanvas().getHeight()) {
             currentY = controller.getRootCanvas().getHeight();
         }
 
+        // calculate width and height based on mouse movement
         double width = Math.abs(currentX - mouseClick.x);
         double height = Math.abs(currentY - mouseClick.y);
 
-        if(selected != null && event.isPrimaryButtonDown()) {
+        if(ellipse != null && event.isPrimaryButtonDown()) {
 
+            // fix ratio if shift is held
             if(event.isShiftDown()) {
 
                 width = Math.min(width, height);
                 height = Math.min(width, height);
 
                 if ((currentX - mouseClick.x) >= 0) {
-                    selected.setCenterX(mouseClick.x + (width / 2));
-                    selected.setRadiusX(Math.abs(width) / 2);
+                    ellipse.setCenterX(mouseClick.x + (width / 2));
+                    ellipse.setRadiusX(Math.abs(width) / 2);
                 } else {
-                    selected.setCenterX(mouseClick.x - (width / 2));
-                    selected.setRadiusX(Math.abs(width) / 2);
+                    ellipse.setCenterX(mouseClick.x - (width / 2));
+                    ellipse.setRadiusX(Math.abs(width) / 2);
                 }
 
                 if ((currentY - mouseClick.y) >= 0) {
-                    selected.setCenterY(mouseClick.y + (height / 2));
-                    selected.setRadiusY(Math.abs(height) / 2);
+                    ellipse.setCenterY(mouseClick.y + (height / 2));
+                    ellipse.setRadiusY(Math.abs(height) / 2);
                 } else {
-                    selected.setCenterY(mouseClick.y - (height / 2));
-                    selected.setRadiusY(Math.abs(height) / 2);
+                    ellipse.setCenterY(mouseClick.y - (height / 2));
+                    ellipse.setRadiusY(Math.abs(height) / 2);
                 }
 
 
             } else {
 
                 if ((currentX - mouseClick.x) >= 0) {
-                    selected.setCenterX(mouseClick.x + (width / 2));
-                    selected.setRadiusX(width / 2);
+                    ellipse.setCenterX(mouseClick.x + (width / 2));
+                    ellipse.setRadiusX(width / 2);
                 } else {
-                    selected.setCenterX(mouseClick.x - (width / 2));
-                    selected.setRadiusX(width / 2);
+                    ellipse.setCenterX(mouseClick.x - (width / 2));
+                    ellipse.setRadiusX(width / 2);
                 }
 
                 if ((currentY - mouseClick.y) >= 0) {
-                    selected.setCenterY(mouseClick.y + (height / 2));
-                    selected.setRadiusY(height / 2);
+                    ellipse.setCenterY(mouseClick.y + (height / 2));
+                    ellipse.setRadiusY(height / 2);
                 } else {
-                    selected.setCenterY(mouseClick.y - (height / 2));
-                    selected.setRadiusY(height / 2);
+                    ellipse.setCenterY(mouseClick.y - (height / 2));
+                    ellipse.setRadiusY(height / 2);
                 }
             }
         }

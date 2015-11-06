@@ -7,12 +7,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Line;
 
 /**
+ *
+ * This class handles events for the line tool
+ *
  * Created by 150019538 on 05/11/15.
  */
 public class LineEventHandler implements ToolEventHandler {
 
     private View view;
-    private Line selected;
+    private Line line;
     private Controller controller;
     private MouseClick mouseClick;
     private MouseEventHandler mouseEventHandler;
@@ -26,18 +29,19 @@ public class LineEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMousePress(MouseEvent event) {
+
         // keep track of mouse movements
         mouseClick.x = event.getX();
         mouseClick.y = event.getY();
 
         // create a new shape if not already done
-        if (selected == null) {
+        if (line == null) {
             if (view.getSelectedTool() == Tool.LINE) {
-                selected = new Line(event.getX(), event.getY(), event.getX(), event.getY());
-                selected.setStroke(view.getSelectedColor());
-                selected.setStrokeWidth(2);
-                mouseEventHandler.register(selected);
-                controller.addNode(selected);
+                line = new Line(event.getX(), event.getY(), event.getX(), event.getY());
+                line.setStroke(view.getSelectedColor());
+                line.setStrokeWidth(2);
+                mouseEventHandler.register(line);
+                controller.addNode(line);
             }
         }
     }
@@ -53,7 +57,7 @@ public class LineEventHandler implements ToolEventHandler {
         double currentX = event.getX();
         double currentY = event.getY();
 
-        // make sure mouse is within bounds
+        // make sure mouse stays within bounds
         if(currentX < 0) {
             currentX = 0;
         } else if(currentX > controller.getRootCanvas().getWidth()) {
@@ -67,7 +71,7 @@ public class LineEventHandler implements ToolEventHandler {
         }
 
 
-        if(selected != null && event.isPrimaryButtonDown()) {
+        if(line != null && event.isPrimaryButtonDown()) {
 
             if(event.isShiftDown()) {
                 if(Math.abs(currentY-mouseClick.y) > Math.abs(currentX-mouseClick.x)) {
@@ -78,13 +82,14 @@ public class LineEventHandler implements ToolEventHandler {
                 }
             }
 
-            selected.setEndX(currentX);
-            selected.setEndY(currentY);
+            line.setEndX(currentX);
+            line.setEndY(currentY);
         }
     }
 
     @Override
     public void handleMouseRelease(MouseEvent event) {
-        selected = null;
+        // deselect shape
+        line = null;
     }
 }
