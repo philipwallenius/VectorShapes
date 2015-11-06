@@ -17,7 +17,6 @@ import java.util.List;
  */
 public class Selection extends Rectangle {
 
-    public static int BORDER_MARGIN = 5;
     private List<Point> points;
     private Node shape;
 
@@ -34,18 +33,18 @@ public class Selection extends Rectangle {
             setFill(Color.TRANSPARENT);
             setStroke(Color.DEEPSKYBLUE);
             setStrokeWidth(1);
-            setX(rectangle.getX() - BORDER_MARGIN);
-            setY(rectangle.getY() - BORDER_MARGIN);
-            setWidth(rectangle.getWidth() + (BORDER_MARGIN*2));
-            setHeight(rectangle.getHeight() + (BORDER_MARGIN*2));
+            setX(rectangle.getX());
+            setY(rectangle.getY());
+            setWidth(rectangle.getWidth());
+            setHeight(rectangle.getHeight());
 
             // bind position
-            rectangle.xProperty().bind(xProperty().add(BORDER_MARGIN));
-            rectangle.yProperty().bind(yProperty().add(BORDER_MARGIN));
+            rectangle.xProperty().bind(xProperty());
+            rectangle.yProperty().bind(yProperty());
 
             // bind size
-            rectangle.widthProperty().bind(widthProperty().subtract(BORDER_MARGIN*2));
-            rectangle.heightProperty().bind(heightProperty().subtract(BORDER_MARGIN*2));
+            rectangle.widthProperty().bind(widthProperty());
+            rectangle.heightProperty().bind(heightProperty());
 
             Point point = new Point(this, "1", getX(), getY());
             Point point2 = new Point(this, "2", getX()+getWidth(), getY());
@@ -73,18 +72,18 @@ public class Selection extends Rectangle {
             setFill(Color.TRANSPARENT);
             setStroke(Color.DEEPSKYBLUE);
             setStrokeWidth(1);
-            setX(ellipse.getCenterX() - ellipse.getRadiusX() - BORDER_MARGIN);
-            setY(ellipse.getCenterY() - ellipse.getRadiusY() - BORDER_MARGIN);
-            setWidth((ellipse.getRadiusX()*2) + (BORDER_MARGIN*2));
-            setHeight((ellipse.getRadiusY()*2) + (BORDER_MARGIN*2));
+            setX(ellipse.getCenterX() - ellipse.getRadiusX());
+            setY(ellipse.getCenterY() - ellipse.getRadiusY());
+            setWidth((ellipse.getRadiusX()*2));
+            setHeight((ellipse.getRadiusY()*2));
 
             // bind position
-            ellipse.centerXProperty().bind(xProperty().add(BORDER_MARGIN).add(ellipse.radiusXProperty()));
-            ellipse.centerYProperty().bind(yProperty().add(BORDER_MARGIN).add(ellipse.radiusYProperty()));
+            ellipse.centerXProperty().bind(xProperty().add(ellipse.radiusXProperty()));
+            ellipse.centerYProperty().bind(yProperty().add(ellipse.radiusYProperty()));
 
             // bind size
-            ellipse.radiusXProperty().bind(widthProperty().divide(2).subtract(BORDER_MARGIN));
-            ellipse.radiusYProperty().bind(heightProperty().divide(2).subtract(BORDER_MARGIN));
+            ellipse.radiusXProperty().bind(widthProperty().divide(2));
+            ellipse.radiusYProperty().bind(heightProperty().divide(2));
 
             Point point = new Point(this, "1", getX(), getY());
             Point point2 = new Point(this, "2", getX()+getWidth(), getY());
@@ -109,34 +108,34 @@ public class Selection extends Rectangle {
             setStrokeWidth(1);
 
             if(line.getStartX() < line.getEndX()) {
-                setX(line.getStartX() - BORDER_MARGIN);
+                setX(line.getStartX());
             } else {
-                setX(line.getEndX() - BORDER_MARGIN);
+                setX(line.getEndX());
             }
             if(line.getStartY() < line.getEndY()) {
-                setY(line.getStartY() - BORDER_MARGIN);
+                setY(line.getStartY());
             } else {
-                setY(line.getEndY() - BORDER_MARGIN);
+                setY(line.getEndY());
             }
 
-            setWidth(Math.abs(line.getStartX()-line.getEndX()) + (BORDER_MARGIN*2));
-            setHeight(Math.abs(line.getStartY()-line.getEndY()) + (BORDER_MARGIN*2));
+            setWidth(Math.abs(line.getStartX()-line.getEndX()));
+            setHeight(Math.abs(line.getStartY()-line.getEndY()));
 
             // bind position
             if(line.getStartX() < line.getEndX()) {
-                line.startXProperty().bind(xProperty().add(BORDER_MARGIN));
-                line.endXProperty().bind(xProperty().add(widthProperty()).subtract(BORDER_MARGIN));
+                line.startXProperty().bind(xProperty());
+                line.endXProperty().bind(xProperty().add(widthProperty()));
             } else {
-                line.startXProperty().bind(xProperty().add(widthProperty()).subtract(BORDER_MARGIN));
-                line.endXProperty().bind(xProperty().add(BORDER_MARGIN));
+                line.startXProperty().bind(xProperty().add(widthProperty()));
+                line.endXProperty().bind(xProperty());
             }
 
             if(line.getStartY() < line.getEndY()) {
-                line.startYProperty().bind(yProperty().add(BORDER_MARGIN));
-                line.endYProperty().bind(yProperty().add(heightProperty()).subtract(BORDER_MARGIN));
+                line.startYProperty().bind(yProperty());
+                line.endYProperty().bind(yProperty().add(heightProperty()));
             } else {
-                line.startYProperty().bind(yProperty().add(heightProperty()).subtract(BORDER_MARGIN));
-                line.endYProperty().bind(yProperty().add(BORDER_MARGIN));
+                line.startYProperty().bind(yProperty().add(heightProperty()));
+                line.endYProperty().bind(yProperty());
             }
 
             // bind size
@@ -262,7 +261,7 @@ public class Selection extends Rectangle {
         private Rectangle selection;
 
         Point(Rectangle selection, String id, double x, double y) {
-            super(x, y, BORDER_MARGIN);
+            super(x, y, 5);
             this.selection = selection;
             setStrokeWidth(1);
             setId(id);

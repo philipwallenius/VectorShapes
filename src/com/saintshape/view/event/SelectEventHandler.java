@@ -14,6 +14,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
 /**
+ *
+ * This class handles events for the select tool
+ *
  * Created by 150019538 on 04/11/15.
  */
 public class SelectEventHandler implements ToolEventHandler {
@@ -39,17 +42,19 @@ public class SelectEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMousePress(MouseEvent event) {
+
         // keep track of mouse movements
         mouseClick.x = event.getX();
         mouseClick.y = event.getY();
 
         Node source = (Node)event.getSource();
 
-        int selectionBoundary = 5;
         if(source instanceof Rectangle) {
             Rectangle rectangle = (Rectangle)source;
-            clickDiffX = mouseClick.x-(rectangle.getX()+selectionBoundary);
-            clickDiffY = mouseClick.y-(rectangle.getY()+selectionBoundary);
+            clickDiffX = mouseClick.x-(rectangle.getX());
+            clickDiffY = mouseClick.y-(rectangle.getY());
+//            clickDiffX = mouseClick.x-(rectangle.getX()+Selection.BORDER_MARGIN);
+//            clickDiffY = mouseClick.y-(rectangle.getY()+Selection.BORDER_MARGIN);
         } else if(source instanceof Ellipse) {
             Ellipse ellipse = (Ellipse)source;
             clickDiffX = mouseClick.x-(ellipse.getCenterX()-ellipse.getRadiusX());
@@ -59,8 +64,6 @@ public class SelectEventHandler implements ToolEventHandler {
             clickDiffX = mouseClick.x-(Math.min(line.getStartX(), line.getEndX()));
             clickDiffY = mouseClick.y-(Math.min(line.getStartY(), line.getEndY()));
         }
-
-
 
         if(!(source instanceof Selection)) {
             clearSelection();
@@ -141,15 +144,15 @@ public class SelectEventHandler implements ToolEventHandler {
             // Make sure x-position not outside of canvas
             if(currentX-clickDiffX < 0) {
                 currentX = currentX + (Math.abs(0-(currentX-clickDiffX)));
-            } else if(((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX)+currentX > controller.getRootCanvas().getWidth()) {
-                currentX = currentX - (Math.abs(controller.getRootCanvas().getWidth()-(currentX+((rectangle.getWidth()-(Selection.BORDER_MARGIN*2))-clickDiffX))));
+            } else if(((rectangle.getWidth())-clickDiffX)+currentX > controller.getRootCanvas().getWidth()) {
+                currentX = currentX - (Math.abs(controller.getRootCanvas().getWidth()-(currentX+((rectangle.getWidth())-clickDiffX))));
             }
 
             // Make sure y-position not outside of canvas
             if(currentY-clickDiffY < 0) {
                 currentY = currentY + (Math.abs(0-(currentY-clickDiffY)));
-            } else if(((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY)+currentY > controller.getRootCanvas().getHeight()) {
-                currentY = currentY - (Math.abs(controller.getRootCanvas().getHeight()-(currentY+((rectangle.getHeight()-(Selection.BORDER_MARGIN*2))-clickDiffY))));
+            } else if(((rectangle.getHeight())-clickDiffY)+currentY > controller.getRootCanvas().getHeight()) {
+                currentY = currentY - (Math.abs(controller.getRootCanvas().getHeight()-(currentY+((rectangle.getHeight())-clickDiffY))));
             }
 
             // Calculate rectangle movement
