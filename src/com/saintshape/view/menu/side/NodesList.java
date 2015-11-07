@@ -7,18 +7,19 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TitledPane;
-import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *
+ * This class represents a list showing objects created in application
+ *
  * Created by 150019538 on 11/4/2015.
  */
 public class NodesList extends TitledPane implements ModelObserver {
@@ -64,16 +65,17 @@ public class NodesList extends TitledPane implements ModelObserver {
             }
         });
 
+        // focus on shape if clicked on in the list
         listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<NodeItem>() {
             @Override
             public void changed(ObservableValue<? extends NodeItem> observable, NodeItem oldValue, NodeItem newValue) {
-                System.out.println("change list");
                 if (newValue != null) {
                     view.selectNode(newValue.getNode());
                 }
             }
         });
 
+        // clear list selection if list is defocused
         listView.focusedProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -86,10 +88,12 @@ public class NodesList extends TitledPane implements ModelObserver {
     }
 
     @Override
-    public void update() {
+    public void update() {}
 
-    }
-
+    /**
+     * This class listens to changes in the model and updates the list of objects
+     * @param model of drawing application (MVC)
+     */
     @Override
     public void update(Model model) {
         List<Node> nodes = model.getNodes();

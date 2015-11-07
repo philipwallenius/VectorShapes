@@ -3,6 +3,9 @@ package com.saintshape.view.menu.side;
 import javafx.scene.Node;
 
 /**
+ *
+ * This class represents a list item in the NodesList. it holds a reference to the node which it represents.
+ *
  * Created by 150019538 on 11/4/2015.
  */
 public class NodeItem {
@@ -10,7 +13,6 @@ public class NodeItem {
     private String name;
     private Node node;
 
-    public NodeItem() {}
     public NodeItem(String name, Node node) {
         this.name = name;
         this.node = node;
