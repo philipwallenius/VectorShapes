@@ -14,6 +14,7 @@ import javafx.scene.control.TitledPane;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -106,6 +107,18 @@ public class NodesList extends TitledPane implements ModelObserver {
         } else {
             listView.setPrefHeight(LIST_ITEM_HEIGHT + 2);
         }
-
     }
+
+    public void selectNodeInList(Node node) {
+        ObservableList<NodeItem> list = listView.getItems();
+        Iterator it = list.iterator();
+        while(it.hasNext()) {
+            NodeItem nodeItem = (NodeItem)it.next();
+            if(nodeItem.getNode() == node) {
+                listView.getSelectionModel().select(nodeItem);
+                break;
+            }
+        }
+    }
+
 }

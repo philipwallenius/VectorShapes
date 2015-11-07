@@ -86,6 +86,7 @@ public class SelectEventHandler implements ToolEventHandler {
     public void createSelection(Node source) {
         clearSelection();
         selection = new Selection(source);
+        view.selectNodeInList(source);
         selection.setCursor(Cursor.OPEN_HAND);
         mouseEventHandler.registerSelection(selection);
         view.getSelectionGroup().getChildren().clear();

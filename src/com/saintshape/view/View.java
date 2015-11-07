@@ -186,4 +186,7 @@ public class View implements ModelObserver {
         mouseEventHandler.selectNode(node);
     }
 
+    public void selectNodeInList(Node node) {
+        sideMenu.selectNodeInList(node);
+    }
 }

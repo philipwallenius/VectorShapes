@@ -2,17 +2,17 @@ package com.saintshape.view.menu.side;
 
 import com.saintshape.model.Model;
 import com.saintshape.view.View;
-import com.saintshape.view.event.SelectEventHandler;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+
+import java.util.Iterator;
 
 /**
  *
@@ -26,7 +26,6 @@ public class SideMenu extends VBox {
     private TitledPane titledPaneNodes;
     private ColorPicker colorPicker;
     private ToggleGroup toggleGroup;
-    private ListView<NodeItem> listView;
     private Model model;
     private View view;
 
@@ -127,19 +126,15 @@ public class SideMenu extends VBox {
         return colorPicker;
     }
 
-    public void addNode(String name, Node node) {
-        listView.getItems().add(new NodeItem(name, node));
-    }
-
-    public void removeNode(NodeItem nodeItem) {
-        listView.getItems().remove(nodeItem);
-    }
-
     public void setSelectedColor(Color color) {
         colorPicker.setValue(color);
     }
 
     public ToggleGroup getTools() {
         return toggleGroup;
+    }
+
+    public void selectNodeInList(Node node) {
+        ((NodesList)titledPaneNodes).selectNodeInList(node);
     }
 }
