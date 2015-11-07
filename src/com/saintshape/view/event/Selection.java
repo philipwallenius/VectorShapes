@@ -144,6 +144,7 @@ public class Selection extends Rectangle {
         points.add(point4);
     }
 
+    // TODO: refactor this
     private double ww = 0;
     private double hh = 0;
     private double xx = 0;
@@ -157,6 +158,9 @@ public class Selection extends Rectangle {
 
         final MouseClick click = new MouseClick();
 
+        /*
+         * Point event handling (e.g. for resizing).
+         */
         for(Point p : points) {
             p.setOnMousePressed(new EventHandler<MouseEvent>() {
                 @Override

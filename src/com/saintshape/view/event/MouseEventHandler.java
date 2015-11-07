@@ -10,6 +10,9 @@ import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
 
 /**
+ *
+ * This class is the main mouse event handler which redirects mouse events to appropriate handlers based on the tool
+ *
  * Created by 150019538 on 03/11/15.
  */
 public class MouseEventHandler {

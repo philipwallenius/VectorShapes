@@ -3,6 +3,9 @@ package com.saintshape.view.event;
 import javafx.scene.input.MouseEvent;
 
 /**
+ *
+ * Interface contract of mouse events handlers
+ *
  * Created by 150019538 on 04/11/15.
  */
 public interface ToolEventHandler {
