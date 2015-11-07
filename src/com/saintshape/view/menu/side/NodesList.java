@@ -2,12 +2,17 @@ package com.saintshape.view.menu.side;
 
 import com.saintshape.model.Model;
 import com.saintshape.observer.ModelObserver;
+import com.saintshape.view.View;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
@@ -21,10 +26,12 @@ public class NodesList extends TitledPane implements ModelObserver {
     private List<NodeItem> nodeList;
     private ListView<NodeItem> listView;
     private ObservableList<NodeItem> myObservableList;
-    private final int LIST_ITEM_HEIGHT = 20;
+    private final int LIST_ITEM_HEIGHT = 25;
+    private View view;
 
-    public NodesList(Model model) {
+    public NodesList(View view, Model model) {
         super("Objects", new ListView<NodeItem>());
+        this.view = view;
         model.registerObserver(this);
         initialize();
         setContent(listView);
@@ -56,6 +63,26 @@ public class NodesList extends TitledPane implements ModelObserver {
                 return cell;
             }
         });
+
+        listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<NodeItem>() {
+            @Override
+            public void changed(ObservableValue<? extends NodeItem> observable, NodeItem oldValue, NodeItem newValue) {
+                System.out.println("change list");
+                if (newValue != null) {
+                    view.selectNode(newValue.getNode());
+                }
+            }
+        });
+
+        listView.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(!newValue) {
+                    listView.getSelectionModel().clearSelection();
+                }
+            }
+        });
+
     }
 
     @Override
@@ -67,10 +94,8 @@ public class NodesList extends TitledPane implements ModelObserver {
     public void update(Model model) {
         List<Node> nodes = model.getNodes();
         myObservableList.clear();
-        int i = 0;
         for(Node node : nodes) {
-            myObservableList.add(new NodeItem(node.getTypeSelector() + " " + i, node));
-            i++;
+            myObservableList.add(new NodeItem(node.getTypeSelector(), node));
         }
         if(listView.getItems().size() > 0) {
             listView.setPrefHeight(myObservableList.size() * LIST_ITEM_HEIGHT + 2);

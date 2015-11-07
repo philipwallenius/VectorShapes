@@ -2,6 +2,7 @@ package com.saintshape.view.event;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.view.View;
+import com.saintshape.view.event.factory.EventHandlerFactory;
 import com.saintshape.view.menu.side.Tool;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
@@ -89,4 +90,36 @@ public class MouseEventHandler {
         return false;
     }
 
+    public void selectNode(Node node) {
+        ToolEventHandler toolEventHandler = eventHandlerFactory.getEventHandler(Tool.SELECT);
+        ((SelectEventHandler)toolEventHandler).createSelection(node);
+    }
+
+    public void registerSelection(Selection selection) {
+        ToolEventHandler toolEventHandler = eventHandlerFactory.getEventHandler(Tool.SELECT);
+        selection.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                toolEventHandler.handleMousePress(event);
+            }
+        });
+        selection.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                toolEventHandler.handleMouseDrag(event);
+            }
+        });
+        selection.setOnMouseReleased(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                toolEventHandler.handleMouseRelease(event);
+            }
+        });
+        selection.setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                toolEventHandler.handleMouseMove(event);
+            }
+        });
+    }
 }

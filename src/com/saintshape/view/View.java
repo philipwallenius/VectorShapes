@@ -11,6 +11,7 @@ import com.saintshape.view.menu.side.Tool;
 import com.saintshape.view.menu.top.TopMenu;
 import javafx.beans.binding.Bindings;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -180,4 +181,9 @@ public class View implements ModelObserver {
     public ToggleGroup getTools() {
         return sideMenu.getTools();
     }
+
+    public void selectNode(Node node) {
+        mouseEventHandler.selectNode(node);
+    }
+
 }

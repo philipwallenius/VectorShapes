@@ -34,7 +34,7 @@ public class Controller {
         if(model.hasUnsavedChanges()) {
             // TODO: prompt save changes
         }
-
+        view.getSelectionGroup().getChildren().clear();
         model.reset();
         model.setName(name);
         model.setDimensions(width, height);

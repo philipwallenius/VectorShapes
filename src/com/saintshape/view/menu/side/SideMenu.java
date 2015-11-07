@@ -50,7 +50,7 @@ public class SideMenu extends VBox {
     }
 
     private TitledPane createNodesList() {
-        return new NodesList(model);
+        return new NodesList(view, model);
     }
 
     /**
@@ -67,11 +67,6 @@ public class SideMenu extends VBox {
                 if (newToggle == null) {
                     toggle.setSelected(true);
                 }
-//                else {
-//                    if(newToggle.getUserData() != Tool.SELECT) {
-//                        view.getSelectionGroup().getChildren().clear();
-//                    }
-//                }
             }
         });
 

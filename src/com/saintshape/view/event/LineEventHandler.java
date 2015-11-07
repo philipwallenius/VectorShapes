@@ -90,6 +90,7 @@ public class LineEventHandler implements ToolEventHandler {
     @Override
     public void handleMouseRelease(MouseEvent event) {
         // deselect shape
+        view.selectNode(line);
         line = null;
     }
 }

@@ -66,13 +66,12 @@ public class SelectEventHandler implements ToolEventHandler {
 
         // if shape clicked, select it
         if(!(source instanceof Selection || source instanceof Canvas)) {
-            clearSelection();
-            selection = createSelection(source);
-            selection.setCursor(Cursor.OPEN_HAND);
+            createSelection(source);
         }
 
         // save shape's original coordinates for drag handling
         if(selection != null) {
+            selection.setCursor(Cursor.OPEN_HAND);
             selectedOriginalX = selection.getX();
             selectedOriginalY = selection.getY();
         }
@@ -84,18 +83,19 @@ public class SelectEventHandler implements ToolEventHandler {
 
     }
 
-    public Selection createSelection(Node source) {
-        Selection result = new Selection(source);
-        mouseEventHandler.register(result);
+    public void createSelection(Node source) {
+        clearSelection();
+        selection = new Selection(source);
+        selection.setCursor(Cursor.OPEN_HAND);
+        mouseEventHandler.registerSelection(selection);
         view.getSelectionGroup().getChildren().clear();
-        view.getSelectionGroup().getChildren().add(result);
-        view.getSelectionGroup().getChildren().addAll(result.getPoints());
+        view.getSelectionGroup().getChildren().add(selection);
+        view.getSelectionGroup().getChildren().addAll(selection.getPoints());
         if(source instanceof Line) {
             view.setSelectedColor((Color)((Line)source).getStroke());
         } else if(source instanceof Shape) {
             view.setSelectedColor((Color)((Shape)source).getFill());
         }
-        return result;
     }
 
     public void clearSelection() {

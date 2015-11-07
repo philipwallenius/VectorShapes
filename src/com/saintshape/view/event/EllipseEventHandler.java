@@ -48,6 +48,7 @@ public class EllipseEventHandler implements ToolEventHandler {
     @Override
     public void handleMouseRelease(MouseEvent event) {
             // deselect when mouse press is released
+            view.selectNode(ellipse);
             ellipse = null;
         }
 

@@ -1,10 +1,14 @@
-package com.saintshape.view.event;
+package com.saintshape.view.event.factory;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.view.View;
+import com.saintshape.view.event.*;
 import com.saintshape.view.menu.side.Tool;
 
 /**
+ *
+ * This class manages creation of mouse event handlers
+ *
  * Created by 150019538 on 04/11/15.
  */
 public class EventHandlerFactory {
@@ -21,6 +25,11 @@ public class EventHandlerFactory {
         lineEventHandler = new LineEventHandler(view, controller, mouseEventHandler);
     }
 
+    /**
+     * Returns appropriate event handler based on the tool passed to it
+     * @param tool to get mouse event handler for
+     * @return Returns an event handler appropriate for the tool
+     */
     public ToolEventHandler getEventHandler(Tool tool) {
         ToolEventHandler eventHandler;
         switch (tool) {

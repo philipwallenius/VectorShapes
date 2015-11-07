@@ -50,6 +50,7 @@ public class RectangleEventHandler implements ToolEventHandler {
     @Override
     public void handleMouseRelease(MouseEvent event) {
         // deselect the shape when mouse released
+        view.selectNode(selected);
         selected = null;
     };
 
