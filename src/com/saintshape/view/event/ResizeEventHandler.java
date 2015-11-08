@@ -74,76 +74,80 @@ public class ResizeEventHandler {
                         currentY = Math.min(controller.getRootCanvas().getHeight()+clickDiffY, currentY);
 
                         // calculate width and height difference
-                        double width = click.x-currentX;
-                        double height = click.y-currentY;
-
-                        // fix ratio if shift is pressed
-                        if(event.isShiftDown()) {
-                            width = Math.min(width, height);
-                            height = Math.min(width, height);
-                        }
+                        double widthChange = click.x-currentX;
+                        double heightChange = click.y-currentY;
 
                         // resize differently depending on which corner is selected
                         if(point.getId().equals("1")) {
 
+                            // fix ratio if shift is pressed
+                            if(event.isShiftDown()) {
+                                widthChange = Math.min(widthChange, heightChange);
+                                heightChange = Math.min(widthChange, heightChange);
+                                System.out.println("1. width: " + widthChange+", height: " + heightChange);
+                            }
+
                             // enforce minimum width and height of 1 px
-                            width = Math.max(width, -selectionWidth + 1);
-                            height = Math.max(height, -selectionHeight + 1);
+                            widthChange = Math.max(widthChange, -selectionWidth + 1);
+                            heightChange = Math.max(heightChange, -selectionHeight + 1);
 
-                            double newWidth = selectionWidth + width;
-                            double newHeight = selectionHeight + height;
-
-                            if (width > 0) {
-                                rectangle.setX(selectionX - Math.abs(width));
-                            } else {
-                                rectangle.setX(selectionX + Math.abs(width));
-                            }
-
-                            if (height > 0) {
-                                rectangle.setY(selectionY - Math.abs(height));
-                            } else {
-                                rectangle.setY(selectionY + Math.abs(height));
-                            }
-
-                            rectangle.setWidth(newWidth);
-                            rectangle.setHeight(newHeight);
+                            rectangle.setX(selectionX - widthChange);
+                            rectangle.setY(selectionY - heightChange);
+                            rectangle.setWidth(selectionWidth + widthChange);
+                            rectangle.setHeight(selectionHeight + heightChange);
 
                         } else if(point.getId().equals("2")) {
 
-                            // enforce minimum width and height of 1 px
-                            width = Math.min(width, selectionWidth - 1);
-                            height = Math.max(height, -selectionHeight + 1);
-
-                            if(height > 0) {
-                                rectangle.setY(selectionY -Math.abs(height));
-                            } else {
-                                rectangle.setY(selectionY +Math.abs(height));
+                            // fix ratio if shift is pressed
+                            if(event.isShiftDown()) {
+                                widthChange = Math.min(-widthChange, heightChange);
+                                heightChange = Math.min(widthChange, heightChange);
+                                widthChange = -widthChange;
                             }
-                            rectangle.setWidth(selectionWidth -width);
-                            rectangle.setHeight(selectionHeight +height);
+
+                            // enforce minimum width and height of 1 px
+                            widthChange = Math.min(widthChange, selectionWidth - 1);
+                            heightChange = Math.max(heightChange, -selectionHeight + 1);
+
+                            rectangle.setY(selectionY - heightChange);
+                            rectangle.setWidth(selectionWidth - widthChange);
+                            rectangle.setHeight(selectionHeight + heightChange);
 
                         } else if(point.getId().equals("3")) {
 
-                            // enforce minimum width and height of 1 px
-                            width = Math.max(width, -selectionWidth + 1);
-                            height = Math.min(height, selectionHeight - 1);
-
-                            if(width > 0) {
-                                rectangle.setX(selectionX -Math.abs(width));
-                            } else {
-                                rectangle.setX(selectionX +Math.abs(width));
+                            // fix ratio if shift is pressed
+                            if(event.isShiftDown()) {
+                                widthChange = Math.min(-widthChange, heightChange);
+                                heightChange = Math.min(widthChange, heightChange);
+                                widthChange = -widthChange;
                             }
-                            rectangle.setWidth(selectionWidth +width);
-                            rectangle.setHeight(selectionHeight -height);
+
+                            // enforce minimum width and height of 1 px
+                            widthChange = Math.max(widthChange, -selectionWidth + 1);
+                            heightChange = Math.min(heightChange, selectionHeight - 1);
+
+                            if(widthChange > 0) {
+                                rectangle.setX(selectionX -Math.abs(widthChange));
+                            } else {
+                                rectangle.setX(selectionX +Math.abs(widthChange));
+                            }
+                            rectangle.setWidth(selectionWidth +widthChange);
+                            rectangle.setHeight(selectionHeight -heightChange);
 
                         } else if(point.getId().equals("4")) {
 
-                            // enforce minimum width and height of 1 px
-                            width = Math.min(width, selectionWidth - 1);
-                            height = Math.min(height, selectionHeight - 1);
+                            // fix ratio if shift is pressed
+                            if(event.isShiftDown()) {
+                                widthChange = Math.min(widthChange, heightChange);
+                                heightChange = Math.min(widthChange, heightChange);
+                            }
 
-                            rectangle.setWidth(selectionWidth -width);
-                            rectangle.setHeight(selectionHeight -height);
+                            // enforce minimum width and height of 1 px
+                            widthChange = Math.min(widthChange, selectionWidth - 1);
+                            heightChange = Math.min(heightChange, selectionHeight - 1);
+
+                            rectangle.setWidth(selectionWidth -widthChange);
+                            rectangle.setHeight(selectionHeight -heightChange);
                         }
                     }
                 }
