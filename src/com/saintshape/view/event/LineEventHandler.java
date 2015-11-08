@@ -74,9 +74,12 @@ public class LineEventHandler implements ToolEventHandler {
         if(line != null && event.isPrimaryButtonDown()) {
 
             if(event.isShiftDown()) {
+
+                // if y is larger than x, make a straight vertical line
                 if(Math.abs(currentY-mouseClick.y) > Math.abs(currentX-mouseClick.x)) {
                     currentX = mouseClick.x;
                 }
+                // if x is larger than y, make a straight horizontal line
                 if(Math.abs(currentX-mouseClick.x) > Math.abs(currentY-mouseClick.y)) {
                     currentY = mouseClick.y;
                 }

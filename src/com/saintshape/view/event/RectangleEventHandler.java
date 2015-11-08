@@ -85,6 +85,7 @@ public class RectangleEventHandler implements ToolEventHandler {
             // fix ratio if shift is pressed
             if(event.isShiftDown()) {
 
+                // set both to the same value, whichever is smallest, width or height
                 width = Math.min(width, height);
                 height = Math.min(width, height);
 

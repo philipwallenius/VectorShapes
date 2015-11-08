@@ -42,12 +42,16 @@ public class SelectEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMousePress(MouseEvent event) {
-
         Node source = (Node)event.getSource();
 
         // keep track of mouse movements
         mouseClick.x = event.getX();
         mouseClick.y = event.getY();
+
+        // change cursor
+        if(source instanceof Shape) {
+            source.setCursor(Cursor.CLOSED_HAND);
+        }
 
         // get the offset between click xy and shape xy
         if(source instanceof Rectangle) {
@@ -105,7 +109,11 @@ public class SelectEventHandler implements ToolEventHandler {
     }
 
     @Override
-    public void handleMouseMove(MouseEvent event) {}
+    public void handleMouseMove(MouseEvent event) {
+//        if(event.getSource() instanceof Node) {
+//            ((Node)event.getSource()).setCursor(Cursor.OPEN_HAND);
+//        }
+    }
 
     @Override
     public void handleMouseRelease(MouseEvent event) {
