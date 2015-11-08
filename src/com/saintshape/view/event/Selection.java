@@ -37,7 +37,6 @@ public class Selection extends Rectangle {
             bindToLine((Line)shape);
         }
         createResizePoints();
-        registerPointsEventListener(points);
     }
 
     private void bindToLine(Line line) {
@@ -142,98 +141,6 @@ public class Selection extends Rectangle {
         points.add(point2);
         points.add(point3);
         points.add(point4);
-    }
-
-    // TODO: refactor this
-    private double ww = 0;
-    private double hh = 0;
-    private double xx = 0;
-    private double yy = 0;
-
-    /**
-     * Listens to mouse events on points, e.g. resize drag
-     * @param points to register to event listener
-     */
-    private void registerPointsEventListener(List<Point> points) {
-
-        final MouseClick click = new MouseClick();
-
-        /*
-         * Point event handling (e.g. for resizing).
-         */
-        for(Point p : points) {
-            p.setOnMousePressed(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    click.x = event.getX();
-                    click.y = event.getY();
-                    if (event.getSource() instanceof Point) {
-                        Point point = (Point) event.getSource();
-                        ww = point.getSelection().getWidth();
-                        hh = point.getSelection().getHeight();
-                        xx = point.getSelection().getX();
-                        yy = point.getSelection().getY();
-                    }
-                }
-            });
-            p.setOnMouseDragged(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent event) {
-                    if(event.getSource() instanceof Point) {
-                        Point point = (Point) event.getSource();
-                        Selection rectangle = (Selection)point.getSelection();
-                        if (event.isPrimaryButtonDown()) {
-                            if(rectangle != null ) {
-                                double wi = click.x-event.getX();
-                                double hi = click.y-event.getY();
-                                if(event.isShiftDown()) {
-                                    wi = Math.min(wi, hi);
-                                    hi = Math.min(wi, hi);
-                                }
-
-                                if(point.getId().equals("1")) {
-                                    if(wi > 0) {
-                                        rectangle.setX(xx-Math.abs(wi));
-                                    } else {
-                                        rectangle.setX(xx+Math.abs(wi));
-                                    }
-                                    if(hi > 0) {
-                                        rectangle.setY(yy-Math.abs(hi));
-                                    } else {
-                                        rectangle.setY(yy+Math.abs(hi));
-                                    }
-                                    rectangle.setWidth(ww+wi);
-                                    rectangle.setHeight(hh+hi);
-
-                                } else if(point.getId().equals("2")) {
-                                    if(hi > 0) {
-                                        rectangle.setY(yy-Math.abs(hi));
-                                    } else {
-                                        rectangle.setY(yy+Math.abs(hi));
-                                    }
-                                    rectangle.setWidth(ww-wi);
-                                    rectangle.setHeight(hh+hi);
-
-                                } else if(point.getId().equals("3")) {
-
-                                    if(wi > 0) {
-                                        rectangle.setX(xx-Math.abs(wi));
-                                    } else {
-                                        rectangle.setX(xx+Math.abs(wi));
-                                    }
-                                    rectangle.setWidth(ww+wi);
-                                    rectangle.setHeight(hh-hi);
-
-                                } else if(point.getId().equals("4")) {
-                                    rectangle.setWidth(ww-wi);
-                                    rectangle.setHeight(hh-hi);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
     }
 
     public List<Point> getPoints() {

@@ -28,6 +28,7 @@ public class SelectEventHandler implements ToolEventHandler {
     private MouseClick mouseClick;
     private MouseEventHandler mouseEventHandler;
     public Selection selection;
+    private ResizeEventHandler resizeEventHandler;
 
     private double selectedOriginalX, selectedOriginalY, clickDiffX, clickDiffY;
 
@@ -36,6 +37,7 @@ public class SelectEventHandler implements ToolEventHandler {
         this.controller = controller;
         this.mouseEventHandler = mouseEventHandler;
         mouseClick = new MouseClick();
+        resizeEventHandler = new ResizeEventHandler(view, controller);
         subscribeToColorPicker();
         subscribeToTools();
     }
@@ -90,6 +92,7 @@ public class SelectEventHandler implements ToolEventHandler {
     public void createSelection(Node source) {
         clearSelection();
         selection = new Selection(source);
+        resizeEventHandler.register(selection.getPoints());
         view.selectNodeInList(source);
         selection.setCursor(Cursor.OPEN_HAND);
         mouseEventHandler.registerSelection(selection);
