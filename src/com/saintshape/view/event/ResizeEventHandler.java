@@ -68,10 +68,10 @@ public class ResizeEventHandler {
                         double currentY = event.getY();
 
                         // enforce resize within canvas bounds
-                        currentX = Math.max(0+clickDiffX, currentX);
-                        currentX = Math.min(controller.getRootCanvas().getWidth()+clickDiffX, currentX);
-                        currentY = Math.max(0+clickDiffY, currentY);
-                        currentY = Math.min(controller.getRootCanvas().getHeight()+clickDiffY, currentY);
+                        currentX = Math.max(0 + clickDiffX, currentX);
+                        currentX = Math.min(controller.getRootCanvas().getWidth() + clickDiffX, currentX);
+                        currentY = Math.max(0 + clickDiffY, currentY);
+                        currentY = Math.min(controller.getRootCanvas().getHeight() + clickDiffY, currentY);
 
                         // calculate width and height difference
                         double widthChange = click.x-currentX;
@@ -84,7 +84,6 @@ public class ResizeEventHandler {
                             if(event.isShiftDown()) {
                                 widthChange = Math.min(widthChange, heightChange);
                                 heightChange = Math.min(widthChange, heightChange);
-                                System.out.println("1. width: " + widthChange+", height: " + heightChange);
                             }
 
                             // enforce minimum width and height of 1 px
@@ -117,9 +116,11 @@ public class ResizeEventHandler {
 
                             // fix ratio if shift is pressed
                             if(event.isShiftDown()) {
-                                widthChange = Math.min(-widthChange, heightChange);
-                                heightChange = Math.min(widthChange, heightChange);
+
+                                widthChange = Math.max(-widthChange, heightChange);
+                                heightChange = Math.max(widthChange, heightChange);
                                 widthChange = -widthChange;
+
                             }
 
                             // enforce minimum width and height of 1 px
@@ -131,23 +132,23 @@ public class ResizeEventHandler {
                             } else {
                                 rectangle.setX(selectionX +Math.abs(widthChange));
                             }
-                            rectangle.setWidth(selectionWidth +widthChange);
-                            rectangle.setHeight(selectionHeight -heightChange);
+                            rectangle.setWidth(selectionWidth + widthChange);
+                            rectangle.setHeight(selectionHeight - heightChange);
 
                         } else if(point.getId().equals("4")) {
 
                             // fix ratio if shift is pressed
                             if(event.isShiftDown()) {
-                                widthChange = Math.min(widthChange, heightChange);
-                                heightChange = Math.min(widthChange, heightChange);
+                                widthChange = Math.max(widthChange, heightChange);
+                                heightChange = Math.max(widthChange, heightChange);
                             }
 
                             // enforce minimum width and height of 1 px
                             widthChange = Math.min(widthChange, selectionWidth - 1);
                             heightChange = Math.min(heightChange, selectionHeight - 1);
 
-                            rectangle.setWidth(selectionWidth -widthChange);
-                            rectangle.setHeight(selectionHeight -heightChange);
+                            rectangle.setWidth(selectionWidth - widthChange);
+                            rectangle.setHeight(selectionHeight - heightChange);
                         }
                     }
                 }
