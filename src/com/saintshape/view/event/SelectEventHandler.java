@@ -29,6 +29,7 @@ public class SelectEventHandler implements ToolEventHandler {
     private MouseEventHandler mouseEventHandler;
     public Selection selection;
     private ResizeEventHandler resizeEventHandler;
+    private RotateEventHandler rotateEventHandler;
 
     private double selectedOriginalX, selectedOriginalY, clickDiffX, clickDiffY;
 
@@ -38,6 +39,7 @@ public class SelectEventHandler implements ToolEventHandler {
         this.mouseEventHandler = mouseEventHandler;
         mouseClick = new MouseClick();
         resizeEventHandler = new ResizeEventHandler(view, controller);
+        rotateEventHandler = new RotateEventHandler(view, controller);
         subscribeToColorPicker();
         subscribeToTools();
     }
@@ -92,13 +94,15 @@ public class SelectEventHandler implements ToolEventHandler {
     public void createSelection(Node source) {
         clearSelection();
         selection = new Selection(source);
-        resizeEventHandler.register(selection.getPoints());
+        resizeEventHandler.register(selection.getResizePoints());
+        rotateEventHandler.register(selection.getRotatePoint());
         view.selectNodeInList(source);
         selection.setCursor(Cursor.OPEN_HAND);
         mouseEventHandler.registerSelection(selection);
         view.getSelectionGroup().getChildren().clear();
         view.getSelectionGroup().getChildren().add(selection);
-        view.getSelectionGroup().getChildren().addAll(selection.getPoints());
+        view.getSelectionGroup().getChildren().addAll(selection.getResizePoints());
+        view.getSelectionGroup().getChildren().add(selection.getRotatePoint());
         if(source instanceof Line) {
             view.setSelectedColor((Color)((Line)source).getStroke());
         } else if(source instanceof Shape) {

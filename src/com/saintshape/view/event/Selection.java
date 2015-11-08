@@ -1,9 +1,7 @@
 package com.saintshape.view.event;
 
-import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import java.util.ArrayList;
@@ -17,7 +15,8 @@ import java.util.List;
  */
 public class Selection extends Rectangle {
 
-    private List<Point> points;
+    private List<Point> resizePoints;
+    private Point rotatePoint;
     private Node shape;
 
     public Selection(Node shape) {
@@ -27,7 +26,7 @@ public class Selection extends Rectangle {
 
     public void initialize() {
 
-        points = new ArrayList<>();
+        resizePoints = new ArrayList<>();
 
         if(shape instanceof Rectangle) {
             bindToRectangle((Rectangle)shape);
@@ -37,6 +36,16 @@ public class Selection extends Rectangle {
             bindToLine((Line)shape);
         }
         createResizePoints();
+        createRotatePoint();
+    }
+
+    private void createRotatePoint() {
+        rotatePoint = new Point(this, "5", getX(), getY());
+        rotatePoint.setFill(Color.GREENYELLOW.deriveColor(1, 1, 1, 0.5));
+        rotatePoint.setStroke(Color.GREENYELLOW);
+        rotatePoint.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
+        rotatePoint.centerYProperty().bind(yProperty().subtract(20));
+        rotatePoint.setCursor(Cursor.H_RESIZE);
     }
 
     private void bindToLine(Line line) {
@@ -77,6 +86,9 @@ public class Selection extends Rectangle {
 
         // bind size
         // not needed for line
+
+        // bind rotation
+        line.rotateProperty().bind(rotateProperty());
     }
 
     private void bindToEllipse(Ellipse ellipse) {
@@ -95,6 +107,9 @@ public class Selection extends Rectangle {
         // bind size
         ellipse.radiusXProperty().bind(widthProperty().divide(2));
         ellipse.radiusYProperty().bind(heightProperty().divide(2));
+
+        // bind rotation
+        ellipse.rotateProperty().bind(rotateProperty());
     }
 
     private void bindToRectangle(Rectangle rectangle) {
@@ -113,6 +128,9 @@ public class Selection extends Rectangle {
         // bind size
         rectangle.widthProperty().bind(widthProperty());
         rectangle.heightProperty().bind(heightProperty());
+
+        // bind rotation
+        rectangle.rotateProperty().bind(rotateProperty());
     }
 
     private void createResizePoints() {
@@ -137,14 +155,18 @@ public class Selection extends Rectangle {
         point4.centerYProperty().bind(yProperty().add(heightProperty()));
         point4.setCursor(Cursor.SE_RESIZE);
 
-        points.add(point);
-        points.add(point2);
-        points.add(point3);
-        points.add(point4);
+        resizePoints.add(point);
+        resizePoints.add(point2);
+        resizePoints.add(point3);
+        resizePoints.add(point4);
     }
 
-    public List<Point> getPoints() {
-        return points;
+    public List<Point> getResizePoints() {
+        return resizePoints;
+    }
+
+    public Point getRotatePoint() {
+        return rotatePoint;
     }
 
     public Node getShape() {
