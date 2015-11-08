@@ -16,10 +16,12 @@ public class ResizeEventHandler {
     private Controller controller;
 
     private MouseClick click = new MouseClick();
-    private double selectionWidth = 0;
-    private double selectionHeight = 0;
-    private double selectionX = 0;
-    private double selectionY = 0;
+    private double selectionWidth;
+    private double selectionHeight;
+    private double selectionX;
+    private double selectionY;
+    private double clickDiffX;
+    private double clickDiffY;
 
     public ResizeEventHandler(View view, Controller controller) {
         this.view = view;
@@ -44,6 +46,10 @@ public class ResizeEventHandler {
                 selectionHeight = point.getSelection().getHeight();
                 selectionX = point.getSelection().getX();
                 selectionY = point.getSelection().getY();
+
+                // take account for xy difference between Point circle and mouse click
+                clickDiffX = click.x-(point.getCenterX());
+                clickDiffY = click.y-(point.getCenterY());
             }
         }
     };
@@ -62,10 +68,10 @@ public class ResizeEventHandler {
                         double currentY = event.getY();
 
                         // enforce resize within canvas bounds
-                        currentX = Math.max(0, currentX);
-                        currentX = Math.min(controller.getRootCanvas().getWidth(), currentX);
-                        currentY = Math.max(0, currentY);
-                        currentY = Math.min(controller.getRootCanvas().getHeight(), currentY);
+                        currentX = Math.max(0+clickDiffX, currentX);
+                        currentX = Math.min(controller.getRootCanvas().getWidth()+clickDiffX, currentX);
+                        currentY = Math.max(0+clickDiffY, currentY);
+                        currentY = Math.min(controller.getRootCanvas().getHeight()+clickDiffY, currentY);
 
                         // calculate width and height difference
                         double width = click.x-currentX;
