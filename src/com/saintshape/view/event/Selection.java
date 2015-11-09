@@ -134,31 +134,55 @@ public class Selection extends Rectangle {
     }
 
     private void createResizePoints() {
-        Point point = new Point(this, "1", getX(), getY());
-        Point point2 = new Point(this, "2", getX()+getWidth(), getY());
-        Point point3 = new Point(this, "3", getX(), getY()+getHeight());
-        Point point4 = new Point(this, "4", getX()+getWidth(), getY()+getHeight());
 
-        point.centerXProperty().bind(xProperty());
-        point.centerYProperty().bind(yProperty());
-        point.setCursor(Cursor.NW_RESIZE);
+        Point pointNW = new Point(this, "NW", getX(), getY());
+        pointNW.centerXProperty().bind(xProperty());
+        pointNW.centerYProperty().bind(yProperty());
+        pointNW.setCursor(Cursor.NW_RESIZE);
 
-        point2.centerXProperty().bind(xProperty().add(widthProperty()));
-        point2.centerYProperty().bind(yProperty());
-        point2.setCursor(Cursor.NE_RESIZE);
+        Point pointNE = new Point(this, "NE", getX()+getWidth(), getY());
+        pointNE.centerXProperty().bind(xProperty().add(widthProperty()));
+        pointNE.centerYProperty().bind(yProperty());
+        pointNE.setCursor(Cursor.NE_RESIZE);
 
-        point3.centerXProperty().bind(xProperty());
-        point3.centerYProperty().bind(yProperty().add(heightProperty()));
-        point3.setCursor(Cursor.SW_RESIZE);
+        Point pointSW = new Point(this, "SW", getX(), getY()+getHeight());
+        pointSW.centerXProperty().bind(xProperty());
+        pointSW.centerYProperty().bind(yProperty().add(heightProperty()));
+        pointSW.setCursor(Cursor.SW_RESIZE);
 
-        point4.centerXProperty().bind(xProperty().add(widthProperty()));
-        point4.centerYProperty().bind(yProperty().add(heightProperty()));
-        point4.setCursor(Cursor.SE_RESIZE);
+        Point pointSE = new Point(this, "SE", getX()+getWidth(), getY()+getHeight());
+        pointSE.centerXProperty().bind(xProperty().add(widthProperty()));
+        pointSE.centerYProperty().bind(yProperty().add(heightProperty()));
+        pointSE.setCursor(Cursor.SE_RESIZE);
 
-        resizePoints.add(point);
-        resizePoints.add(point2);
-        resizePoints.add(point3);
-        resizePoints.add(point4);
+        Point pointW = new Point(this, "W", getX(), getY()+(getHeight()/2));
+        pointW.centerXProperty().bind(xProperty());
+        pointW.centerYProperty().bind(yProperty().add(heightProperty().divide(2)));
+        pointW.setCursor(Cursor.W_RESIZE);
+
+        Point pointN = new Point(this, "N", getX()+(getWidth()/2), getY());
+        pointN.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
+        pointN.centerYProperty().bind(yProperty());
+        pointN.setCursor(Cursor.N_RESIZE);
+
+        Point pointE = new Point(this, "E", getX()+getWidth(), getY()+(getHeight()/2));
+        pointE.centerXProperty().bind(xProperty().add(widthProperty()));
+        pointE.centerYProperty().bind(yProperty().add(heightProperty().divide(2)));
+        pointE.setCursor(Cursor.E_RESIZE);
+
+        Point pointS = new Point(this, "S", getX()+(getWidth()/2), getY()+getHeight());
+        pointS.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
+        pointS.centerYProperty().bind(yProperty().add(heightProperty()));
+        pointS.setCursor(Cursor.S_RESIZE);
+
+        resizePoints.add(pointNW);
+        resizePoints.add(pointNE);
+        resizePoints.add(pointSW);
+        resizePoints.add(pointSE);
+        resizePoints.add(pointW);
+        resizePoints.add(pointN);
+        resizePoints.add(pointE);
+        resizePoints.add(pointS);
     }
 
     public List<Point> getResizePoints() {

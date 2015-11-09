@@ -78,7 +78,7 @@ public class ResizeEventHandler {
                         double heightChange = click.y-currentY;
 
                         // resize differently depending on which corner is selected
-                        if(point.getId().equals("1")) {
+                        if(point.getId().equals("NW")) {
 
                             // fix ratio if shift is pressed
                             if(event.isShiftDown()) {
@@ -95,7 +95,7 @@ public class ResizeEventHandler {
                             rectangle.setWidth(selectionWidth + widthChange);
                             rectangle.setHeight(selectionHeight + heightChange);
 
-                        } else if(point.getId().equals("2")) {
+                        } else if(point.getId().equals("NE")) {
 
                             // fix ratio if shift is pressed
                             if(event.isShiftDown()) {
@@ -112,7 +112,7 @@ public class ResizeEventHandler {
                             rectangle.setWidth(selectionWidth - widthChange);
                             rectangle.setHeight(selectionHeight + heightChange);
 
-                        } else if(point.getId().equals("3")) {
+                        } else if(point.getId().equals("SW")) {
 
                             // fix ratio if shift is pressed
                             if(event.isShiftDown()) {
@@ -135,7 +135,7 @@ public class ResizeEventHandler {
                             rectangle.setWidth(selectionWidth + widthChange);
                             rectangle.setHeight(selectionHeight - heightChange);
 
-                        } else if(point.getId().equals("4")) {
+                        } else if(point.getId().equals("SE")) {
 
                             // fix ratio if shift is pressed
                             if(event.isShiftDown()) {
@@ -148,6 +148,24 @@ public class ResizeEventHandler {
                             heightChange = Math.min(heightChange, selectionHeight - 1);
 
                             rectangle.setWidth(selectionWidth - widthChange);
+                            rectangle.setHeight(selectionHeight - heightChange);
+                        } else if(point.getId().equals("W")) {
+                            // enforce minimum width and height of 1 px
+                            widthChange = Math.max(widthChange, -selectionWidth + 1);
+                            rectangle.setX(selectionX - widthChange);
+                            rectangle.setWidth(selectionWidth + widthChange);
+                        } else if(point.getId().equals("N")) {
+                            // enforce minimum width and height of 1 px
+                            heightChange = Math.max(heightChange, -selectionHeight + 1);
+                            rectangle.setY(selectionY - heightChange);
+                            rectangle.setHeight(selectionHeight + heightChange);
+                        } else if(point.getId().equals("E")) {
+                            // enforce minimum width and height of 1 px
+                            widthChange = Math.min(widthChange, selectionWidth - 1);
+                            rectangle.setWidth(selectionWidth - widthChange);
+                        } else if(point.getId().equals("S")) {
+                            // enforce minimum width and height of 1 px
+                            heightChange = Math.min(heightChange, selectionHeight - 1);
                             rectangle.setHeight(selectionHeight - heightChange);
                         }
                     }

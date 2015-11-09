@@ -6,6 +6,7 @@ import com.saintshape.observer.ModelObserver;
 import com.saintshape.view.event.EllipseEventHandler;
 import com.saintshape.view.event.MouseEventHandler;
 import com.saintshape.view.event.RectangleEventHandler;
+import com.saintshape.view.menu.StatusBar;
 import com.saintshape.view.menu.side.SideMenu;
 import com.saintshape.view.menu.side.Tool;
 import com.saintshape.view.menu.top.TopMenu;
@@ -48,6 +49,7 @@ public class View implements ModelObserver {
     private TopMenu topMenu;
     private MouseEventHandler mouseEventHandler;
     private Group selectionGroup;
+    private StatusBar statusBar;
 
     /**
      * Constructor that initializes the view and creates the main window
@@ -88,9 +90,11 @@ public class View implements ModelObserver {
 
         borderPane = new BorderPane();
         topMenu = new TopMenu(controller);
+        statusBar = new StatusBar();
         borderPane.setTop(topMenu);
         borderPane.setLeft(controls);
         borderPane.setCenter(scrollPane);
+        borderPane.setBottom(statusBar);
         scene = new Scene(borderPane, WINDOW_WIDTH, WINDOW_HEIGHT);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -188,5 +192,9 @@ public class View implements ModelObserver {
 
     public void selectNodeInList(Node node) {
         sideMenu.selectNodeInList(node);
+    }
+
+    public void setZoom() {
+
     }
 }
