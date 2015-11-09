@@ -20,9 +20,9 @@ public class Point extends Circle {
         this.selection = selection;
         setStrokeWidth(1);
         setId(id);
-        setFill(Color.GOLD.deriveColor(1, 1, 1, 0.5));
+        setFill(Color.DEEPSKYBLUE.deriveColor(1, 1, 1, 0.5));
         setStrokeType(StrokeType.OUTSIDE);
-        setStroke(Color.GOLD);
+        setStroke(Color.DEEPSKYBLUE);
     }
 
     public Rectangle getSelection() {
