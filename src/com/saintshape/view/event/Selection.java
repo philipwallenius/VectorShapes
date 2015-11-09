@@ -40,7 +40,7 @@ public class Selection extends Rectangle {
     }
 
     private void createRotatePoint() {
-        rotatePoint = new Point(this, "5", getX(), getY());
+        rotatePoint = new Point(this, "5");
         rotatePoint.setFill(Color.GREENYELLOW.deriveColor(1, 1, 1, 0.5));
         rotatePoint.setStroke(Color.GREENYELLOW);
         rotatePoint.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
@@ -66,6 +66,9 @@ public class Selection extends Rectangle {
 
         setWidth(Math.abs(line.getStartX()-line.getEndX()));
         setHeight(Math.abs(line.getStartY()-line.getEndY()));
+
+        // set rotation from shape
+        setRotate(line.getRotate());
 
         // bind position
         if(line.getStartX() < line.getEndX()) {
@@ -98,7 +101,10 @@ public class Selection extends Rectangle {
         setX(ellipse.getCenterX() - ellipse.getRadiusX());
         setY(ellipse.getCenterY() - ellipse.getRadiusY());
         setWidth((ellipse.getRadiusX()*2));
-        setHeight((ellipse.getRadiusY()*2));
+        setHeight((ellipse.getRadiusY() * 2));
+
+        // set rotation from shape
+        setRotate(ellipse.getRotate());
 
         // bind position
         ellipse.centerXProperty().bind(xProperty().add(ellipse.radiusXProperty()));
@@ -121,6 +127,9 @@ public class Selection extends Rectangle {
         setWidth(rectangle.getWidth());
         setHeight(rectangle.getHeight());
 
+        // set rotation from shape
+        setRotate(rectangle.getRotate());
+
         // bind position
         rectangle.xProperty().bind(xProperty());
         rectangle.yProperty().bind(yProperty());
@@ -135,42 +144,42 @@ public class Selection extends Rectangle {
 
     private void createResizePoints() {
 
-        Point pointNW = new Point(this, "NW", getX(), getY());
+        Point pointNW = new Point(this, "NW");
         pointNW.centerXProperty().bind(xProperty());
         pointNW.centerYProperty().bind(yProperty());
         pointNW.setCursor(Cursor.NW_RESIZE);
 
-        Point pointNE = new Point(this, "NE", getX()+getWidth(), getY());
+        Point pointNE = new Point(this, "NE");
         pointNE.centerXProperty().bind(xProperty().add(widthProperty()));
         pointNE.centerYProperty().bind(yProperty());
         pointNE.setCursor(Cursor.NE_RESIZE);
 
-        Point pointSW = new Point(this, "SW", getX(), getY()+getHeight());
+        Point pointSW = new Point(this, "SW");
         pointSW.centerXProperty().bind(xProperty());
         pointSW.centerYProperty().bind(yProperty().add(heightProperty()));
         pointSW.setCursor(Cursor.SW_RESIZE);
 
-        Point pointSE = new Point(this, "SE", getX()+getWidth(), getY()+getHeight());
+        Point pointSE = new Point(this, "SE");
         pointSE.centerXProperty().bind(xProperty().add(widthProperty()));
         pointSE.centerYProperty().bind(yProperty().add(heightProperty()));
         pointSE.setCursor(Cursor.SE_RESIZE);
 
-        Point pointW = new Point(this, "W", getX(), getY()+(getHeight()/2));
+        Point pointW = new Point(this, "W");
         pointW.centerXProperty().bind(xProperty());
         pointW.centerYProperty().bind(yProperty().add(heightProperty().divide(2)));
         pointW.setCursor(Cursor.W_RESIZE);
 
-        Point pointN = new Point(this, "N", getX()+(getWidth()/2), getY());
+        Point pointN = new Point(this, "N");
         pointN.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
         pointN.centerYProperty().bind(yProperty());
         pointN.setCursor(Cursor.N_RESIZE);
 
-        Point pointE = new Point(this, "E", getX()+getWidth(), getY()+(getHeight()/2));
+        Point pointE = new Point(this, "E");
         pointE.centerXProperty().bind(xProperty().add(widthProperty()));
         pointE.centerYProperty().bind(yProperty().add(heightProperty().divide(2)));
         pointE.setCursor(Cursor.E_RESIZE);
 
-        Point pointS = new Point(this, "S", getX()+(getWidth()/2), getY()+getHeight());
+        Point pointS = new Point(this, "S");
         pointS.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
         pointS.centerYProperty().bind(yProperty().add(heightProperty()));
         pointS.setCursor(Cursor.S_RESIZE);

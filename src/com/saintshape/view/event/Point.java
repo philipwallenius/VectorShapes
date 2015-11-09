@@ -15,8 +15,8 @@ public class Point extends Circle {
 
     private Rectangle selection;
 
-    Point(Rectangle selection, String id, double x, double y) {
-        super(x, y, 5);
+    Point(Rectangle selection, String id) {
+        super(5);
         this.selection = selection;
         setStrokeWidth(1);
         setId(id);

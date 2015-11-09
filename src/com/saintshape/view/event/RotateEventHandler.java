@@ -86,6 +86,7 @@ public class RotateEventHandler {
                         d2 = 360-d;
                         rectangle.setRotate(d2);
                         predeg = d2;
+//                        System.out.println("d2: " + d2);
                     }
                 }
             }
