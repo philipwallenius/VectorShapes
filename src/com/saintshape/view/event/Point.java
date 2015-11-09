@@ -15,14 +15,14 @@ public class Point extends Circle {
 
     private Rectangle selection;
 
-    Point(Rectangle selection, String id) {
+    Point(Rectangle selection, String id, Color fill) {
         super(5);
         this.selection = selection;
         setStrokeWidth(1);
         setId(id);
-        setFill(Color.DEEPSKYBLUE.deriveColor(1, 1, 1, 0.5));
+        setFill(fill.deriveColor(1, 1, 1, 0.5));
         setStrokeType(StrokeType.OUTSIDE);
-        setStroke(Color.DEEPSKYBLUE);
+        setStroke(fill);
     }
 
     public Rectangle getSelection() {

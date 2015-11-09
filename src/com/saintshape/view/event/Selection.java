@@ -40,9 +40,7 @@ public class Selection extends Rectangle {
     }
 
     private void createRotatePoint() {
-        rotatePoint = new Point(this, "5");
-        rotatePoint.setFill(Color.GREENYELLOW.deriveColor(1, 1, 1, 0.5));
-        rotatePoint.setStroke(Color.GREENYELLOW);
+        rotatePoint = new Point(this, "ROTATE", Color.GREENYELLOW);
         rotatePoint.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
         rotatePoint.centerYProperty().bind(yProperty().subtract(20));
         rotatePoint.setCursor(Cursor.H_RESIZE);
@@ -144,42 +142,42 @@ public class Selection extends Rectangle {
 
     private void createResizePoints() {
 
-        Point pointNW = new Point(this, "NW");
+        Point pointNW = new Point(this, "NW", Color.DEEPSKYBLUE);
         pointNW.centerXProperty().bind(xProperty());
         pointNW.centerYProperty().bind(yProperty());
         pointNW.setCursor(Cursor.NW_RESIZE);
 
-        Point pointNE = new Point(this, "NE");
+        Point pointNE = new Point(this, "NE", Color.DEEPSKYBLUE);
         pointNE.centerXProperty().bind(xProperty().add(widthProperty()));
         pointNE.centerYProperty().bind(yProperty());
         pointNE.setCursor(Cursor.NE_RESIZE);
 
-        Point pointSW = new Point(this, "SW");
+        Point pointSW = new Point(this, "SW", Color.DEEPSKYBLUE);
         pointSW.centerXProperty().bind(xProperty());
         pointSW.centerYProperty().bind(yProperty().add(heightProperty()));
         pointSW.setCursor(Cursor.SW_RESIZE);
 
-        Point pointSE = new Point(this, "SE");
+        Point pointSE = new Point(this, "SE", Color.DEEPSKYBLUE);
         pointSE.centerXProperty().bind(xProperty().add(widthProperty()));
         pointSE.centerYProperty().bind(yProperty().add(heightProperty()));
         pointSE.setCursor(Cursor.SE_RESIZE);
 
-        Point pointW = new Point(this, "W");
+        Point pointW = new Point(this, "W", Color.DEEPSKYBLUE);
         pointW.centerXProperty().bind(xProperty());
         pointW.centerYProperty().bind(yProperty().add(heightProperty().divide(2)));
         pointW.setCursor(Cursor.W_RESIZE);
 
-        Point pointN = new Point(this, "N");
+        Point pointN = new Point(this, "N", Color.DEEPSKYBLUE);
         pointN.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
         pointN.centerYProperty().bind(yProperty());
         pointN.setCursor(Cursor.N_RESIZE);
 
-        Point pointE = new Point(this, "E");
+        Point pointE = new Point(this, "E", Color.DEEPSKYBLUE);
         pointE.centerXProperty().bind(xProperty().add(widthProperty()));
         pointE.centerYProperty().bind(yProperty().add(heightProperty().divide(2)));
         pointE.setCursor(Cursor.E_RESIZE);
 
-        Point pointS = new Point(this, "S");
+        Point pointS = new Point(this, "S", Color.DEEPSKYBLUE);
         pointS.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
         pointS.centerYProperty().bind(yProperty().add(heightProperty()));
         pointS.setCursor(Cursor.S_RESIZE);
