@@ -10,12 +10,15 @@ import com.saintshape.view.menu.side.SideMenu;
 import com.saintshape.view.menu.side.Tool;
 import com.saintshape.view.menu.top.TopMenu;
 import javafx.beans.binding.Bindings;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -93,6 +96,13 @@ public class View implements ModelObserver {
         borderPane.setCenter(scrollPane);
         borderPane.setBottom(statusBar);
         scene = new Scene(borderPane, WINDOW_WIDTH, WINDOW_HEIGHT);
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            public void handle(KeyEvent ke) {
+                if (ke.getCode() == KeyCode.ESCAPE) {
+                    mouseEventHandler.deselect();
+                }
+            }
+        });
         primaryStage.setScene(scene);
         primaryStage.show();
     }

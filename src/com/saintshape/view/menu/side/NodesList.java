@@ -7,10 +7,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
@@ -45,12 +48,12 @@ public class NodesList extends TitledPane implements ModelObserver {
         myObservableList = FXCollections.observableList(nodeList);
         listView.setPrefHeight(LIST_ITEM_HEIGHT + 2);
         listView.setItems(myObservableList);
-        listView.setCellFactory(new Callback<ListView<NodeItem>, ListCell<NodeItem>>(){
+        listView.setCellFactory(new Callback<ListView<NodeItem>, ListCell<NodeItem>>() {
 
             @Override
             public ListCell<NodeItem> call(ListView<NodeItem> p) {
 
-                ListCell<NodeItem> cell = new ListCell<NodeItem>(){
+                ListCell<NodeItem> cell = new ListCell<NodeItem>() {
 
                     @Override
                     protected void updateItem(NodeItem t, boolean bln) {
@@ -72,6 +75,15 @@ public class NodesList extends TitledPane implements ModelObserver {
             public void changed(ObservableValue<? extends NodeItem> observable, NodeItem oldValue, NodeItem newValue) {
                 if (newValue != null) {
                     view.selectNode(newValue.getNode());
+                }
+            }
+        });
+
+        listView.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            public void handle(KeyEvent ke) {
+                if (ke.getCode() == KeyCode.ESCAPE) {
+                    view.getMouseEventHandler().deselect();
+                    listView.getSelectionModel().clearSelection();
                 }
             }
         });
