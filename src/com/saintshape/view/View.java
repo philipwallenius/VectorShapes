@@ -34,7 +34,7 @@ import javafx.stage.Stage;
 public class View implements ModelObserver {
 
     private final static String APPLICATION_NAME = "Saintshape";
-    private final static int WINDOW_WIDTH = 800, WINDOW_HEIGHT = 600;
+    private final static int WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 768;
 
     private Controller controller;
     private Model model;

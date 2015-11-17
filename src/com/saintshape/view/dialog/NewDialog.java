@@ -34,8 +34,8 @@ import java.awt.event.KeyEvent;
 public class NewDialog extends Stage {
 
     private final static String DEFAULT_NAME = "Untitled-1";
-    private final static String DEFAULT_WIDTH = "300";
-    private final static String DEFAULT_HEIGHT = "300";
+    private final static String DEFAULT_WIDTH = "500";
+    private final static String DEFAULT_HEIGHT = "500";
 
     private Stage parentStage;
     private Scene scene;
