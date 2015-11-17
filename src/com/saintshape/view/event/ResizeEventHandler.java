@@ -67,12 +67,6 @@ public class ResizeEventHandler {
                         double currentX = event.getX();
                         double currentY = event.getY();
 
-                        // enforce resize within canvas bounds
-                        currentX = Math.max(0 + clickDiffX, currentX);
-                        currentX = Math.min(controller.getRootCanvas().getWidth() + clickDiffX, currentX);
-                        currentY = Math.max(0 + clickDiffY, currentY);
-                        currentY = Math.min(controller.getRootCanvas().getHeight() + clickDiffY, currentY);
-
                         // calculate width and height difference
                         double widthChange = click.x-currentX;
                         double heightChange = click.y-currentY;

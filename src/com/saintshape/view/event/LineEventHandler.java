@@ -58,20 +58,6 @@ public class LineEventHandler implements ToolEventHandler {
         double currentX = event.getX();
         double currentY = event.getY();
 
-        // make sure mouse stays within bounds
-        if(currentX < 0) {
-            currentX = 0;
-        } else if(currentX > controller.getRootCanvas().getWidth()) {
-            currentX = controller.getRootCanvas().getWidth();
-        }
-
-        if(currentY < 0) {
-            currentY = 0;
-        } else if(currentY > controller.getRootCanvas().getHeight()) {
-            currentY = controller.getRootCanvas().getHeight();
-        }
-
-
         if(line != null && event.isPrimaryButtonDown()) {
 
             if(event.isShiftDown()) {

@@ -120,9 +120,6 @@ public class SelectEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMouseMove(MouseEvent event) {
-//        if(event.getSource() instanceof Node) {
-//            ((Node)event.getSource()).setCursor(Cursor.OPEN_HAND);
-//        }
     }
 
     @Override
@@ -145,20 +142,6 @@ public class SelectEventHandler implements ToolEventHandler {
             double currentY = event.getY();
 
             Rectangle rectangle = selection;
-
-            // Make sure x-position not outside of canvas
-            if(currentX-clickDiffX < 0) {
-                currentX = currentX + (Math.abs(0-(currentX-clickDiffX)));
-            } else if(((rectangle.getWidth())-clickDiffX)+currentX > controller.getRootCanvas().getWidth()) {
-                currentX = currentX - (Math.abs(controller.getRootCanvas().getWidth()-(currentX+((rectangle.getWidth())-clickDiffX))));
-            }
-
-            // Make sure y-position not outside of canvas
-            if(currentY-clickDiffY < 0) {
-                currentY = currentY + (Math.abs(0-(currentY-clickDiffY)));
-            } else if(((rectangle.getHeight())-clickDiffY)+currentY > controller.getRootCanvas().getHeight()) {
-                currentY = currentY - (Math.abs(controller.getRootCanvas().getHeight()-(currentY+((rectangle.getHeight())-clickDiffY))));
-            }
 
             // Calculate rectangle movement
             double offsetX = currentX - mouseClick.x;
