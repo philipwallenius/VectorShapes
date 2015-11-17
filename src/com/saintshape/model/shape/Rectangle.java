@@ -14,6 +14,7 @@ public class Rectangle extends javafx.scene.shape.Rectangle {
         result.setRotate(getRotate());
         result.setFill(getFill());
         result.setStroke(getStroke());
+        result.getTransforms().addAll(getTransforms());
         return result;
     }
 

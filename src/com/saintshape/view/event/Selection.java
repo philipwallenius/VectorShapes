@@ -42,8 +42,11 @@ public class Selection extends Rectangle {
     private void createRotatePoint() {
         rotatePoint = new Point(this, "ROTATE", Color.GREENYELLOW);
         rotatePoint.centerXProperty().bind(xProperty().add(widthProperty().divide(2)));
-        rotatePoint.centerYProperty().bind(yProperty().subtract(20));
+        rotatePoint.centerYProperty().bind(yProperty().add(heightProperty().divide(2)));
         rotatePoint.setCursor(Cursor.H_RESIZE);
+
+        // add all transforms to selection
+        rotatePoint.getTransforms().addAll(getTransforms());
     }
 
     private void bindToLine(Line line) {
@@ -65,9 +68,6 @@ public class Selection extends Rectangle {
         setWidth(Math.abs(line.getStartX()-line.getEndX()));
         setHeight(Math.abs(line.getStartY()-line.getEndY()));
 
-        // set rotation from shape
-        setRotate(line.getRotate());
-
         // bind position
         if(line.getStartX() < line.getEndX()) {
             line.startXProperty().bind(xProperty());
@@ -88,8 +88,8 @@ public class Selection extends Rectangle {
         // bind size
         // not needed for line
 
-        // bind rotation
-        line.rotateProperty().bind(rotateProperty());
+        // add all transforms to selection
+        getTransforms().addAll(line.getTransforms());
     }
 
     private void bindToEllipse(Ellipse ellipse) {
@@ -101,9 +101,6 @@ public class Selection extends Rectangle {
         setWidth((ellipse.getRadiusX()*2));
         setHeight((ellipse.getRadiusY() * 2));
 
-        // set rotation from shape
-        setRotate(ellipse.getRotate());
-
         // bind position
         ellipse.centerXProperty().bind(xProperty().add(ellipse.radiusXProperty()));
         ellipse.centerYProperty().bind(yProperty().add(ellipse.radiusYProperty()));
@@ -112,8 +109,8 @@ public class Selection extends Rectangle {
         ellipse.radiusXProperty().bind(widthProperty().divide(2));
         ellipse.radiusYProperty().bind(heightProperty().divide(2));
 
-        // bind rotation
-        ellipse.rotateProperty().bind(rotateProperty());
+        // add all transforms to selection
+        getTransforms().addAll(ellipse.getTransforms());
     }
 
     private void bindToRectangle(Rectangle rectangle) {
@@ -125,9 +122,6 @@ public class Selection extends Rectangle {
         setWidth(rectangle.getWidth());
         setHeight(rectangle.getHeight());
 
-        // set rotation from shape
-        setRotate(rectangle.getRotate());
-
         // bind position
         rectangle.xProperty().bind(xProperty());
         rectangle.yProperty().bind(yProperty());
@@ -136,8 +130,8 @@ public class Selection extends Rectangle {
         rectangle.widthProperty().bind(widthProperty());
         rectangle.heightProperty().bind(heightProperty());
 
-        // bind rotation
-        rectangle.rotateProperty().bind(rotateProperty());
+        // add all transforms to selection
+        getTransforms().addAll(rectangle.getTransforms());
     }
 
     private void createResizePoints() {
@@ -190,6 +184,11 @@ public class Selection extends Rectangle {
         resizePoints.add(pointN);
         resizePoints.add(pointE);
         resizePoints.add(pointS);
+
+        // add all transforms to resize points
+        for(Point p : resizePoints) {
+            p.getTransforms().addAll(getTransforms());
+        }
     }
 
     public List<Point> getResizePoints() {

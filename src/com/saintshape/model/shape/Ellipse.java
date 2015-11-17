@@ -1,5 +1,9 @@
 package com.saintshape.model.shape;
 
+import javafx.scene.transform.Transform;
+
+import java.util.List;
+
 /**
  * Created by 150019538 on 10/11/15.
  */
@@ -11,9 +15,9 @@ public class Ellipse extends javafx.scene.shape.Ellipse {
 
     public javafx.scene.shape.Ellipse clone() {
         Ellipse result = new Ellipse(getCenterX(), getCenterY(), getRadiusX(), getRadiusY());
-        result.setRotate(getRotate());
         result.setFill(getFill());
         result.setStroke(getStroke());
+        result.getTransforms().addAll(getTransforms());
         return result;
     }
 

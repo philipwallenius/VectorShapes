@@ -15,7 +15,7 @@ public class RotateEventHandler {
 
     private View view;
     private Controller controller;
-
+    private boolean rotated = false;
     private MouseClick click = new MouseClick();
     private double selX, selY, pX, pY, deltaX, deltaY, d2, predeg;
 
@@ -33,6 +33,7 @@ public class RotateEventHandler {
     public EventHandler<MouseEvent> mousePressEventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
+            rotated = false;
             click.x = event.getX();
             click.y = event.getY();
             if(event.getSource() instanceof Point) {
@@ -59,7 +60,10 @@ public class RotateEventHandler {
                 Point point = (Point) event.getSource();
                 point.getTransforms().add(new Rotate(d2, pX, pY));
             }
-            HistoryUtil.getInstance().addHistoryPoint();
+            if(rotated) {
+                HistoryUtil.getInstance().addHistoryPoint();
+            }
+            rotated = false;
         }
     };
 
@@ -84,9 +88,15 @@ public class RotateEventHandler {
                             d += 360;
                         }
                         d2 = 360-d;
-                        rectangle.setRotate(d2);
+                        Rotate rotationTransform = new Rotate(d2, rectangle.getX()+(rectangle.getWidth()/2), rectangle.getY()+(rectangle.getHeight()/2));
+                        rectangle.getTransforms().add(rotationTransform);
+                        rectangle.getShape().getTransforms().add(rotationTransform);
+                        for(Point p : rectangle.getResizePoints()) {
+                            p.getTransforms().add(rotationTransform);
+                        }
+                        rectangle.getRotatePoint().getTransforms().add(rotationTransform);
                         predeg = d2;
-//                        System.out.println("d2: " + d2);
+                        rotated = true;
                     }
                 }
             }
