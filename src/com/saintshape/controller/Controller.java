@@ -1,12 +1,10 @@
 package com.saintshape.controller;
 
+import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.model.Model;
 import com.saintshape.view.View;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -22,11 +20,14 @@ public class Controller {
     private Model model;
     private View view;
     private Stage primaryStage;
+    private HistoryUtil historyUtil;
 
     public Controller(Model model, Stage primaryStage) {
         this.model = model;
         view = new View(this, model, primaryStage);
         this.primaryStage = primaryStage;
+        historyUtil = HistoryUtil.getInstance();
+        historyUtil.setMouseEventHandler(view.getMouseEventHandler());
     }
 
     public void newProject(String name, double width, double height) {
@@ -56,4 +57,13 @@ public class Controller {
         return model.getNodes();
     }
 
+    public void undo() {
+        view.deselect();
+        HistoryUtil.getInstance().undo();
+    }
+
+    public void redo() {
+        view.deselect();
+        HistoryUtil.getInstance().redo();
+    }
 }

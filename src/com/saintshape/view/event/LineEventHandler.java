@@ -1,6 +1,7 @@
 package com.saintshape.view.event;
 
 import com.saintshape.controller.Controller;
+import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
 import com.saintshape.view.menu.side.Tool;
 import javafx.scene.input.MouseEvent;
@@ -37,7 +38,7 @@ public class LineEventHandler implements ToolEventHandler {
         // create a new shape if not already done
         if (line == null) {
             if (view.getSelectedTool() == Tool.LINE) {
-                line = new Line(event.getX(), event.getY(), event.getX(), event.getY());
+                line = new com.saintshape.model.shape.Line(event.getX(), event.getY(), event.getX(), event.getY());
                 line.setStroke(view.getSelectedColor());
                 line.setStrokeWidth(2);
                 mouseEventHandler.register(line);
@@ -92,7 +93,7 @@ public class LineEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMouseRelease(MouseEvent event) {
-        // deselect shape
+        HistoryUtil.getInstance().addHistoryPoint();
         view.selectNode(line);
         line = null;
     }

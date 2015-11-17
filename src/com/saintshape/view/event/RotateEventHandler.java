@@ -1,13 +1,12 @@
 package com.saintshape.view.event;
 
 import com.saintshape.controller.Controller;
+import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
-
-import java.util.List;
 
 /**
  * Created by 150019538 on 08/11/15.
@@ -60,6 +59,7 @@ public class RotateEventHandler {
                 Point point = (Point) event.getSource();
                 point.getTransforms().add(new Rotate(d2, pX, pY));
             }
+            HistoryUtil.getInstance().addHistoryPoint();
         }
     };
 

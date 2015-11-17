@@ -1,6 +1,7 @@
 package com.saintshape.view.event;
 
 import com.saintshape.controller.Controller;
+import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
 import com.saintshape.view.menu.side.Tool;
 import javafx.beans.value.ChangeListener;
@@ -30,6 +31,7 @@ public class SelectEventHandler implements ToolEventHandler {
     public Selection selection;
     private ResizeEventHandler resizeEventHandler;
     private RotateEventHandler rotateEventHandler;
+    private boolean moved = false;
 
     private double selectedOriginalX, selectedOriginalY, clickDiffX, clickDiffY;
 
@@ -47,6 +49,7 @@ public class SelectEventHandler implements ToolEventHandler {
     @Override
     public void handleMousePress(MouseEvent event) {
         Node source = (Node)event.getSource();
+        moved = false;
 
         // keep track of mouse movements
         mouseClick.x = event.getX();
@@ -125,7 +128,11 @@ public class SelectEventHandler implements ToolEventHandler {
     @Override
     public void handleMouseRelease(MouseEvent event) {
         if(selection != null) {
+            if(moved) {
+                HistoryUtil.getInstance().addHistoryPoint();
+            }
             selection.setCursor(Cursor.OPEN_HAND);
+            moved = false;
         }
     }
 
@@ -160,7 +167,7 @@ public class SelectEventHandler implements ToolEventHandler {
             // Update movement
             rectangle.setX(selectedOriginalX+offsetX);
             rectangle.setY(selectedOriginalY+offsetY);
-
+            moved = true;
         }
     }
 
@@ -185,7 +192,7 @@ public class SelectEventHandler implements ToolEventHandler {
     }
 
     /**
-     * Listens to tool changes and deselects any selection if tool is changed
+     * Listens to tool changes and deselects any selection if tool is moved
      */
     public void subscribeToTools() {
         ToggleGroup toggleGroup = view.getTools();
@@ -193,10 +200,14 @@ public class SelectEventHandler implements ToolEventHandler {
             @Override
             public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
                 if(newValue.getUserData() != Tool.SELECT) {
-                    selection = null;
-                    view.getSelectionGroup().getChildren().clear();
+                    deselect();
                 }
             }
         });
+    }
+
+    public void deselect() {
+        selection = null;
+        view.getSelectionGroup().getChildren().clear();
     }
 }

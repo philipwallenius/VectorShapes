@@ -21,8 +21,9 @@ import javafx.scene.input.KeyCombination;
 public class TopMenu extends MenuBar {
 
     private Controller controller;
-    private Menu menuFile;
+    private Menu menuFile, menuEdit;
     private MenuItem menuFileItemNew, menuFileItemSave, menuFileItemSaveAs, menuFileItemQuit;
+    private MenuItem menuEditUndo, menuEditRedo;
 
     /**
      * Constructor that initializes the menus
@@ -38,7 +39,8 @@ public class TopMenu extends MenuBar {
      */
     private void initialize() {
         menuFile = createFileMenu();
-        getMenus().addAll(menuFile);
+        menuEdit = createEditMenu();
+        getMenus().addAll(menuFile, menuEdit);
         addEventHandlers();
     }
 
@@ -57,9 +59,24 @@ public class TopMenu extends MenuBar {
     }
 
     /**
+     * Creates the Edit menu and adds items to it
+     * @return Returns am Edit menu
+     */
+    private Menu createEditMenu() {
+        Menu menu = new Menu("Edit");
+        menuEditUndo = new MenuItem("Undo");
+        menuEditRedo = new MenuItem("Redo");
+        menu.getItems().addAll(menuEditUndo, menuEditRedo);
+        return menu;
+    }
+
+    /**
      * Handles menu item events
      */
     private void addEventHandlers() {
+
+        // File menu
+
         menuFileItemNew.setOnAction(new EventHandler<ActionEvent>() {
             public void handle(ActionEvent t) {
                 new NewDialog(controller, controller.getPrimaryStage());
@@ -77,6 +94,12 @@ public class TopMenu extends MenuBar {
         menuFileItemSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
         menuFileItemSaveAs.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN));
         menuFileItemQuit.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
+
+        // Edit menu
+        menuEditUndo.setOnAction(event -> controller.undo());
+        menuEditRedo.setOnAction(event -> controller.redo());
+        menuEditUndo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.META_DOWN));
+        menuEditRedo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN));
     }
 
 }

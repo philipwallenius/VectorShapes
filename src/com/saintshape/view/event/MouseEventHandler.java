@@ -125,4 +125,9 @@ public class MouseEventHandler {
             }
         });
     }
+
+    public void deselect() {
+        SelectEventHandler selectEventHandler = (SelectEventHandler)eventHandlerFactory.getEventHandler(Tool.SELECT);
+        selectEventHandler.deselect();
+    }
 }

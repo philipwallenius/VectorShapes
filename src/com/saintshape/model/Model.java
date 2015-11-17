@@ -1,8 +1,15 @@
 package com.saintshape.model;
 
+import com.saintshape.model.util.HistoryUtil;
+import com.saintshape.model.shape.Ellipse;
+import com.saintshape.model.shape.Line;
+import com.saintshape.model.shape.Rectangle;
 import com.saintshape.observer.ModelObserver;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
@@ -21,6 +28,7 @@ public class Model {
     private List<Node> nodes;
     private boolean hasUnsavedChanges;
     private List<ModelObserver> observers;
+    private HistoryUtil historyUtil;
 
     /**
      * Constructor
@@ -28,13 +36,16 @@ public class Model {
     public Model() {
         hasUnsavedChanges = true;
         rootCanvas = new Canvas();
-        nodes = new ArrayList<Node>();
-        observers = new ArrayList<ModelObserver>();
+        nodes = new ArrayList<>();
+        observers = new ArrayList<>();
+        historyUtil = HistoryUtil.getInstance();
+        historyUtil.setModel(this);
     }
 
     public void reset() {
         name = "";
         nodes.clear();
+        historyUtil.resetHistory();
     }
 
     public String getName() {
@@ -95,13 +106,45 @@ public class Model {
     }
 
     public void addNode(Node node) {
+        addColorChangeListener(node);
         nodes.add(node);
         notifyObservers();
+    }
+
+    private void addColorChangeListener(Node node) {
+        // Add history point if color of shape is changed
+        if(node instanceof Shape) {
+            Shape s = (Shape)node;
+            s.fillProperty().addListener((observable, oldValue, newValue) -> {
+                HistoryUtil.getInstance().addHistoryPoint();
+            });
+            s.strokeProperty().addListener((observable, oldValue, newValue) -> {
+                HistoryUtil.getInstance().addHistoryPoint();
+            });
+        }
     }
 
     public void removeNode(Node node) {
         nodes.remove(node);
         notifyObservers();
+    }
+
+    public List<Node> cloneNodes() {
+        return cloneNodes(nodes);
+    }
+
+    public List<Node> cloneNodes(List<Node> nodesToClone) {
+        List<Node> result = new ArrayList<>(nodesToClone.size());
+        for(Node node : nodesToClone) {
+            if(node instanceof Rectangle) {
+                result.add(((Rectangle) node).clone());
+            } else if(node instanceof Ellipse) {
+                result.add(((Ellipse) node).clone());
+            } else if(node instanceof Line) {
+                result.add(((Line) node).clone());
+            }
+        }
+        return result;
     }
 
 }

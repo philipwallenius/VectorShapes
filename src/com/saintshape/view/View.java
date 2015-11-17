@@ -3,9 +3,8 @@ package com.saintshape.view;
 import com.saintshape.controller.Controller;
 import com.saintshape.model.Model;
 import com.saintshape.observer.ModelObserver;
-import com.saintshape.view.event.EllipseEventHandler;
 import com.saintshape.view.event.MouseEventHandler;
-import com.saintshape.view.event.RectangleEventHandler;
+import com.saintshape.view.event.Selection;
 import com.saintshape.view.menu.StatusBar;
 import com.saintshape.view.menu.side.SideMenu;
 import com.saintshape.view.menu.side.Tool;
@@ -19,8 +18,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 
 /**
@@ -194,7 +191,11 @@ public class View implements ModelObserver {
         sideMenu.selectNodeInList(node);
     }
 
-    public void setZoom() {
+    public MouseEventHandler getMouseEventHandler() {
+        return mouseEventHandler;
+    }
 
+    public void deselect() {
+        mouseEventHandler.deselect();
     }
 }

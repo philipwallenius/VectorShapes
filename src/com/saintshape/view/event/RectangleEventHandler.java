@@ -1,6 +1,7 @@
 package com.saintshape.view.event;
 
 import com.saintshape.controller.Controller;
+import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
 import com.saintshape.view.menu.side.Tool;
 import javafx.scene.input.MouseEvent;
@@ -38,7 +39,7 @@ public class RectangleEventHandler implements ToolEventHandler {
         if(selected == null) {
             if(view.getSelectedTool() == Tool.RECTANGLE) {
                 // create a new rectangle, set its color and register it to event handler
-                selected = new Rectangle(event.getX(), event.getY(), 0, 0);
+                selected = new com.saintshape.model.shape.Rectangle(event.getX(), event.getY(), 0, 0);
                 selected.setFill(view.getSelectedColor());
                 mouseEventHandler.register(selected);
                 controller.addNode(selected);
@@ -49,7 +50,7 @@ public class RectangleEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMouseRelease(MouseEvent event) {
-        // deselect the shape when mouse released
+        HistoryUtil.getInstance().addHistoryPoint();
         view.selectNode(selected);
         selected = null;
     };

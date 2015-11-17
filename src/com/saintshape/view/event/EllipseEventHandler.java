@@ -1,6 +1,7 @@
 package com.saintshape.view.event;
 
 import com.saintshape.controller.Controller;
+import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
 import com.saintshape.view.menu.side.Tool;
 import javafx.scene.input.MouseEvent;
@@ -37,7 +38,7 @@ public class EllipseEventHandler implements ToolEventHandler {
         // create a new shape if not already done
         if (ellipse == null) {
             if (view.getSelectedTool() == Tool.ELLIPSE) {
-                ellipse = new Ellipse(event.getX(), event.getY(), 0, 0);
+                ellipse = new com.saintshape.model.shape.Ellipse(event.getX(), event.getY(), 0, 0);
                 ellipse.setFill(view.getSelectedColor());
                 mouseEventHandler.register(ellipse);
                 controller.addNode(ellipse);
@@ -47,7 +48,7 @@ public class EllipseEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMouseRelease(MouseEvent event) {
-            // deselect when mouse press is released
+            HistoryUtil.getInstance().addHistoryPoint();
             view.selectNode(ellipse);
             ellipse = null;
         }
