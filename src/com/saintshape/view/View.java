@@ -2,6 +2,7 @@ package com.saintshape.view;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.model.Model;
+import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.observer.ModelObserver;
 import com.saintshape.view.event.MouseEventHandler;
 import com.saintshape.view.event.Selection;
@@ -21,6 +22,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 
 /**
@@ -100,6 +102,15 @@ public class View implements ModelObserver {
             public void handle(KeyEvent ke) {
                 if (ke.getCode() == KeyCode.ESCAPE) {
                     mouseEventHandler.deselect();
+                }
+                if (ke.getCode() == KeyCode.DELETE || ke.getCode() == KeyCode.BACK_SPACE) {
+                    Selection selection = getMouseEventHandler().getSelection();
+                    if(selection != null) {
+                        Node node = selection.getShape();
+                        mouseEventHandler.deselect();
+                        model.removeNode(node);
+                        HistoryUtil.getInstance().addHistoryPoint();
+                    }
                 }
             }
         });

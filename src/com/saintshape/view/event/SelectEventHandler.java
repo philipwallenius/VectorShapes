@@ -193,4 +193,8 @@ public class SelectEventHandler implements ToolEventHandler {
         selection = null;
         view.getSelectionGroup().getChildren().clear();
     }
+
+    public Selection getSelection() {
+        return selection;
+    }
 }
