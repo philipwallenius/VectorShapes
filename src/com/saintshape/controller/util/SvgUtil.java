@@ -110,6 +110,7 @@ public class SvgUtil {
         rootElement.setAttribute("viewbox", "0 0 " + String.valueOf(width) + " " + String.valueOf(height));
         rootElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
         rootElement.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
+        rootElement.setAttribute("version", "1.1");
         document.appendChild(rootElement);
 
         // convert all shapes into SVG elements
@@ -141,7 +142,6 @@ public class SvgUtil {
 
         // create XML element and set attributes
         Element result = document.createElement("image");
-        result.setAttribute("version", "1.1");
         result.setAttribute("width", String.valueOf(imageView.getFitWidth()));
         result.setAttribute("height", String.valueOf(imageView.getFitHeight()));
         result.setAttribute("x", String.valueOf(imageView.getX()));
@@ -160,21 +160,14 @@ public class SvgUtil {
         String base64Encoded = new String(Base64.getEncoder().encode(res));
 
         // set base64 data as an attribute in the SVG image element
-        result.setAttribute("xlink:href", "data:image/png;base64,"+base64Encoded);
+        result.setAttribute("xlink:href", "data:image/png;base64," + base64Encoded);
 
         // apply rotation transforms, if any
-        double totalRotation = 0;
-        for(Transform transform : imageView.getTransforms()) {
-            if(transform instanceof Rotate) {
-                // combine all rotate transforms into one
-                Rotate rotate = (Rotate)transform;
-                totalRotation += rotate.getAngle();
-            }
+        String rotateTransformation = convertRotations(imageView, (imageView.getX() + (imageView.getFitWidth() / 2)), (imageView.getY() + (imageView.getFitHeight() / 2)));
+        if(rotateTransformation != null) {
+            result.setAttribute("transform", rotateTransformation);
         }
-        if(totalRotation > 0) {
-            String transformString = "rotate(" + totalRotation + " " + (imageView.getX() + (imageView.getFitWidth() / 2)) + " " + (imageView.getY() + (imageView.getFitHeight() / 2)) + ")";
-            result.setAttribute("transform", transformString);
-        }
+
         return result;
     }
 
@@ -201,18 +194,11 @@ public class SvgUtil {
         result.setAttribute("style", fillString);
 
         // apply rotation, if any
-        double totalRotation = 0;
-        for(Transform transform : line.getTransforms()) {
-            if(transform instanceof Rotate) {
-                // combine rotate transforms into one
-                Rotate rotate = (Rotate)transform;
-                totalRotation += rotate.getAngle();
-            }
+        String rotateTransformation = convertRotations(line, (line.getStartX()+((line.getEndX() - line.getStartX())/2)), (line.getStartY()+((line.getEndY()-line.getStartY())/2)));
+        if(rotateTransformation != null) {
+            result.setAttribute("transform", rotateTransformation);
         }
-        if(totalRotation > 0) {
-            String transformString = "rotate(" + totalRotation + " " + (line.getStartX()+((line.getEndX() - line.getStartX())/2)) + " " + (line.getStartY()+((line.getEndY()-line.getStartY())/2)) + ")";
-            result.setAttribute("transform", transformString);
-        }
+
         return result;
     }
 
@@ -238,17 +224,9 @@ public class SvgUtil {
         result.setAttribute("style", fillString);
 
         // apply rotation, if any
-        double totalRotation = 0;
-        for(Transform transform : ellipse.getTransforms()) {
-            if(transform instanceof Rotate) {
-                // combine rotate transforms
-                Rotate rotate = (Rotate)transform;
-                totalRotation += rotate.getAngle();
-            }
-        }
-        if(totalRotation > 0) {
-            String transformString = "rotate(" + totalRotation + " " + ellipse.getCenterX() + " " + ellipse.getCenterY() + ")";
-            result.setAttribute("transform", transformString);
+        String rotateTransformation = convertRotations(ellipse, ellipse.getCenterX(), ellipse.getCenterY());
+        if(rotateTransformation != null) {
+            result.setAttribute("transform", rotateTransformation);
         }
 
         return result;
@@ -276,39 +254,39 @@ public class SvgUtil {
         result.setAttribute("style", fillString);
 
         // apply rotation and shear
-        double totalRotation = 0;
+        String transformString = "";
+
+        // get rotate transforms
+        String rotateTransformation = convertRotations(parallelogram, (parallelogram.getX() + (parallelogram.getWidth() / 2)), (parallelogram.getY() + (parallelogram.getHeight() / 2)));
+        if(rotateTransformation != null) {
+            transformString += rotateTransformation;
+        }
+
+        // combine shear transforms
         double totalShearX = 0;
         for(Transform transform : parallelogram.getTransforms()) {
-
-            // combine rotate transforms
-            if(transform instanceof Rotate) {
-                Rotate rotate = (Rotate)transform;
-                totalRotation += rotate.getAngle();
-            }
-
-            // combine shear transforms
             if(transform instanceof Shear) {
                 Shear shear = (Shear)transform;
                 totalShearX += shear.getX();
             }
         }
-        String transformString = "";
-        if(totalRotation > 0) {
-            String rotateTransformString = "rotate(" + totalRotation + " " + (parallelogram.getX() + (parallelogram.getWidth() / 2)) + " " + (parallelogram.getY() + (parallelogram.getHeight() / 2)) + ")";
-            transformString += rotateTransformString;
-        }
+
+        // add shear transforms
         if(totalShearX != 0) {
             if(!transformString.equals("")) {
                 transformString += " ";
             }
             // svg skewX must be in degrees so convert it
             double angles = (totalShearX/8)*360;
-            String shearTransformString = "skewX("+angles+")";
-            transformString += shearTransformString;
+            String shearTransformation = "skewX("+angles+")";
+            transformString += shearTransformation;
         }
+
         if(!transformString.equals("")) {
             result.setAttribute("transform", transformString);
         }
+
+
         return result;
     }
 
@@ -333,18 +311,33 @@ public class SvgUtil {
         String fillString = "fill:rgb("+(int)(color.getRed()*255)+","+(int)(color.getGreen()*255)+","+(int)(color.getBlue()*255)+");fill-opacity:"+opacity;
         result.setAttribute("style", fillString);
 
-        // apply rotation, if any
+        String transformations = convertRotations(rectangle, (rectangle.getX() + (rectangle.getWidth() / 2)), (rectangle.getY() + (rectangle.getHeight() / 2)));
+
+        if(transformations != null) {
+            result.setAttribute("transform", transformations);
+        }
+
+        return result;
+    }
+
+    /**
+     * Converts node rotations to SVG rotation String
+     * @param node to convert rotations for
+     * @param pivotX of node rotation
+     * @param pivotY of node rotation
+     * @return Returns SVG string with rotation
+     */
+    private String convertRotations(Node node, double pivotX, double pivotY) {
+        String result = null;
         double totalRotation = 0;
-        for(Transform transform : rectangle.getTransforms()) {
+        for(Transform transform : node.getTransforms()) {
             if(transform instanceof Rotate) {
-                // combine rotate transforms
                 Rotate rotate = (Rotate)transform;
                 totalRotation += rotate.getAngle();
             }
         }
         if(totalRotation > 0) {
-            String transformString = "rotate(" + totalRotation + " " + (rectangle.getX() + (rectangle.getWidth() / 2)) + " " + (rectangle.getY() + (rectangle.getHeight() / 2)) + ")";
-            result.setAttribute("transform", transformString);
+            result = "rotate(" + totalRotation + " " + pivotX + " " + pivotY + ")";
         }
         return result;
     }
@@ -365,6 +358,7 @@ public class SvgUtil {
         Document doc = documentBuilder.parse(file);
 
         doc.getDocumentElement().normalize();
+
         Element root = doc.getDocumentElement();
 
         // Set model width and height from SVG file
@@ -641,6 +635,8 @@ public class SvgUtil {
             String[] parts = rotateString.split(" ");
             rotateAngle = Double.valueOf(parts[0]);
             rotate = new Rotate(rotateAngle);
+            rotate.setPivotX(Double.parseDouble(parts[1]));
+            rotate.setPivotY(Double.parseDouble(parts[2]));
         }
 
         return rotate;
