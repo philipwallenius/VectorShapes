@@ -1,24 +1,19 @@
 package com.saintshape.model;
 
-import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.model.shape.Ellipse;
 import com.saintshape.model.shape.Line;
 import com.saintshape.model.shape.Rectangle;
+import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.observer.ModelObserver;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

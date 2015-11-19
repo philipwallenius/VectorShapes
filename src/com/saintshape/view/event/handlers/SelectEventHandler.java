@@ -17,7 +17,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 /**
  *
@@ -127,7 +130,11 @@ public class SelectEventHandler implements ToolEventHandler {
 
     @Override
     public void handleMouseMove(MouseEvent event) {
-        view.changeCursor(Cursor.OPEN_HAND);
+        if(event.getSource() instanceof Shape || event.getSource() instanceof ImageView) {
+            view.changeCursor(Cursor.OPEN_HAND);
+        } else {
+            view.changeCursor(Cursor.DEFAULT);
+        }
     }
 
     @Override

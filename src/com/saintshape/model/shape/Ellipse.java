@@ -1,9 +1,5 @@
 package com.saintshape.model.shape;
 
-import javafx.scene.transform.Transform;
-
-import java.util.List;
-
 /**
  *
  * Ellipse class that makes Ellipses cloneable

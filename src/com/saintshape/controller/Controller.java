@@ -1,8 +1,9 @@
 package com.saintshape.controller;
 
-import com.saintshape.controller.util.SvgUtil;
-import com.saintshape.model.util.HistoryUtil;
+import com.saintshape.controller.util.OpenSaveInterface;
+import com.saintshape.controller.util.svg.SvgUtil;
 import com.saintshape.model.Model;
+import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -10,7 +11,6 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -31,7 +31,7 @@ public class Controller {
     private View view;
     private Stage primaryStage;
     private HistoryUtil historyUtil;
-    private SvgUtil svgUtil = SvgUtil.getInstance();
+    private OpenSaveInterface openSaveUtil = SvgUtil.getInstance();
 
     public Controller(Model model, Stage primaryStage) {
         this.model = model;
@@ -174,11 +174,12 @@ public class Controller {
             }
         }
 
-        // export model to SVG file
-        svgUtil.exportSvg(file, model.getRootCanvas().getWidth(), model.getRootCanvas().getHeight(), model.getNodes());
+        model.setFile(file);
+
+        // export model
+        openSaveUtil.exportFile(model);
 
         // update model file and name
-        model.setFile(file);
         model.setName(file.getName().substring(0, file.getName().lastIndexOf(".")));
         model.setHasUnsavedChanges(false);
         return true;
@@ -200,7 +201,7 @@ public class Controller {
         }
 
         // import new model from SVG file
-        Model importedModel = svgUtil.importSvg(file);
+        Model importedModel = openSaveUtil.importFile(file);
 
         // reset current model
         model.reset();

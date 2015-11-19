@@ -1,12 +1,10 @@
 package com.saintshape.view.dialog;
 
 import com.saintshape.controller.Controller;
-import com.saintshape.main.Saintshape;
 import com.saintshape.view.View;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,8 +20,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
-import java.awt.event.KeyEvent;
 
 /**
  *

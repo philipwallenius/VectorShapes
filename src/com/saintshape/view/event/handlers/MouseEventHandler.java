@@ -2,8 +2,8 @@ package com.saintshape.view.event.handlers;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.view.View;
-import com.saintshape.view.event.handlers.entity.Selection;
 import com.saintshape.view.event.factory.EventHandlerFactory;
+import com.saintshape.view.event.handlers.entity.Selection;
 import com.saintshape.view.menu.side.Tool;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
