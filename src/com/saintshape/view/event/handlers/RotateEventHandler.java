@@ -89,7 +89,7 @@ public class RotateEventHandler {
                         double angles = angleFromDeltas(deltaX, deltaY);
 
                         // apply rotation transform diff since last rotation
-                        Rotate rotationTransform = new Rotate(angles- previouslyRotated, rectangle.getX()+(rectangle.getWidth()/2), rectangle.getY()+(rectangle.getHeight()/2));
+                        Rotate rotationTransform = new Rotate(angles - previouslyRotated, rectangle.getX()+(rectangle.getWidth()/2), rectangle.getY()+(rectangle.getHeight()/2));
                         rectangle.getTransforms().add(rotationTransform);
                         rectangle.getShape().getTransforms().add(rotationTransform);
                         for(Point p : rectangle.getResizePoints()) {

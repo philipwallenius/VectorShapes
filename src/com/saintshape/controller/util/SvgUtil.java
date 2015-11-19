@@ -33,6 +33,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -163,7 +164,7 @@ public class SvgUtil {
         result.setAttribute("xlink:href", "data:image/png;base64," + base64Encoded);
 
         // apply rotation transforms, if any
-        String rotateTransformation = convertRotations(imageView, (imageView.getX() + (imageView.getFitWidth() / 2)), (imageView.getY() + (imageView.getFitHeight() / 2)));
+        String rotateTransformation = convertRotations(imageView);
         if(rotateTransformation != null) {
             result.setAttribute("transform", rotateTransformation);
         }
@@ -194,7 +195,7 @@ public class SvgUtil {
         result.setAttribute("style", fillString);
 
         // apply rotation, if any
-        String rotateTransformation = convertRotations(line, (line.getStartX()+((line.getEndX() - line.getStartX())/2)), (line.getStartY()+((line.getEndY()-line.getStartY())/2)));
+        String rotateTransformation = convertRotations(line);
         if(rotateTransformation != null) {
             result.setAttribute("transform", rotateTransformation);
         }
@@ -224,7 +225,7 @@ public class SvgUtil {
         result.setAttribute("style", fillString);
 
         // apply rotation, if any
-        String rotateTransformation = convertRotations(ellipse, ellipse.getCenterX(), ellipse.getCenterY());
+        String rotateTransformation = convertRotations(ellipse);
         if(rotateTransformation != null) {
             result.setAttribute("transform", rotateTransformation);
         }
@@ -257,7 +258,7 @@ public class SvgUtil {
         String transformString = "";
 
         // get rotate transforms
-        String rotateTransformation = convertRotations(parallelogram, (parallelogram.getX() + (parallelogram.getWidth() / 2)), (parallelogram.getY() + (parallelogram.getHeight() / 2)));
+        String rotateTransformation = convertRotations(parallelogram);
         if(rotateTransformation != null) {
             transformString += rotateTransformation;
         }
@@ -311,7 +312,7 @@ public class SvgUtil {
         String fillString = "fill:rgb("+(int)(color.getRed()*255)+","+(int)(color.getGreen()*255)+","+(int)(color.getBlue()*255)+");fill-opacity:"+opacity;
         result.setAttribute("style", fillString);
 
-        String transformations = convertRotations(rectangle, (rectangle.getX() + (rectangle.getWidth() / 2)), (rectangle.getY() + (rectangle.getHeight() / 2)));
+        String transformations = convertRotations(rectangle);
 
         if(transformations != null) {
             result.setAttribute("transform", transformations);
@@ -323,22 +324,23 @@ public class SvgUtil {
     /**
      * Converts node rotations to SVG rotation String
      * @param node to convert rotations for
-     * @param pivotX of node rotation
-     * @param pivotY of node rotation
      * @return Returns SVG string with rotation
      */
-    private String convertRotations(Node node, double pivotX, double pivotY) {
-        String result = null;
-        double totalRotation = 0;
+    private String convertRotations(Node node) {
+        String result = "";
         for(Transform transform : node.getTransforms()) {
             if(transform instanceof Rotate) {
                 Rotate rotate = (Rotate)transform;
-                totalRotation += rotate.getAngle();
+                result += "rotate(" + rotate.getAngle() + " " + rotate.getPivotX() + " " + rotate.getPivotY() + "),";
             }
         }
-        if(totalRotation > 0) {
-            result = "rotate(" + totalRotation + " " + pivotX + " " + pivotY + ")";
+
+        if(!result.equals("")) {
+            if(result.endsWith(",")) {
+                result = result.substring(0, result.lastIndexOf(","));
+            }
         }
+
         return result;
     }
 
@@ -424,9 +426,9 @@ public class SvgUtil {
                         // apply rotation transforms, if any
                         if(transform != null && !transform.equals("") && transform.contains("rotate")) {
 
-                            Rotate rotate = getRotate(transform);
-                            if(rotate != null) {
-                                shape.getTransforms().add(rotate);
+                            List<Rotate> rotates = getRotate(transform);
+                            if(rotates.size() > 0) {
+                                shape.getTransforms().addAll(rotates);
                             }
 
                         }
@@ -454,9 +456,9 @@ public class SvgUtil {
 
                         // apply rotation, if any
                         if(transform != null && !transform.equals("") && transform.contains("rotate")) {
-                            Rotate rotate = getRotate(transform);
-                            if(rotate != null) {
-                                shape.getTransforms().add(rotate);
+                            List<Rotate> rotates = getRotate(transform);
+                            if(rotates.size() > 0) {
+                                shape.getTransforms().addAll(rotates);
                             }
                         }
 
@@ -483,9 +485,9 @@ public class SvgUtil {
 
                         // apply rotation, if any
                         if(transform != null && !transform.equals("") && transform.contains("rotate")) {
-                            Rotate rotate = getRotate(transform);
-                            if(rotate != null) {
-                                shape.getTransforms().add(rotate);
+                            List<Rotate> rotates = getRotate(transform);
+                            if(rotates.size() > 0) {
+                                shape.getTransforms().addAll(rotates);
                             }
                         }
 
@@ -521,9 +523,9 @@ public class SvgUtil {
 
                         // add rotation transforms, if any
                         if(transform != null && !transform.equals("") && transform.contains("rotate")) {
-                            Rotate rotate = getRotate(transform);
-                            if(rotate != null) {
-                                imageView.getTransforms().add(rotate);
+                            List<Rotate> rotates = getRotate(transform);
+                            if(rotates.size() > 0) {
+                                imageView.getTransforms().addAll(rotates);
                             }
                         }
 
@@ -621,25 +623,27 @@ public class SvgUtil {
      * @param transformString to extract Rotation from
      * @return Rotation object
      */
-    private Rotate getRotate(String transformString) {
-        Rotate rotate = null;
-        double rotateAngle = 0;
-        String rotateString = "";
+    private List<Rotate> getRotate(String transformString) {
+        List<Rotate> result = new ArrayList<>();
 
-        // extract using regex
-        Pattern pattern = Pattern.compile(".*rotate[(]([^)]*).*");
-
+        // matches for example: rotate(1.3453 245.0 236.0)
+        Pattern pattern = Pattern.compile("rotate[(]([^)]*)[)]");
         Matcher matcher = pattern.matcher(transformString);
-        if(matcher.matches()) {
-            rotateString = matcher.group(1);
-            String[] parts = rotateString.split(" ");
-            rotateAngle = Double.valueOf(parts[0]);
-            rotate = new Rotate(rotateAngle);
+        while(matcher.find()) {
+            Rotate rotate = new Rotate();
+            String match = matcher.group();
+            match = match.replace("rotate(", "").replace(")", "");
+
+            // split on space
+            String[] parts = match.split(" ");
+            rotate.setAngle(Double.parseDouble(parts[0]));
             rotate.setPivotX(Double.parseDouble(parts[1]));
             rotate.setPivotY(Double.parseDouble(parts[2]));
+
+            result.add(rotate);
         }
 
-        return rotate;
+        return result;
     }
 
     /**
