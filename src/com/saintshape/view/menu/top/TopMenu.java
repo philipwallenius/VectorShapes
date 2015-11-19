@@ -98,17 +98,15 @@ public class TopMenu extends MenuBar {
         menuFileItemSaveAs.setOnAction(event -> view.saveAsDialog());
 
         menuFileItemNew.setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.CONTROL_DOWN));
+        menuFileItemOpen.setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN));
         menuFileItemSave.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN));
         menuFileItemSaveAs.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN));
         menuFileItemQuit.setAccelerator(new KeyCodeCombination(KeyCode.Q, KeyCombination.CONTROL_DOWN));
 
-
-
         // Edit menu
         menuEditUndo.setOnAction(event -> controller.undo());
         menuEditRedo.setOnAction(event -> controller.redo());
-        menuEditUndo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.META_DOWN));
-        menuEditUndo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.META_DOWN));
+        menuEditUndo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN));
         menuEditRedo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN));
 
         menuEditImportImage.setOnAction(event -> view.showImportImageDialog());

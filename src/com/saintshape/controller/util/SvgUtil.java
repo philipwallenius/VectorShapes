@@ -250,6 +250,7 @@ public class SvgUtil {
             String transformString = "rotate(" + totalRotation + " " + ellipse.getCenterX() + " " + ellipse.getCenterY() + ")";
             result.setAttribute("transform", transformString);
         }
+
         return result;
     }
 

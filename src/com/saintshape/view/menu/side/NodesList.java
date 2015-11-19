@@ -49,6 +49,9 @@ public class NodesList extends TitledPane implements ModelObserver {
         initialize();
     }
 
+    /**
+     * Initializes nodes list
+     */
     private void initialize() {
         nodeList = new ArrayList<>();
         listView = new ListView<>();
@@ -83,6 +86,7 @@ public class NodesList extends TitledPane implements ModelObserver {
             }
         });
 
+        // deselect if esc or enter pressed
         listView.setOnKeyPressed(ke -> {
             if (ke.getCode() == KeyCode.ESCAPE || ke.getCode() == KeyCode.ENTER) {
                 view.getMouseEventHandler().deselect();
@@ -124,6 +128,9 @@ public class NodesList extends TitledPane implements ModelObserver {
         setContent(vbox);
     }
 
+    /**
+     * This class listens to changes in the model and updates the list of objects
+     */
     @Override
     public void update() {}
 
@@ -145,6 +152,10 @@ public class NodesList extends TitledPane implements ModelObserver {
         }
     }
 
+    /**
+     * Selects a node in the list
+     * @param node to select in list
+     */
     public void selectNodeInList(Node node) {
         ObservableList<NodeItem> list = listView.getItems();
         Iterator it = list.iterator();
