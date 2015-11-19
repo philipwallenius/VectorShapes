@@ -108,6 +108,7 @@ public class TopMenu extends MenuBar {
         menuEditUndo.setOnAction(event -> controller.undo());
         menuEditRedo.setOnAction(event -> controller.redo());
         menuEditUndo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.META_DOWN));
+        menuEditUndo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.META_DOWN));
         menuEditRedo.setAccelerator(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN));
 
         menuEditImportImage.setOnAction(event -> view.showImportImageDialog());

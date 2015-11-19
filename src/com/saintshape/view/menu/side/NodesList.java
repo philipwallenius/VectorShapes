@@ -77,21 +77,16 @@ public class NodesList extends TitledPane implements ModelObserver {
         });
 
         // focus on shape if clicked on in the list
-        listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<NodeItem>() {
-            @Override
-            public void changed(ObservableValue<? extends NodeItem> observable, NodeItem oldValue, NodeItem newValue) {
-                if (newValue != null) {
-                    view.selectNode(newValue.getNode());
-                }
+        listView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                view.selectNode(newValue.getNode());
             }
         });
 
-        listView.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            public void handle(KeyEvent ke) {
-                if (ke.getCode() == KeyCode.ESCAPE) {
-                    view.getMouseEventHandler().deselect();
-                    listView.getSelectionModel().clearSelection();
-                }
+        listView.setOnKeyPressed(ke -> {
+            if (ke.getCode() == KeyCode.ESCAPE || ke.getCode() == KeyCode.ENTER) {
+                view.getMouseEventHandler().deselect();
+                listView.getSelectionModel().clearSelection();
             }
         });
 

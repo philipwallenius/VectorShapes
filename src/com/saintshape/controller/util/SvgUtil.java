@@ -107,6 +107,7 @@ public class SvgUtil {
         Element rootElement = document.createElement("svg");
         rootElement.setAttribute("width", String.valueOf(width));
         rootElement.setAttribute("height", String.valueOf(height));
+        rootElement.setAttribute("viewbox", "0 0 " + String.valueOf(width) + " " + String.valueOf(height));
         rootElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
         rootElement.setAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
         document.appendChild(rootElement);
@@ -140,10 +141,12 @@ public class SvgUtil {
 
         // create XML element and set attributes
         Element result = document.createElement("image");
+        result.setAttribute("version", "1.1");
         result.setAttribute("width", String.valueOf(imageView.getFitWidth()));
         result.setAttribute("height", String.valueOf(imageView.getFitHeight()));
         result.setAttribute("x", String.valueOf(imageView.getX()));
         result.setAttribute("y", String.valueOf(imageView.getY()));
+        result.setAttribute("preserveAspectRatio", "none");
 
         // convert the imageView image into a base64 representation
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageView.getImage(), null);
@@ -545,7 +548,7 @@ public class SvgUtil {
                         break;
                     }
                     default : {
-                        throw new RuntimeException(String.format("Unsupported SVG element: %s", nodeName));
+                        System.out.println(String.format("Unsupported SVG element: %s", nodeName));
                     }
                 }
             }

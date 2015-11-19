@@ -332,11 +332,12 @@ public class View implements ModelObserver {
         fileChooser.setTitle("Import Image");
 
         // filter file types
-        FileChooser.ExtensionFilter extFilterAll = new FileChooser.ExtensionFilter("*", "*.JPG", "*.JPEG", "*.PNG");
-        FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.JPG");
-        FileChooser.ExtensionFilter extFilterJPEG = new FileChooser.ExtensionFilter("JPEG files (*.jpeg)", "*.JPEG");
-        FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.PNG");
-        fileChooser.getExtensionFilters().addAll(extFilterAll, extFilterJPG, extFilterJPEG, extFilterPNG);
+        FileChooser.ExtensionFilter extFilterAll = new FileChooser.ExtensionFilter("*", "*.JPG", "*.JPEG", "*.PNG", "*.jpg", "*.jpeg", "*.png", "*.gif", "*.GIF");
+        FileChooser.ExtensionFilter extFilterJPG = new FileChooser.ExtensionFilter("JPG files (*.jpg)", "*.JPG", "*.jpg");
+        FileChooser.ExtensionFilter extFilterJPEG = new FileChooser.ExtensionFilter("JPEG files (*.jpeg)", "*.JPEG", "*.jpeg");
+        FileChooser.ExtensionFilter extFilterPNG = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.PNG", "*.png");
+        FileChooser.ExtensionFilter extFilterGIF = new FileChooser.ExtensionFilter("GIF files (*.gif)", "*.GIF", "*.gif");
+        fileChooser.getExtensionFilters().addAll(extFilterAll, extFilterJPG, extFilterJPEG, extFilterPNG, extFilterGIF);
 
         File file = fileChooser.showOpenDialog(controller.getPrimaryStage());
 
