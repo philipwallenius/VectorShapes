@@ -17,13 +17,11 @@ import javafx.scene.input.MouseEvent;
  */
 public class MouseEventHandler {
 
-    private View view;
-    private Controller controller;
-    private EventHandlerFactory eventHandlerFactory;
+    private final View view;
+    private final EventHandlerFactory eventHandlerFactory;
 
     public MouseEventHandler(View view, Controller controller) {
         this.view = view;
-        this.controller = controller;
         eventHandlerFactory = new EventHandlerFactory(view, controller, this);
     }
 
@@ -41,7 +39,7 @@ public class MouseEventHandler {
     /**
      * Handles for mouse press events
      */
-    public EventHandler<MouseEvent> mousePressEventHandler = new EventHandler<MouseEvent>() {
+    private final EventHandler<MouseEvent> mousePressEventHandler = new EventHandler<MouseEvent>() {
 
         @Override
         public void handle(MouseEvent event) {
@@ -53,7 +51,7 @@ public class MouseEventHandler {
     /**
      * Handles mouse release events
      */
-    public EventHandler<MouseEvent> mouseReleaseEventHandler = new EventHandler<MouseEvent>() {
+    private final EventHandler<MouseEvent> mouseReleaseEventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
             ToolEventHandler eventHandler = eventHandlerFactory.getEventHandler(view.getSelectedTool());
@@ -64,7 +62,7 @@ public class MouseEventHandler {
     /**
      * Handles mouse move events
      */
-    public EventHandler<MouseEvent> mouseMoveEventHandler = new EventHandler<MouseEvent>() {
+    private final EventHandler<MouseEvent> mouseMoveEventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
             ToolEventHandler eventHandler = eventHandlerFactory.getEventHandler(view.getSelectedTool());
@@ -75,7 +73,7 @@ public class MouseEventHandler {
     /**
      * Handles mouse drag events
      */
-    public EventHandler<MouseEvent> mouseDragEventHandler = new EventHandler<MouseEvent>() {
+    private final EventHandler<MouseEvent> mouseDragEventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
             ToolEventHandler eventHandler = eventHandlerFactory.getEventHandler(view.getSelectedTool());

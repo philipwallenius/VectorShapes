@@ -23,8 +23,8 @@ import java.io.File;
  */
 public class TopMenu extends MenuBar {
 
-    private View view;
-    private Controller controller;
+    private final View view;
+    private final Controller controller;
     private Menu menuFile, menuEdit;
     private MenuItem menuFileItemNew, menuFileItemOpen, menuFileItemSave, menuFileItemSaveAs, menuFileItemQuit;
     private MenuItem menuEditUndo, menuEditRedo, menuEditImportImage;

@@ -22,11 +22,11 @@ public class ParallelogramEventHandler implements ToolEventHandler {
         NOT_CREATED, CREATED
     }
 
-    private View view;
+    private final View view;
     private Rectangle parallelogram;
-    private Controller controller;
-    private MouseClick mouseClick;
-    private MouseEventHandler mouseEventHandler;
+    private final Controller controller;
+    private final MouseClick mouseClick;
+    private final MouseEventHandler mouseEventHandler;
     private State state;
     private double shearX, sceneX;
 
@@ -47,7 +47,7 @@ public class ParallelogramEventHandler implements ToolEventHandler {
 
         sceneX = event.getSceneX();
 
-        // if paralellogram isn't created yet, create it
+        // if parallelogram isn't created yet, create it
         if(parallelogram == null) {
             if(state == State.NOT_CREATED) {
                 if(view.getSelectedTool() == Tool.PARALLELOGRAM) {
@@ -61,7 +61,7 @@ public class ParallelogramEventHandler implements ToolEventHandler {
             }
         }
 
-    };
+    }
 
     @Override
     public void handleMouseRelease(MouseEvent event) {
@@ -85,7 +85,7 @@ public class ParallelogramEventHandler implements ToolEventHandler {
             state = State.NOT_CREATED;
         }
 
-    };
+    }
 
     @Override
     public void handleMouseMove(MouseEvent event) {

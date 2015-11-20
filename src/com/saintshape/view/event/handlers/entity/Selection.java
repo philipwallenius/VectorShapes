@@ -23,7 +23,7 @@ public class Selection extends Rectangle {
 
     private List<Point> resizePoints;
     private Point rotatePoint;
-    private Node shape;
+    private final Node shape;
     private Image rotateCursorImage;
 
     public Selection(Node shape) {
@@ -31,7 +31,7 @@ public class Selection extends Rectangle {
         initialize();
     }
 
-    public void initialize() {
+    void initialize() {
 
         resizePoints = new ArrayList<>();
 

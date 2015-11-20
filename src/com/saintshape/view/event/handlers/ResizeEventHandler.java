@@ -1,8 +1,6 @@
 package com.saintshape.view.event.handlers;
 
-import com.saintshape.controller.Controller;
 import com.saintshape.model.util.HistoryUtil;
-import com.saintshape.view.View;
 import com.saintshape.view.event.handlers.entity.MouseClick;
 import com.saintshape.view.event.handlers.entity.Point;
 import com.saintshape.view.event.handlers.entity.Selection;
@@ -17,24 +15,14 @@ import java.util.List;
  *
  * Created by 150019538 on 08/11/15.
  */
-public class ResizeEventHandler {
+class ResizeEventHandler {
 
-    private View view;
-    private Controller controller;
-
-    private MouseClick click = new MouseClick();
+    private final MouseClick click = new MouseClick();
     private double selectionWidth;
     private double selectionHeight;
     private double selectionX;
     private double selectionY;
-    private double clickDiffX;
-    private double clickDiffY;
     private boolean resized = false;
-
-    public ResizeEventHandler(View view, Controller controller) {
-        this.view = view;
-        this.controller = controller;
-    }
 
     public void register(List<Point> points) {
         for(Point point : points) {
@@ -44,7 +32,7 @@ public class ResizeEventHandler {
         }
     }
 
-    public EventHandler<MouseEvent> mousePressEventHandler = new EventHandler<MouseEvent>() {
+    private final EventHandler<MouseEvent> mousePressEventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
             resized = false;
@@ -56,25 +44,18 @@ public class ResizeEventHandler {
                 selectionHeight = point.getSelection().getHeight();
                 selectionX = point.getSelection().getX();
                 selectionY = point.getSelection().getY();
-
-                // take account for xy difference between Point circle and mouse click
-                clickDiffX = click.x-(point.getCenterX());
-                clickDiffY = click.y-(point.getCenterY());
             }
         }
     };
 
-    public EventHandler<MouseEvent> mouseReleaseEventHandler = new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent event) {
-            if(resized) {
-                HistoryUtil.getInstance().addHistoryPoint();
-            }
-            resized = false;
+    private final EventHandler<MouseEvent> mouseReleaseEventHandler = event -> {
+        if(resized) {
+            HistoryUtil.getInstance().addHistoryPoint();
         }
+        resized = false;
     };
 
-    public EventHandler<MouseEvent> mouseDragEventHandler = new EventHandler<MouseEvent>() {
+    private final EventHandler<MouseEvent> mouseDragEventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
             if(event.getSource() instanceof Point) {

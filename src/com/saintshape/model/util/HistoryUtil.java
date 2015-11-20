@@ -23,14 +23,14 @@ import java.util.List;
  */
 public class HistoryUtil {
 
-    private ObservableList<List<Node>> history;
+    private final ObservableList<List<Node>> history;
 
-    private IntegerProperty historyPointer;
+    private final IntegerProperty historyPointer;
     private Model model;
     private MouseEventHandler mouseEventHandler;
 
-    private BooleanProperty disableUndo;
-    private BooleanProperty disableRedo;
+    private final BooleanProperty disableUndo;
+    private final BooleanProperty disableRedo;
 
     private static HistoryUtil instance;
 
@@ -62,9 +62,7 @@ public class HistoryUtil {
      * Removes all history of the model
      */
     public void resetHistory() {
-        for(List<Node> h : history) {
-            h.clear();
-        }
+        history.forEach(List<Node>::clear);
         history.clear();
         historyPointer.setValue(-1);
         addHistoryPoint();
@@ -125,7 +123,7 @@ public class HistoryUtil {
 
     /**
      * Registers nodes from history for mouse events
-     * @param nodes
+     * @param nodes to register
      */
     private void register(List<Node> nodes) {
         for(Node node: nodes) {

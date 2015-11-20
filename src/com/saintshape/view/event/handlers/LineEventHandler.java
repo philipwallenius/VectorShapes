@@ -17,11 +17,11 @@ import javafx.scene.shape.Line;
  */
 public class LineEventHandler implements ToolEventHandler {
 
-    private View view;
+    private final View view;
     private Line line;
-    private Controller controller;
-    private MouseClick mouseClick;
-    private MouseEventHandler mouseEventHandler;
+    private final Controller controller;
+    private final MouseClick mouseClick;
+    private final MouseEventHandler mouseEventHandler;
 
     public LineEventHandler(View view, Controller controller, MouseEventHandler mouseEventHandler) {
         this.view = view;

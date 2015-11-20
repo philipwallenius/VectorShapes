@@ -1,6 +1,5 @@
 package com.saintshape.view.event.handlers;
 
-import com.saintshape.controller.Controller;
 import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.view.View;
 import com.saintshape.view.event.handlers.entity.MouseClick;
@@ -17,7 +16,6 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -30,24 +28,22 @@ import javafx.scene.shape.Shape;
  */
 public class SelectEventHandler implements ToolEventHandler {
 
-    private View view;
-    private Controller controller;
-    private MouseClick mouseClick;
-    private MouseEventHandler mouseEventHandler;
-    public Selection selection;
-    private ResizeEventHandler resizeEventHandler;
-    private RotateEventHandler rotateEventHandler;
+    private final View view;
+    private final MouseClick mouseClick;
+    private final MouseEventHandler mouseEventHandler;
+    private Selection selection;
+    private final ResizeEventHandler resizeEventHandler;
+    private final RotateEventHandler rotateEventHandler;
     private boolean moved = false;
 
-    private double selectedOriginalX, selectedOriginalY, clickDiffX, clickDiffY;
+    private double selectedOriginalX, selectedOriginalY;
 
-    public SelectEventHandler(View view, Controller controller, MouseEventHandler mouseEventHandler) {
+    public SelectEventHandler(View view, MouseEventHandler mouseEventHandler) {
         this.view = view;
-        this.controller = controller;
         this.mouseEventHandler = mouseEventHandler;
         mouseClick = new MouseClick();
-        resizeEventHandler = new ResizeEventHandler(view, controller);
-        rotateEventHandler = new RotateEventHandler(view, controller);
+        resizeEventHandler = new ResizeEventHandler();
+        rotateEventHandler = new RotateEventHandler();
         subscribeToColorPicker();
         subscribeToTools();
     }
@@ -64,25 +60,6 @@ public class SelectEventHandler implements ToolEventHandler {
         // change cursor
         if(source instanceof Shape || source instanceof ImageView) {
             source.setCursor(Cursor.CLOSED_HAND);
-        }
-
-        // get the offset between click xy and shape xy
-        if(source instanceof Rectangle) {
-            Rectangle rectangle = (Rectangle)source;
-            clickDiffX = mouseClick.x-(rectangle.getX());
-            clickDiffY = mouseClick.y-(rectangle.getY());
-        } else if(source instanceof Ellipse) {
-            Ellipse ellipse = (Ellipse)source;
-            clickDiffX = mouseClick.x-(ellipse.getCenterX()-ellipse.getRadiusX());
-            clickDiffY = mouseClick.y-(ellipse.getCenterY()-ellipse.getRadiusY());
-        } else if(source instanceof Line) {
-            Line line = (Line)source;
-            clickDiffX = mouseClick.x-(Math.min(line.getStartX(), line.getEndX()));
-            clickDiffY = mouseClick.y-(Math.min(line.getStartY(), line.getEndY()));
-        } else if(source instanceof ImageView) {
-            ImageView image = (ImageView)source;
-            clickDiffX = mouseClick.x-(image.getX());
-            clickDiffY = mouseClick.y-(image.getY());
         }
 
         // if shape clicked, select it
@@ -123,7 +100,7 @@ public class SelectEventHandler implements ToolEventHandler {
         }
     }
 
-    public void clearSelection() {
+    void clearSelection() {
         view.getSelectionGroup().getChildren().clear();
         selection = null;
     }
@@ -170,7 +147,7 @@ public class SelectEventHandler implements ToolEventHandler {
     }
 
     /**
-     * Listens to color changes in the colorpicker and changes color of shape if one is selected
+     * Listens to color changes in the color-picker and changes color of shape if one is selected
      */
     private void subscribeToColorPicker() {
         ColorPicker colorPicker = view.getColorPicker();
@@ -192,7 +169,7 @@ public class SelectEventHandler implements ToolEventHandler {
     /**
      * Listens to tool changes and deselects any selection if tool is moved
      */
-    public void subscribeToTools() {
+    void subscribeToTools() {
         ToggleGroup toggleGroup = view.getTools();
         toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             @Override

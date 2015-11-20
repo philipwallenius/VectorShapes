@@ -13,8 +13,8 @@ import java.io.File;
  */
 public class SvgUtil implements OpenSaveInterface {
 
-    private SvgExporter svgExporter;
-    private SvgImporter svgImporter;
+    private final SvgExporter svgExporter;
+    private final SvgImporter svgImporter;
     private static SvgUtil instance;
 
 

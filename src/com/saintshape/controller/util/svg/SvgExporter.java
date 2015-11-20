@@ -35,11 +35,11 @@ import java.util.List;
  *
  * Created by 150019538 on 19/11/15.
  */
-public class SvgExporter {
+class SvgExporter {
 
 
-    private DocumentBuilderFactory documentBuilderFactory;
-    private TransformerFactory transformerFactory;
+    private final DocumentBuilderFactory documentBuilderFactory;
+    private final TransformerFactory transformerFactory;
 
     public SvgExporter() {
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -273,7 +273,7 @@ public class SvgExporter {
      * @param document that SVG Rectangle will be part of
      * @return Returns a XML element with the SVG Rectangle
      */
-    public Element convertRectangle(Rectangle rectangle, Document document) {
+    Element convertRectangle(Rectangle rectangle, Document document) {
 
         // create XML element and set attributes
         Element result = document.createElement("rect");

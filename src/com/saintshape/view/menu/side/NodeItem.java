@@ -8,7 +8,7 @@ import javafx.scene.Node;
  *
  * Created by 150019538 on 11/4/2015.
  */
-public class NodeItem {
+class NodeItem {
 
     private String name;
     private Node node;

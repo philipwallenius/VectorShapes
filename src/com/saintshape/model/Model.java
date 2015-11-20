@@ -29,10 +29,10 @@ public class Model {
     private Canvas rootCanvas;
     private List<Node> nodes;
     private boolean hasUnsavedChanges;
-    private List<ModelObserver> observers;
-    private HistoryUtil historyUtil;
+    private final List<ModelObserver> observers;
+    private final HistoryUtil historyUtil;
     private File file;
-    private BooleanProperty fileProperty;
+    private final BooleanProperty fileProperty;
 
     /**
      * Constructor
@@ -125,7 +125,7 @@ public class Model {
 
     /**
      * Listen to color changes of nodes so that we can support undo and redo
-     * @param node
+     * @param node to listen for color changes
      */
     private void addColorChangeListener(Node node) {
         // Add history point if color of shape is changed

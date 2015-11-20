@@ -22,13 +22,12 @@ public class SideMenu extends VBox {
 
     private final static int SIDEMENU_WIDTH = 150;
     private TitledPane titledPaneTools;
-    private VBox otherTools;
     private TitledPane titledPaneNodes;
     private ColorPicker colorPicker;
     private ToggleGroup toggleGroup;
-    private Model model;
-    private View view;
-    private Controller controller;
+    private final Model model;
+    private final View view;
+    private final Controller controller;
 
     /**
      * Constructor that initializes the drawing tools and colorpicker
@@ -119,14 +118,12 @@ public class SideMenu extends VBox {
         buttonCircle.setMaxWidth(Double.MAX_VALUE);
 
 
-        otherTools = createOtherTools();
+        VBox otherTools = createOtherTools();
 
         VBox vbox = new VBox();
         vbox.getChildren().addAll(buttonSelect, buttonLine, buttonRectangle, buttonParallelogram, buttonCircle, otherTools);
 
-        TitledPane titledPane = new TitledPane("Tools", vbox);
-
-        return titledPane;
+        return new TitledPane("Tools", vbox);
 
     }
 

@@ -13,17 +13,17 @@ import com.saintshape.view.menu.side.Tool;
  */
 public class EventHandlerFactory {
 
-    private RectangleEventHandler rectangleEventHandler;
-    private ParallelogramEventHandler parallelogramEventHandler;
-    private EllipseEventHandler ellipseEventHandler;
-    private SelectEventHandler selectEventHandler;
-    private LineEventHandler lineEventHandler;
+    private final RectangleEventHandler rectangleEventHandler;
+    private final ParallelogramEventHandler parallelogramEventHandler;
+    private final EllipseEventHandler ellipseEventHandler;
+    private final SelectEventHandler selectEventHandler;
+    private final LineEventHandler lineEventHandler;
 
     public EventHandlerFactory(View view, Controller controller, MouseEventHandler mouseEventHandler) {
         rectangleEventHandler = new RectangleEventHandler(view, controller, mouseEventHandler);
         parallelogramEventHandler = new ParallelogramEventHandler(view, controller, mouseEventHandler);
         ellipseEventHandler = new EllipseEventHandler(view, controller, mouseEventHandler);
-        selectEventHandler = new SelectEventHandler(view, controller, mouseEventHandler);
+        selectEventHandler = new SelectEventHandler(view, mouseEventHandler);
         lineEventHandler = new LineEventHandler(view, controller, mouseEventHandler);
     }
 

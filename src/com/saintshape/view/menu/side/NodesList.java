@@ -30,12 +30,11 @@ import java.util.List;
  */
 public class NodesList extends TitledPane implements ModelObserver {
 
-    private List<NodeItem> nodeList;
     private ListView<NodeItem> listView;
     private ObservableList<NodeItem> myObservableList;
     private final int LIST_ITEM_HEIGHT = 25;
-    private View view;
-    private Controller controller;
+    private final View view;
+    private final Controller controller;
 
     public NodesList(View view, Model model, Controller controller) {
         super("Objects", new ListView<NodeItem>());
@@ -49,7 +48,7 @@ public class NodesList extends TitledPane implements ModelObserver {
      * Initializes nodes list
      */
     private void initialize() {
-        nodeList = new ArrayList<>();
+        List<NodeItem> nodeList = new ArrayList<>();
         listView = new ListView<>();
         myObservableList = FXCollections.observableList(nodeList);
         listView.setPrefHeight(LIST_ITEM_HEIGHT + 2);
@@ -59,7 +58,7 @@ public class NodesList extends TitledPane implements ModelObserver {
             @Override
             public ListCell<NodeItem> call(ListView<NodeItem> p) {
 
-                ListCell<NodeItem> cell = new ListCell<NodeItem>() {
+                return new ListCell<NodeItem>() {
 
                     @Override
                     protected void updateItem(NodeItem t, boolean bln) {
@@ -70,8 +69,6 @@ public class NodesList extends TitledPane implements ModelObserver {
                     }
 
                 };
-
-                return cell;
             }
         });
 
@@ -154,10 +151,8 @@ public class NodesList extends TitledPane implements ModelObserver {
      */
     public void selectNodeInList(Node node) {
         ObservableList<NodeItem> list = listView.getItems();
-        Iterator it = list.iterator();
-        while(it.hasNext()) {
-            NodeItem nodeItem = (NodeItem)it.next();
-            if(nodeItem.getNode() == node) {
+        for (NodeItem nodeItem : list) {
+            if (nodeItem.getNode() == node) {
                 listView.getSelectionModel().select(nodeItem);
                 break;
             }

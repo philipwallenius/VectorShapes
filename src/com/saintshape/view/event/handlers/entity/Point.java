@@ -13,7 +13,7 @@ import javafx.scene.shape.StrokeType;
  */
 public class Point extends Circle {
 
-    private Rectangle selection;
+    private final Rectangle selection;
 
     Point(Rectangle selection, String id, Color fill) {
         super(5);

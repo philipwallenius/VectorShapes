@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  *
  * Created by 150019538 on 19/11/15.
  */
-public class SvgImporter {
+class SvgImporter {
 
     /**
      * Imports and converts a SVG file into a Model object
@@ -69,168 +69,30 @@ public class SvgImporter {
                 Element element = (Element) node;
                 String nodeName = element.getNodeName();
 
-                Shape shape = null;
+                Shape shape;
 
                 // create shapes based on their SVG type
                 switch(nodeName) {
 
                     // this one creates Rectangles and Parallelograms
                     case "rect" : {
-
-                        // get dimensions
-                        double x = Double.valueOf(element.getAttribute("x"));
-                        double y = Double.valueOf(element.getAttribute("y"));
-                        double width = Double.valueOf(element.getAttribute("width"));
-                        double height = Double.valueOf(element.getAttribute("height"));
-
-                        // if it has skew transform attribute, it is a parallelogram
-                        String transform = element.getAttribute("transform");
-                        if(transform != null && !transform.equals("")) {
-                            if (transform.contains("skewX")) {
-                                double skewAngle = 0;
-
-                                Pattern pattern = Pattern.compile(".*skewX[(]([^)]*).*");
-
-                                Matcher matcher = pattern.matcher(transform);
-                                if (matcher.matches()) {
-                                    skewAngle = Double.valueOf(matcher.group(1));
-                                }
-                                // convert skewX angle to shearX
-                                double shearX = (skewAngle / 360) * 8;
-
-                                Shear shear = new Shear(shearX, 0);
-
-                                shape = new Parallelogram(x, y, width, height);
-
-                                shape.getTransforms().add(shear);
-
-                            }
-                        }
-
-                        // if shape hasn't been created, it must be a Rectangle
-                        if(shape == null) {
-                            shape = new Rectangle(x, y, width, height);
-                        }
-
-                        // apply rotation transforms, if any
-                        if(transform != null && !transform.equals("") && transform.contains("rotate")) {
-
-                            List<Rotate> rotates = getRotate(transform);
-                            if(rotates.size() > 0) {
-                                shape.getTransforms().addAll(rotates);
-                            }
-
-                        }
-
-                        // set color
-                        String styles = element.getAttribute("style");
-                        Color color = getFillColor(styles);
-                        shape.setFill(color);
-
-                        // add shape to model
+                        shape = convertRect(element);
                         model.getNodes().add(shape);
-
                         break;
                     }
                     case "ellipse" : {
-                        // get dimensions
-                        double centerX = Double.valueOf(element.getAttribute("cx"));
-                        double centerY = Double.valueOf(element.getAttribute("cy"));
-                        double radianX = Double.valueOf(element.getAttribute("rx"));
-                        double radianY = Double.valueOf(element.getAttribute("ry"));
-
-                        String transform = element.getAttribute("transform");
-
-                        shape = new Ellipse(centerX, centerY, radianX, radianY);
-
-                        // apply rotation, if any
-                        if(transform != null && !transform.equals("") && transform.contains("rotate")) {
-                            List<Rotate> rotates = getRotate(transform);
-                            if(rotates.size() > 0) {
-                                shape.getTransforms().addAll(rotates);
-                            }
-                        }
-
-                        // set color
-                        String styles = element.getAttribute("style");
-                        Color color = getFillColor(styles);
-                        shape.setFill(color);
-
-                        // add shape to model
+                        shape = convertEllipse(element);
                         model.getNodes().add(shape);
-
                         break;
                     }
                     case "line" : {
-                        // get dimensions
-                        double startX = Double.valueOf(element.getAttribute("x1"));
-                        double startY = Double.valueOf(element.getAttribute("y1"));
-                        double endX = Double.valueOf(element.getAttribute("x2"));
-                        double endY = Double.valueOf(element.getAttribute("y2"));
-
-                        String transform = element.getAttribute("transform");
-
-                        shape = new Line(startX, startY, endX, endY);
-
-                        // apply rotation, if any
-                        if(transform != null && !transform.equals("") && transform.contains("rotate")) {
-                            List<Rotate> rotates = getRotate(transform);
-                            if(rotates.size() > 0) {
-                                shape.getTransforms().addAll(rotates);
-                            }
-                        }
-
-                        // set stroke color and stroke width
-                        String styles = element.getAttribute("style");
-                        Color color = getStrokeColor(styles);
-                        double strokeWidth = getStrokeWidth(styles);
-                        shape.setStrokeWidth(strokeWidth);
-                        shape.setStroke(color);
-
-                        // add shape to model
+                        shape = convertLine(element);
                         model.getNodes().add(shape);
-
                         break;
                     }
                     case "image" : {
-
-                        ImageView imageView = new ImageView();
-
-                        // get dimensions of image
-                        double x = Double.valueOf(element.getAttribute("x"));
-                        double y = Double.valueOf(element.getAttribute("y"));
-                        double width = Double.valueOf(element.getAttribute("width"));
-                        double height = Double.valueOf(element.getAttribute("height"));
-
-                        String transform = element.getAttribute("transform");
-
-                        // set x, y, width and height of image
-                        imageView.setX(x);
-                        imageView.setY(y);
-                        imageView.setFitWidth(width);
-                        imageView.setFitHeight(height);
-
-                        // add rotation transforms, if any
-                        if(transform != null && !transform.equals("") && transform.contains("rotate")) {
-                            List<Rotate> rotates = getRotate(transform);
-                            if(rotates.size() > 0) {
-                                imageView.getTransforms().addAll(rotates);
-                            }
-                        }
-
-                        // decode base64 data and convert into a Java FX image
-                        String data = element.getAttribute("xlink:href");
-                        String base64 = data.replace("data:image/png;base64,", "");
-
-                        byte[] imageBytes = Base64.getDecoder().decode(base64);
-                        ByteArrayInputStream in = new ByteArrayInputStream(imageBytes);
-
-                        Image image = new Image(in);
-                        imageView.setImage(image);
-
-                        // add image to model
+                        ImageView imageView = convertImage(element);
                         model.getNodes().add(imageView);
-
                         break;
                     }
                     default : {
@@ -241,6 +103,178 @@ public class SvgImporter {
         }
 
         return model;
+    }
+
+    /**
+     * Converts a SVG image to ImageView
+     * @param element to convert to ImageView
+     * @return Returns an ImageView
+     */
+    private ImageView convertImage(Element element) {
+        ImageView result = new ImageView();
+
+        // get dimensions of image
+        double x = Double.valueOf(element.getAttribute("x"));
+        double y = Double.valueOf(element.getAttribute("y"));
+        double width = Double.valueOf(element.getAttribute("width"));
+        double height = Double.valueOf(element.getAttribute("height"));
+
+        String transform = element.getAttribute("transform");
+
+        // set x, y, width and height of image
+        result.setX(x);
+        result.setY(y);
+        result.setFitWidth(width);
+        result.setFitHeight(height);
+
+        // add rotation transforms, if any
+        if(transform != null && !transform.equals("") && transform.contains("rotate")) {
+            List<Rotate> rotates = getRotate(transform);
+            if(rotates.size() > 0) {
+                result.getTransforms().addAll(rotates);
+            }
+        }
+
+        // decode base64 data and convert into a Java FX image
+        String data = element.getAttribute("xlink:href");
+        String base64 = data.replace("data:image/png;base64,", "");
+
+        byte[] imageBytes = Base64.getDecoder().decode(base64);
+        ByteArrayInputStream in = new ByteArrayInputStream(imageBytes);
+
+        Image image = new Image(in);
+        result.setImage(image);
+        return result;
+    }
+
+    /**
+     * Converts a SVG line to a Line shape
+     * @param element to convert
+     * @return Returns a Line shape
+     */
+    private Shape convertLine(Element element) {
+        Shape result;
+
+        // get dimensions
+        double startX = Double.valueOf(element.getAttribute("x1"));
+        double startY = Double.valueOf(element.getAttribute("y1"));
+        double endX = Double.valueOf(element.getAttribute("x2"));
+        double endY = Double.valueOf(element.getAttribute("y2"));
+
+        String transform = element.getAttribute("transform");
+
+        result = new Line(startX, startY, endX, endY);
+
+        // apply rotation, if any
+        if(transform != null && !transform.equals("") && transform.contains("rotate")) {
+            List<Rotate> rotates = getRotate(transform);
+            if(rotates.size() > 0) {
+                result.getTransforms().addAll(rotates);
+            }
+        }
+
+        // set stroke color and stroke width
+        String styles = element.getAttribute("style");
+        Color color = getStrokeColor(styles);
+        double strokeWidth = getStrokeWidth(styles);
+        result.setStrokeWidth(strokeWidth);
+        result.setStroke(color);
+        return result;
+    }
+
+    /**
+     * Converts a SVG ellipse to an Ellipse shape
+     * @param element to convert
+     * @return Returns an Ellipse shape
+     */
+    private Shape convertEllipse(Element element) {
+        Shape result;
+        // get dimensions
+        double centerX = Double.valueOf(element.getAttribute("cx"));
+        double centerY = Double.valueOf(element.getAttribute("cy"));
+        double radianX = Double.valueOf(element.getAttribute("rx"));
+        double radianY = Double.valueOf(element.getAttribute("ry"));
+
+        String transform = element.getAttribute("transform");
+
+        result = new Ellipse(centerX, centerY, radianX, radianY);
+
+        // apply rotation, if any
+        if(transform != null && !transform.equals("") && transform.contains("rotate")) {
+            List<Rotate> rotates = getRotate(transform);
+            if(rotates.size() > 0) {
+                result.getTransforms().addAll(rotates);
+            }
+        }
+
+        // set color
+        String styles = element.getAttribute("style");
+        Color color = getFillColor(styles);
+        result.setFill(color);
+
+        return result;
+    }
+
+    /**
+     * Converts a SVG rect to a Rectangle or Parallelogram Shape
+     * @param element to convert
+     * @return Returns a Rectangle or Parallelogram
+     */
+    private Shape convertRect(Element element) {
+
+        Shape result = null;
+
+        // get dimensions
+        double x = Double.valueOf(element.getAttribute("x"));
+        double y = Double.valueOf(element.getAttribute("y"));
+        double width = Double.valueOf(element.getAttribute("width"));
+        double height = Double.valueOf(element.getAttribute("height"));
+
+        // if it has skew transform attribute, it is a parallelogram
+        String transform = element.getAttribute("transform");
+        if(transform != null && !transform.equals("")) {
+            if (transform.contains("skewX")) {
+                double skewAngle = 0;
+
+                Pattern pattern = Pattern.compile(".*skewX[(]([^)]*).*");
+
+                Matcher matcher = pattern.matcher(transform);
+                if (matcher.matches()) {
+                    skewAngle = Double.valueOf(matcher.group(1));
+                }
+                // convert skewX angle to shearX
+                double shearX = (skewAngle / 360) * 8;
+
+                Shear shear = new Shear(shearX, 0);
+
+                result = new Parallelogram(x, y, width, height);
+
+                result.getTransforms().add(shear);
+
+            }
+        }
+
+        // if shape hasn't been created, it must be a Rectangle
+        if(result == null) {
+            result = new Rectangle(x, y, width, height);
+        }
+
+        // apply rotation transforms, if any
+        if(transform != null && !transform.equals("") && transform.contains("rotate")) {
+
+            List<Rotate> rotates = getRotate(transform);
+            if(rotates.size() > 0) {
+                result.getTransforms().addAll(rotates);
+            }
+
+        }
+
+        // set color
+        String styles = element.getAttribute("style");
+        Color color = getFillColor(styles);
+        result.setFill(color);
+
+        return result;
     }
 
     /**
@@ -302,9 +336,7 @@ public class SvgImporter {
             }
         }
 
-        Color color = new Color(r/255.0, g/255.0, b/255.0, opacity);
-
-        return color;
+        return new Color(r/255.0, g/255.0, b/255.0, opacity);
     }
 
     /**
@@ -372,9 +404,7 @@ public class SvgImporter {
             }
         }
 
-        Color color = new Color(r/255.0, g/255.0, b/255.0, opacity);
-
-        return color;
+        return new Color(r/255.0, g/255.0, b/255.0, opacity);
     }
 
 }

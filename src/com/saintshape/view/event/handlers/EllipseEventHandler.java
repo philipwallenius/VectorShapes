@@ -17,11 +17,11 @@ import javafx.scene.shape.Ellipse;
  */
 public class EllipseEventHandler implements ToolEventHandler {
 
-    private View view;
+    private final View view;
     private Ellipse ellipse;
-    private Controller controller;
-    private MouseClick mouseClick;
-    private MouseEventHandler mouseEventHandler;
+    private final Controller controller;
+    private final MouseClick mouseClick;
+    private final MouseEventHandler mouseEventHandler;
 
     public EllipseEventHandler(View view, Controller controller, MouseEventHandler mouseEventHandler) {
         this.view = view;

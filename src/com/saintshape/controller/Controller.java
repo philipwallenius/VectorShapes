@@ -26,20 +26,18 @@ import java.util.List;
  */
 public class Controller {
 
-    private BooleanProperty workSpaceEmpty = new SimpleBooleanProperty(true);
-    private Model model;
-    private View view;
-    private Stage primaryStage;
-    private HistoryUtil historyUtil;
-    private OpenSaveInterface openSaveUtil = SvgUtil.getInstance();
+    private final BooleanProperty workSpaceEmpty = new SimpleBooleanProperty(true);
+    private final Model model;
+    private final View view;
+    private final Stage primaryStage;
+    private final OpenSaveInterface openSaveUtil = SvgUtil.getInstance();
 
     public Controller(Model model, Stage primaryStage) {
         this.model = model;
         view = new View(this, model, primaryStage);
         this.primaryStage = primaryStage;
-        historyUtil = HistoryUtil.getInstance();
-        historyUtil.setModel(model);
-        historyUtil.setMouseEventHandler(view.getMouseEventHandler());
+        HistoryUtil.getInstance().setModel(model);
+        HistoryUtil.getInstance().setMouseEventHandler(view.getMouseEventHandler());
     }
 
     /**
@@ -80,7 +78,7 @@ public class Controller {
     private Boolean checkUnsavedChanges() throws Exception {
 
         // prompt to save if there are unsaved changes
-        Boolean save = null;
+        Boolean save;
         if(model.hasUnsavedChanges()) {
             save = view.unsavedChangesDialog();
         } else {

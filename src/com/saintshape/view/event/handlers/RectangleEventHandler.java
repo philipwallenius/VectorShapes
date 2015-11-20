@@ -17,11 +17,11 @@ import javafx.scene.shape.Rectangle;
  */
 public class RectangleEventHandler implements ToolEventHandler {
 
-    private View view;
+    private final View view;
     private Rectangle selected;
-    private Controller controller;
-    private MouseClick mouseClick;
-    private MouseEventHandler mouseEventHandler;
+    private final Controller controller;
+    private final MouseClick mouseClick;
+    private final MouseEventHandler mouseEventHandler;
 
     public RectangleEventHandler(View view, Controller controller, MouseEventHandler mouseEventHandler) {
         this.view = view;
@@ -48,7 +48,7 @@ public class RectangleEventHandler implements ToolEventHandler {
             }
         }
 
-    };
+    }
 
     @Override
     public void handleMouseRelease(MouseEvent event) {
@@ -59,7 +59,7 @@ public class RectangleEventHandler implements ToolEventHandler {
             view.selectNode(selected);
         }
         selected = null;
-    };
+    }
 
     @Override
     public void handleMouseMove(MouseEvent event) {

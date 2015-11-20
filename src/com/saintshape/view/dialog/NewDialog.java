@@ -4,11 +4,11 @@ import com.saintshape.controller.Controller;
 import com.saintshape.view.View;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -16,7 +16,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -34,13 +33,10 @@ public class NewDialog extends Stage {
     private final static String DEFAULT_WIDTH = "500";
     private final static String DEFAULT_HEIGHT = "500";
 
-    private Stage parentStage;
-    private Scene scene;
-    private Label labelName, labelWidth, labelHeight, labelWidthUnit, labelHeightUnit;
+    private final Stage parentStage;
     private TextField inputName, inputWidth, inputHeight;
-    private Button buttonOK, buttonCancel;
-    private View view;
-    private Controller controller;
+    private final View view;
+    private final Controller controller;
 
     public NewDialog(View view, Controller controller, Stage parentStage) {
         super();
@@ -71,12 +67,12 @@ public class NewDialog extends Stage {
         hbox.setPadding(new Insets(10, 20, 20, 20));
         hbox.getChildren().add(gridInputs);
         hbox.getChildren().add(gridButtons);
-        scene = new Scene(hbox);
+        Scene scene = new Scene(hbox);
         scene.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() {
             public void handle(javafx.scene.input.KeyEvent ke) {
                 if (ke.getCode() == KeyCode.ESCAPE) {
                     close();
-                } else if(ke.getCode() == KeyCode.ENTER) {
+                } else if (ke.getCode() == KeyCode.ENTER) {
                     okAction();
                 }
             }
@@ -98,11 +94,11 @@ public class NewDialog extends Stage {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(10, 20, 0, 0));
 
-        labelName = new Label("Name: ");
-        labelWidth = new Label("Width: ");
-        labelHeight = new Label("Height: ");
-        labelWidthUnit = new Label(" px");
-        labelHeightUnit = new Label(" px");
+        Label labelName = new Label("Name: ");
+        Label labelWidth = new Label("Width: ");
+        Label labelHeight = new Label("Height: ");
+        Label labelWidthUnit = new Label(" px");
+        Label labelHeightUnit = new Label(" px");
         inputName = new TextField(DEFAULT_NAME);
         inputWidth = new TextField(DEFAULT_WIDTH);
         inputHeight = new TextField(DEFAULT_HEIGHT);
@@ -163,8 +159,8 @@ public class NewDialog extends Stage {
         gridPane.setAlignment(Pos.TOP_CENTER);
         gridPane.setVgap(10);
 
-        buttonOK = new Button("OK");
-        buttonCancel = new Button("Cancel");
+        Button buttonOK = new Button("OK");
+        Button buttonCancel = new Button("Cancel");
 
         // Make buttons are equal width
         HBox.setHgrow(buttonOK, Priority.ALWAYS);
@@ -173,18 +169,8 @@ public class NewDialog extends Stage {
         buttonCancel.setMaxWidth(Double.MAX_VALUE);
 
         // Add event handlers to buttons
-        buttonOK.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                okAction();
-            }
-        });
-        buttonCancel.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                close();
-            }
-        });
+        buttonOK.setOnAction(event -> okAction());
+        buttonCancel.setOnAction(event -> close());
 
         gridPane.add(buttonOK, 0, 1);
         gridPane.add(buttonCancel, 0, 2);
@@ -199,7 +185,7 @@ public class NewDialog extends Stage {
 
         // Validate name input
         if(name.length() == 0) {
-            showInvalidInputAlert("Invalid Input", "Please enter a name for the project.");
+            showInvalidInputAlert("Please enter a name for the project.");
             inputName.requestFocus();
             return;
         }
@@ -208,7 +194,13 @@ public class NewDialog extends Stage {
         try {
             width = Double.parseDouble(inputWidth.getText());
         } catch (NumberFormatException e) {
-            showInvalidInputAlert("Invalid Input", "Invalid numeric entry. Width must be a number.");
+            showInvalidInputAlert("Invalid numeric entry. Width must be a number (min. 1).");
+            inputWidth.requestFocus();
+            return;
+        }
+
+        if(width <= 0) {
+            showInvalidInputAlert("Invalid numeric entry. Width must be a number (min. 1).");
             inputWidth.requestFocus();
             return;
         }
@@ -217,7 +209,13 @@ public class NewDialog extends Stage {
         try {
             height = Double.parseDouble(inputHeight.getText());
         } catch(NumberFormatException e) {
-            showInvalidInputAlert("Invalid Input", "Invalid numeric entry. Height must be a number.");
+            showInvalidInputAlert("Invalid numeric entry. Height must be a number (min. 1).");
+            inputHeight.requestFocus();
+            return;
+        }
+
+        if(height <= 0) {
+            showInvalidInputAlert("Invalid numeric entry. Height must be a number (min. 1).");
             inputHeight.requestFocus();
             return;
         }
@@ -234,46 +232,15 @@ public class NewDialog extends Stage {
 
     /**
      * Displays a simple popup to the user with given title and message with an OK button
-     * @param title of popup window
      * @param message displayed in popup window
      */
-    private void showInvalidInputAlert(String title, String message) {
-
-        final Stage stage = new Stage();
-        stage.setTitle(title);
-        stage.setResizable(false);
-        stage.initStyle(StageStyle.UTILITY);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initOwner(this);
-
-        VBox vbox = new VBox(10);
-        vbox.setPadding(new Insets(20, 20, 20, 20));
-
-        Label label = new Label(message);
-        Button button = new Button("OK");
-        button.setAlignment(Pos.CENTER);
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                stage.close();
-            }
-        });
-
-        HBox hbox = new HBox(button);
-        hbox.setAlignment(Pos.BOTTOM_CENTER);
-        vbox.getChildren().addAll(label, hbox);
-        Scene scene = new Scene(vbox);
-        scene.setOnKeyPressed(new EventHandler<javafx.scene.input.KeyEvent>() {
-            public void handle(javafx.scene.input.KeyEvent ke) {
-                if (ke.getCode() == KeyCode.ESCAPE || ke.getCode() == KeyCode.ENTER) {
-                    close();
-                }
-            }
-        });
-        stage.setScene(scene);
-
-        stage.show();
-
+    private void showInvalidInputAlert(String message) {
+        // show error to user
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Invalid Input");
+        alert.setHeaderText("Error");
+        alert.setContentText(message);
+        alert.show();
     }
 
 }

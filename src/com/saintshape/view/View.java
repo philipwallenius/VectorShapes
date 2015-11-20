@@ -6,7 +6,6 @@ import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.observer.ModelObserver;
 import com.saintshape.view.event.handlers.MouseEventHandler;
 import com.saintshape.view.event.handlers.entity.Selection;
-import com.saintshape.view.menu.StatusBar;
 import com.saintshape.view.menu.side.SideMenu;
 import com.saintshape.view.menu.side.Tool;
 import com.saintshape.view.menu.top.TopMenu;
@@ -43,23 +42,14 @@ public class View implements ModelObserver {
 
     private final static String APPLICATION_NAME = "Saintshape";
     private final static int WINDOW_WIDTH = 1024, WINDOW_HEIGHT = 768;
-
-    private Controller controller;
-    private Model model;
-
+    private final Controller controller;
+    private final Model model;
     private Stage primaryStage;
-    private StackPane canvasHolder;
     private Group group;
-    private BorderPane borderPane;
-    private Scene scene;
     private ScrollPane scrollPane;
-    private VBox controls;
-
     private SideMenu sideMenu;
-    private TopMenu topMenu;
     private MouseEventHandler mouseEventHandler;
     private Group selectionGroup;
-    private StatusBar statusBar;
 
     /**
      * Constructor that initializes the view and creates the main window
@@ -79,15 +69,15 @@ public class View implements ModelObserver {
     /**
      * Initializes the View
      */
-    public void initialize() {
+    void initialize() {
         primaryStage.setTitle(APPLICATION_NAME);
         primaryStage.getIcons().add(new Image("logo.png"));
         group = new Group();
         selectionGroup = new Group();
-        controls = new VBox();
+        VBox controls = new VBox();
         sideMenu = new SideMenu(this, model, controller);
         controls.getChildren().addAll(sideMenu);
-        canvasHolder = new StackPane(group);
+        StackPane canvasHolder = new StackPane(group);
         scrollPane = new ScrollPane(canvasHolder);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
@@ -103,14 +93,12 @@ public class View implements ModelObserver {
         mouseEventHandler = new MouseEventHandler(this, controller);
         mouseEventHandler.register(model.getRootCanvas());
 
-        borderPane = new BorderPane();
-        topMenu = new TopMenu(this, controller);
-        statusBar = new StatusBar();
+        BorderPane borderPane = new BorderPane();
+        TopMenu topMenu = new TopMenu(this, controller);
         borderPane.setTop(topMenu);
         borderPane.setLeft(controls);
         borderPane.setCenter(scrollPane);
-        borderPane.setBottom(statusBar);
-        scene = new Scene(borderPane, WINDOW_WIDTH, WINDOW_HEIGHT);
+        Scene scene = new Scene(borderPane, WINDOW_WIDTH, WINDOW_HEIGHT);
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             public void handle(KeyEvent ke) {
                 if (ke.getCode() == KeyCode.ESCAPE || ke.getCode() == KeyCode.ENTER) {
@@ -118,7 +106,7 @@ public class View implements ModelObserver {
                 }
                 if (ke.getCode() == KeyCode.DELETE || ke.getCode() == KeyCode.BACK_SPACE) {
                     Selection selection = getMouseEventHandler().getSelection();
-                    if(selection != null) {
+                    if (selection != null) {
                         Node node = selection.getShape();
                         mouseEventHandler.deselect();
                         model.removeNode(node);
@@ -185,18 +173,10 @@ public class View implements ModelObserver {
                     gc.setFill(Color.rgb(204, 204, 204));
                 }
                 gc.fillRect(currX, currY, checkerPatternSize, checkerPatternSize);
-                if(color) {
-                    color = false;
-                } else {
-                    color = true;
-                }
+                color = !color;
             }
             currY += checkerPatternSize;
-            if(alternate) {
-                alternate = false;
-            } else {
-                alternate = true;
-            }
+            alternate = !alternate;
         }
         return canvas;
     }
@@ -215,7 +195,7 @@ public class View implements ModelObserver {
 
     /**
      * Updates view
-     * @param model
+     * @param model to update
      */
     @Override
     public void update(Model model) {

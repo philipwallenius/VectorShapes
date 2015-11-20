@@ -1,8 +1,6 @@
 package com.saintshape.view.event.handlers;
 
-import com.saintshape.controller.Controller;
 import com.saintshape.model.util.HistoryUtil;
-import com.saintshape.view.View;
 import com.saintshape.view.event.handlers.entity.MouseClick;
 import com.saintshape.view.event.handlers.entity.Point;
 import com.saintshape.view.event.handlers.entity.Selection;
@@ -16,19 +14,11 @@ import javafx.scene.transform.Rotate;
  *
  * Created by 150019538 on 08/11/15.
  */
-public class RotateEventHandler {
+class RotateEventHandler {
 
-    private View view;
-    private Controller controller;
     private boolean rotated = false;
-    private MouseClick click = new MouseClick();
-    private double selX, selY, pX, pY, deltaX, deltaY, d2, previouslyRotated;
-
-    public RotateEventHandler(View view, Controller controller) {
-        this.view = view;
-        this.controller = controller;
-
-    }
+    private final MouseClick click = new MouseClick();
+    private double pX, pY, deltaX, deltaY, d2, previouslyRotated;
 
     public void register(Point point) {
         point.setOnMousePressed(mousePressEventHandler);
@@ -36,16 +26,13 @@ public class RotateEventHandler {
         point.setOnMouseReleased(mouseReleaseEventHandler);
     }
 
-    public EventHandler<MouseEvent> mousePressEventHandler = new EventHandler<MouseEvent>() {
+    private final EventHandler<MouseEvent> mousePressEventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
             rotated = false;
             click.x = event.getX();
             click.y = event.getY();
             if(event.getSource() instanceof Point) {
-                Point point = (Point) event.getSource();
-                selX = point.getSelection().getX();
-                selY = point.getSelection().getY();
 
                 // keep track of original x and y
                 pX = event.getSceneX();
@@ -58,17 +45,14 @@ public class RotateEventHandler {
         }
     };
 
-    public EventHandler<MouseEvent> mouseReleaseEventHandler = new EventHandler<MouseEvent>() {
-        @Override
-        public void handle(MouseEvent event) {
-            if(rotated) {
-                HistoryUtil.getInstance().addHistoryPoint();
-            }
-            rotated = false;
+    private final EventHandler<MouseEvent> mouseReleaseEventHandler = event -> {
+        if(rotated) {
+            HistoryUtil.getInstance().addHistoryPoint();
         }
+        rotated = false;
     };
 
-    public EventHandler<MouseEvent> mouseDragEventHandler = new EventHandler<MouseEvent>() {
+    private final EventHandler<MouseEvent> mouseDragEventHandler = new EventHandler<MouseEvent>() {
         @Override
         public void handle(MouseEvent event) {
             if(event.getSource() instanceof Point) {
