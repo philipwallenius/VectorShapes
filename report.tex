@@ -1,0 +1,61 @@
+\documentclass[11pt, a4paper]{article}
+
+\usepackage[left=3cm, right=3cm, top=2.25cm, bottom=2.25cm, includeheadfoot]{geometry}
+\usepackage{microtype}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{Student ID: 150019538}
+\chead{CS5001}
+\rhead{Practical 5}
+
+\title{CS5001: Object Oriented Modelling Design \& Programming\\Practical 5}
+\author{Student IDs: 150019538}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+The assignment was to create a simple vector drawing program. This solution satisfies all the basic criteria and enhancements  specified in the assignment. Some additional enhancements are: 
+
+\begin{itemize}
+	\item Undo/redo support for shape color, movements, resize and rotation
+	\item List view of all shapes created
+	\item Possibility to change the order of the shapes
+	\item SVG file import
+	\item SVG file export
+\end{itemize}
+
+\section{How the System Works}
+
+Important aspects to know about how the system works:
+
+\begin{itemize}
+	\item To start drawing shapes, one needs to click "File" and "New..." to create the project canvas.
+	\item To create parallelograms, click the parallelogram tool. Then click and drag to create the rectangle. Upon mouse button release, the tool will go into "skew"-mode and the cursor changes. Then you can click and pull left or right to adjust the skew to create a parallelogram.
+	\item To change order of the shapes, select a shape with the select tool or click on the shape in the list. Then click the "Up"-button to move it upwards or the "Down"-button to move it downwards.  
+\end{itemize}
+
+\section{Design Decisions}
+
+\subsection{Java FX}
+
+Java FX was chosen instead of Swing due to a couple of reasons. First of all, I had never worked with Java FX before so I wanted to learn it. Secondly, Swing is outdated and Java FX is the newer platform with a better API and support for CSS.
+
+\subsection{MVC Pattern}
+
+The Model View Controller (MVC) pattern was chosen as the basis for this application because this is an ideal application for the pattern. The MVC pattern separates business logic from the data and from the presentation layer which decouples classes and makes them more coherent. In addition, the drawing application only needs one view and one model, which makes it perfect for MVC. 
+
+\subsection{Observer Pattern}
+
+The observer pattern was used to enable the view classes to easily be updated when the model changes, for example when new shapes are added or removed. It is especially beneficial when multiple classes need to be updated due to model changes, for example, main window and the list view representing all shapes.
+
+\subsection{Factory pattern}
+
+The factory pattern was used to handle the mouse events in a efficient manner. There are multiple mouse event handlers, one for each tool and major functions, such as resize. There is a main \emph{MouseEventHandler} which all shapes are registered in and that routes mouse events to the appropriate handler depending on which tool is selected. All mouse event handlers implement the \emph{ToolEventHandler} interface, so the \emph{EventHandlerFactory} can return the correct handler depending on which tool is passed to it. 
+
+\section{Problems}
+
+
+
+\end{document}
