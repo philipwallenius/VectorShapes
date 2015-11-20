@@ -16,6 +16,7 @@ public class Ellipse extends javafx.scene.shape.Ellipse {
         Ellipse result = new Ellipse(getCenterX(), getCenterY(), getRadiusX(), getRadiusY());
         result.setFill(getFill());
         result.setStroke(getStroke());
+        result.setStrokeWidth(getStrokeWidth());
         result.getTransforms().addAll(getTransforms());
         return result;
     }

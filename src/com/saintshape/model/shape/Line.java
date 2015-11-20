@@ -17,6 +17,7 @@ public class Line extends javafx.scene.shape.Line {
         result.setRotate(getRotate());
         result.setFill(getFill());
         result.setStroke(getStroke());
+        result.setStrokeWidth(getStrokeWidth());
         result.getTransforms().addAll(getTransforms());
         return result;
     }

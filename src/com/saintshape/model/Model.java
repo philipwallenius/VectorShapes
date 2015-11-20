@@ -7,7 +7,9 @@ import com.saintshape.model.util.HistoryUtil;
 import com.saintshape.observer.ModelObserver;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.ImageView;
@@ -135,6 +137,9 @@ public class Model {
                 HistoryUtil.getInstance().addHistoryPoint();
             });
             s.strokeProperty().addListener((observable, oldValue, newValue) -> {
+                HistoryUtil.getInstance().addHistoryPoint();
+            });
+            s.strokeWidthProperty().addListener((observable, oldValue, newValue) -> {
                 HistoryUtil.getInstance().addHistoryPoint();
             });
         }
