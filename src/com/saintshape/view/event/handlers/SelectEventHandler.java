@@ -100,7 +100,7 @@ public class SelectEventHandler implements ToolEventHandler {
             view.setSelectedStrokeColor((Color) ((Shape) source).getStroke());
             view.setSelectedStrokeWidth((int) ((Shape) source).getStrokeWidth());
         }
-        if(!(source instanceof Line)) {
+        if(source instanceof Shape && !(source instanceof Line)) {
             view.setSelectedFillColor((Color) ((Shape) source).getFill());
         }
     }

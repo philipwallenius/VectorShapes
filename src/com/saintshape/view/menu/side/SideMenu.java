@@ -4,7 +4,6 @@ import com.saintshape.controller.Controller;
 import com.saintshape.model.Model;
 import com.saintshape.model.shape.Line;
 import com.saintshape.view.View;
-import com.saintshape.view.event.handlers.SelectEventHandler;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -24,6 +23,7 @@ public class SideMenu extends VBox {
 
     private final static int SIDEMENU_WIDTH = 150;
     private TitledPane titledPaneTools;
+    private TitledPane titledPaneColor;
     private TitledPane titledPaneNodes;
     private Spinner strokeWidthSpinner;
     private ColorPicker colorPickerFill;
@@ -47,13 +47,20 @@ public class SideMenu extends VBox {
      * Initializes the side menu by creating the tool buttons and a color picker
      */
     private void initialize() {
-        titledPaneTools = createTools();
+        titledPaneTools = createToolsPane();
+        titledPaneColor = createColorPane();
+        titledPaneNodes = createNodesList();
+        getChildren().addAll(titledPaneTools, titledPaneColor, titledPaneNodes);
+        setPrefWidth(SIDEMENU_WIDTH);
+    }
+
+    private TitledPane createColorPane() {
+        VBox vbox = new VBox(10);
         colorPickerFill = createColorPicker();
         colorPickerStroke = createColorPicker();
-        titledPaneNodes = createNodesList();
         strokeWidthSpinner = createSpinner();
-        getChildren().addAll(titledPaneTools, colorPickerFill, colorPickerStroke, strokeWidthSpinner, titledPaneNodes);
-        setPrefWidth(SIDEMENU_WIDTH);
+        vbox.getChildren().addAll(new VBox(new Label("Fill Color:"), colorPickerFill), new VBox(new Label("Stroke Color:"), colorPickerStroke), new VBox(new Label("Stroke Width:"), strokeWidthSpinner));
+        return new TitledPane("Color", vbox);
     }
 
     private VBox createOtherTools() {
@@ -97,7 +104,7 @@ public class SideMenu extends VBox {
      * Creates a TitledPane with the drawing tools
      * @return Returns a TitledPane with the drawing tools
      */
-    private TitledPane createTools() {
+    private TitledPane createToolsPane() {
 
         toggleGroup = new ToggleGroup();
         toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {

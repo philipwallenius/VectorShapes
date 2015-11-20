@@ -37,7 +37,7 @@ public class NodesList extends TitledPane implements ModelObserver {
     private final Controller controller;
 
     public NodesList(View view, Model model, Controller controller) {
-        super("Objects", new ListView<NodeItem>());
+        super("Shapes", new ListView<NodeItem>());
         this.view = view;
         this.controller = controller;
         model.registerObserver(this);
