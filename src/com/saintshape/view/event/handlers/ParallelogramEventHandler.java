@@ -159,23 +159,23 @@ public class ParallelogramEventHandler implements ToolEventHandler {
         // parallelogram is created, adjust shear instead
         else {
 
+            // add shear
             double currentSceneX = event.getSceneX();
             double moveX = currentSceneX-sceneX;
-            double width = parallelogram.getWidth()*4;
 
-            // restrict how much parallelogram can be sheared
-            if(moveX < 0) {
-                moveX = Math.max(moveX, -(width));
-            } else {
-                moveX = Math.min(moveX, width);
-            }
+            moveX = moveX/500.0;
 
-            moveX = moveX/1000;
-
+            // calculate diff since last shear
             double diff = moveX-shearX;
 
-            Shear shear = new Shear(diff, 0);
+            double centerX = parallelogram.getX()+(parallelogram.getWidth()/2);
+            double centerY = parallelogram.getY()+(parallelogram.getHeight()/2);
+
+            // apply shear diff
+            Shear shear = new Shear(diff, 0, centerX, centerY);
             parallelogram.getTransforms().add(shear);
+
+            // save latest shear diff
             shearX += diff;
         }
 

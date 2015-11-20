@@ -120,7 +120,7 @@ public class TopMenu extends MenuBar {
         fileChooser.setTitle("Open...");
 
         // filter file types
-        FileChooser.ExtensionFilter extFilterSvg = new FileChooser.ExtensionFilter("SVG files (*.svg)", "*.svg");
+        FileChooser.ExtensionFilter extFilterSvg = new FileChooser.ExtensionFilter("SVG files (*.svg)", "*.svg", "*.SVG");
         fileChooser.getExtensionFilters().addAll(extFilterSvg);
 
         File file = fileChooser.showOpenDialog(controller.getPrimaryStage());

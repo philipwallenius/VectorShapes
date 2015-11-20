@@ -356,7 +356,7 @@ public class View implements ModelObserver {
         fileChooser.setInitialFileName(name+".svg");
 
         // filter file types
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("svg files (*.svg)", "*.svg");
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("svg files (*.svg)", "*.svg", "*.SVG");
         fileChooser.getExtensionFilters().add(extFilter);
 
         return fileChooser.showSaveDialog(controller.getPrimaryStage());

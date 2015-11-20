@@ -244,7 +244,8 @@ class SvgImporter {
                 // convert skewX angle to shearX
                 double shearX = (skewAngle / 360) * 8;
 
-                Shear shear = new Shear(shearX, 0);
+                // apply skewX with pivots
+                Shear shear = new Shear(shearX, 0, (x+(width/2)), (y+(height/2)));
 
                 result = new Parallelogram(x, y, width, height);
 
