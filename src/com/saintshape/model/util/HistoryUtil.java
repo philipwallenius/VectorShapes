@@ -10,7 +10,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +35,9 @@ public class HistoryUtil {
 
     private HistoryUtil() {
         history = FXCollections.observableList(new ArrayList<>());
-        historyPointer = new SimpleIntegerProperty(0);
+        historyPointer = new SimpleIntegerProperty(-1);
         disableUndo = new SimpleBooleanProperty();
-        disableUndo.bind(historyPointer.subtract(1).lessThan(0));
+        disableUndo.bind(historyPointer.lessThan(1));
         disableRedo = new SimpleBooleanProperty();
         disableRedo.bind(historyPointer.add(1).greaterThanOrEqualTo(Bindings.size(history)));
     }
@@ -65,7 +64,6 @@ public class HistoryUtil {
         history.forEach(List<Node>::clear);
         history.clear();
         historyPointer.setValue(-1);
-        addHistoryPoint();
     }
 
     /**
@@ -77,7 +75,7 @@ public class HistoryUtil {
         // if change is made when history pointer isn't at the end of the history list
         // it remove all trailing entries.
         if (historyPointer.get() != (history.size() - 1)) {
-            int diff = (history.size() - 1) - historyPointer.get();
+             int diff = (history.size() - 1) - historyPointer.get();
             while (diff > 0) {
                 history.remove(historyPointer.get() + diff);
                 diff--;
@@ -128,15 +126,7 @@ public class HistoryUtil {
     private void register(List<Node> nodes) {
         for(Node node: nodes) {
             mouseEventHandler.register(node);
-            if(node instanceof Shape) {
-                Shape s = (Shape) node;
-                s.fillProperty().addListener((observable, oldValue, newValue) -> {
-                    HistoryUtil.getInstance().addHistoryPoint();
-                });
-                s.strokeProperty().addListener((observable, oldValue, newValue) -> {
-                    HistoryUtil.getInstance().addHistoryPoint();
-                });
-            }
+            model.addColorChangeListener(node);
         }
     }
 

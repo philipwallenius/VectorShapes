@@ -78,21 +78,10 @@ public class SideMenu extends VBox {
     }
 
     private Spinner createSpinner() {
-        Spinner spinner = new Spinner(0, 10, 1);
+        SpinnerValueFactory spv = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 1);
+        Spinner spinner = new Spinner();
+        spinner.setValueFactory(spv);
         spinner.setMaxWidth(Double.MAX_VALUE);
-        spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            Integer n = (Integer)newValue;
-            if(view.getSelectedTool() == Tool.LINE) {
-                if(n < 1) {
-                    spinner.increment();
-                }
-            }
-            if(view.getSelection() != null && view.getSelection().getShape() instanceof Line) {
-                if((int)spinner.getValue() < 1) {
-                    spinner.increment();
-                }
-            }
-        });
         return spinner;
     }
 
@@ -110,14 +99,8 @@ public class SideMenu extends VBox {
         toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
             public void changed(ObservableValue<? extends Toggle> observableValue,
                                 Toggle toggle, Toggle newToggle) {
-
                 if (newToggle == null) {
                     toggle.setSelected(true);
-                }
-                if(toggleGroup.getSelectedToggle().getUserData() == Tool.LINE) {
-                    if((int)strokeWidthSpinner.getValue() < 1) {
-                        strokeWidthSpinner.increment();
-                    }
                 }
             }
         });
@@ -199,17 +182,7 @@ public class SideMenu extends VBox {
     }
 
     public void setStrokeWidthSpinner(int width) {
-
-        if((int) strokeWidthSpinner.getValue() < width) {
-            while((int) strokeWidthSpinner.getValue() < width) {
-                strokeWidthSpinner.increment();
-            }
-        } else {
-            while((int) strokeWidthSpinner.getValue() > width) {
-                strokeWidthSpinner.decrement();
-            }
-        }
-
+        strokeWidthSpinner.getValueFactory().setValue(width);
     }
 
     public int getStrokeWidth() {

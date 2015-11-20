@@ -129,7 +129,7 @@ public class Model {
      * Listen to color changes of nodes so that we can support undo and redo
      * @param node to listen for color changes
      */
-    private void addColorChangeListener(Node node) {
+    public void addColorChangeListener(Node node) {
         // Add history point if color of shape is changed
         if(node instanceof Shape) {
             Shape s = (Shape)node;

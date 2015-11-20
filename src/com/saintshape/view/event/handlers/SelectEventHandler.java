@@ -172,13 +172,10 @@ public class SelectEventHandler implements ToolEventHandler {
      */
     private void subscribeToStrokeColorPicker() {
         ColorPicker colorPicker = view.getStrokeColorPicker();
-        colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
-            @Override
-            public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
-                if(selection != null && selection.getShape() instanceof Shape) {
-                    Shape s = (Shape)selection.getShape();
-                    s.setStroke(newValue);
-                }
+        colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(selection != null && selection.getShape() instanceof Shape) {
+                Shape s = (Shape)selection.getShape();
+                s.setStroke(newValue);
             }
         });
     }
@@ -188,19 +185,16 @@ public class SelectEventHandler implements ToolEventHandler {
      */
     private void subscribeToStrokeWidth() {
         Spinner spinner = view.getStrokeWidthSpinner();
-        spinner.valueProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                Integer newV = (Integer)newValue;
-                if(selection != null && selection.getShape() instanceof Shape) {
-                    Shape s = (Shape)selection.getShape();
-                    if(s instanceof Line) {
-                        if((double)newV < 1) {
-                            return;
-                        }
+        spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            Integer newV = (Integer)newValue;
+            if(selection != null && selection.getShape() instanceof Shape) {
+                Shape s = (Shape)selection.getShape();
+                if(s instanceof Line) {
+                    if((double)newV < 1) {
+                        return;
                     }
-                    s.setStrokeWidth((double) newV);
                 }
+                s.setStrokeWidth((double) newV);
             }
         });
     }
