@@ -42,7 +42,9 @@ public class RectangleEventHandler implements ToolEventHandler {
             if(view.getSelectedTool() == Tool.RECTANGLE) {
                 // create a new rectangle, set its color and register it to event handler
                 selected = new com.saintshape.model.shape.Rectangle(event.getX(), event.getY(), 0, 0);
-                selected.setFill(view.getSelectedColor());
+                selected.setFill(view.getSelectedFillColor());
+                selected.setStrokeWidth(view.getSelectedStrokeWidth());
+                selected.setStroke(view.getSelectedStrokeColor());
                 mouseEventHandler.register(selected);
                 controller.addNode(selected);
             }

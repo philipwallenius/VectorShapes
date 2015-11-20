@@ -41,7 +41,9 @@ public class EllipseEventHandler implements ToolEventHandler {
         if (ellipse == null) {
             if (view.getSelectedTool() == Tool.ELLIPSE) {
                 ellipse = new com.saintshape.model.shape.Ellipse(event.getX(), event.getY(), 0, 0);
-                ellipse.setFill(view.getSelectedColor());
+                ellipse.setFill(view.getSelectedFillColor());
+                ellipse.setStroke(view.getSelectedStrokeColor());
+                ellipse.setStrokeWidth(view.getSelectedStrokeWidth());
                 mouseEventHandler.register(ellipse);
                 controller.addNode(ellipse);
             }

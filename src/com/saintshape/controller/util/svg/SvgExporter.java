@@ -165,10 +165,10 @@ class SvgExporter {
 
         // set color
         Color color = (Color)line.getStroke();
-        double opacity = color.getOpacity();
+        double strokeOpacity = color.getOpacity();
         double strokeWidth = line.getStrokeWidth();
-        String fillString = "stroke:rgb("+(int)(color.getRed()*255)+","+(int)(color.getGreen()*255)+","+(int)(color.getBlue()*255)+");stroke-width:"+strokeWidth+";stroke-opacity:"+opacity;
-        result.setAttribute("style", fillString);
+        String strokeString = "stroke:rgb("+(int)(color.getRed()*255)+","+(int)(color.getGreen()*255)+","+(int)(color.getBlue()*255)+");stroke-width:"+strokeWidth+";stroke-opacity:"+strokeOpacity;
+        result.setAttribute("style", strokeString);
 
         // apply rotation, if any
         String rotateTransformation = convertRotations(line);
@@ -195,9 +195,12 @@ class SvgExporter {
         result.setAttribute("cy", String.valueOf(ellipse.getCenterY()));
 
         // set color
-        Color color = (Color)ellipse.getFill();
-        double opacity = color.getOpacity();
-        String fillString = "fill:rgb("+(int)(color.getRed()*255)+","+(int)(color.getGreen()*255)+","+(int)(color.getBlue()*255)+");fill-opacity:"+opacity;
+        Color fillColor = (Color)ellipse.getFill();
+        double fillOpacity = fillColor.getOpacity();
+        Color strokeColor = (Color)ellipse.getStroke();
+        double strokeOpacity = strokeColor.getOpacity();
+        double strokeWidth = ellipse.getStrokeWidth();
+        String fillString = "fill:rgb("+(int)(fillColor.getRed()*255)+","+(int)(fillColor.getGreen()*255)+","+(int)(fillColor.getBlue()*255)+");fill-opacity:"+fillOpacity+";stroke:rgb("+(int)(strokeColor.getRed()*255)+","+(int)(strokeColor.getGreen()*255)+","+(int)(strokeColor.getBlue()*255)+");stroke-opacity:"+strokeOpacity+";stroke-width:"+strokeWidth;
         result.setAttribute("style", fillString);
 
         // apply rotation, if any
@@ -225,9 +228,12 @@ class SvgExporter {
         result.setAttribute("y", String.valueOf(parallelogram.getY()));
 
         // set color
-        Color color = (Color)parallelogram.getFill();
-        double opacity = color.getOpacity();
-        String fillString = "fill:rgb("+(int)(color.getRed()*255)+","+(int)(color.getGreen()*255)+","+(int)(color.getBlue()*255)+");fill-opacity:"+opacity;
+        Color fillColor = (Color)parallelogram.getFill();
+        double fillOpacity = fillColor.getOpacity();
+        Color strokeColor = (Color)parallelogram.getStroke();
+        double strokeOpacity = fillColor.getStrokeOpacity();
+
+        String fillString = "fill:rgb("+(int)(fillColor.getRed()*255)+","+(int)(fillColor.getGreen()*255)+","+(int)(fillColor.getBlue()*255)+");fill-opacity:"+fillOpacity;
         result.setAttribute("style", fillString);
 
         // apply rotation and shear

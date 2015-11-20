@@ -53,7 +53,9 @@ public class ParallelogramEventHandler implements ToolEventHandler {
                 if(view.getSelectedTool() == Tool.PARALLELOGRAM) {
                     // create a new rectangle, set its color and register it to event handler
                     parallelogram = new com.saintshape.model.shape.Parallelogram(event.getX(), event.getY(), 0, 0);
-                    parallelogram.setFill(view.getSelectedColor());
+                    parallelogram.setFill(view.getSelectedFillColor());
+                    parallelogram.setStroke(view.getSelectedStrokeColor());
+                    parallelogram.setStrokeWidth(view.getSelectedStrokeWidth());
                     mouseEventHandler.register(parallelogram);
                     controller.addNode(parallelogram);
                     shearX = 0;

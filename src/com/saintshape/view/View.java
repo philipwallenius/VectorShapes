@@ -123,16 +123,28 @@ public class View implements ModelObserver {
         return sideMenu.getSelectedTool();
     }
 
-    public Color getSelectedColor() {
-        return sideMenu.getSelectedColor();
+    public Color getSelectedFillColor() {
+        return sideMenu.getSelectedFillColor();
     }
 
-    public void setSelectedColor(Color color) {
-        sideMenu.setSelectedColor(color);
+    public Color getSelectedStrokeColor() {
+        return sideMenu.getSelectedStrokeColor();
     }
 
-    public ColorPicker getColorPicker() {
-        return sideMenu.getColorPicker();
+    public void setSelectedFillColor(Color color) {
+        sideMenu.setSelectedFillColor(color);
+    }
+
+    public void setSelectedStrokeColor(Color color) {
+        sideMenu.setSelectedStrokeColor(color);
+    }
+
+    public ColorPicker getFillColorPicker() {
+        return sideMenu.getColorPickerFill();
+    }
+
+    public ColorPicker getStrokeColorPicker() {
+        return sideMenu.getColorPickerStroke();
     }
 
     /**
@@ -350,4 +362,22 @@ public class View implements ModelObserver {
         return fileChooser.showSaveDialog(controller.getPrimaryStage());
     }
 
+    public double getSelectedStrokeWidth() {
+        return (double)sideMenu.getStrokeWidth();
+    }
+
+    public Spinner getStrokeWidthSpinner() {
+        return sideMenu.getStrokeWidthSpinner();
+    }
+
+    public void setSelectedStrokeWidth(int width) {
+        sideMenu.setStrokeWidthSpinner(width);
+    }
+
+    public Selection getSelection() {
+        if(getMouseEventHandler() != null) {
+            return getMouseEventHandler().getSelection();
+        }
+        return null;
+    }
 }

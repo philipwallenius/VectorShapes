@@ -41,8 +41,8 @@ public class LineEventHandler implements ToolEventHandler {
         if (line == null) {
             if (view.getSelectedTool() == Tool.LINE) {
                 line = new com.saintshape.model.shape.Line(event.getX(), event.getY(), event.getX(), event.getY());
-                line.setStroke(view.getSelectedColor());
-                line.setStrokeWidth(2);
+                line.setStroke(view.getSelectedStrokeColor());
+                line.setStrokeWidth(view.getSelectedStrokeWidth());
                 mouseEventHandler.register(line);
                 controller.addNode(line);
             }

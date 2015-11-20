@@ -11,6 +11,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.ImageView;
@@ -44,7 +45,9 @@ public class SelectEventHandler implements ToolEventHandler {
         mouseClick = new MouseClick();
         resizeEventHandler = new ResizeEventHandler();
         rotateEventHandler = new RotateEventHandler();
-        subscribeToColorPicker();
+        subscribeToFillColorPicker();
+        subscribeToStrokeColorPicker();
+        subscribeToStrokeWidth();
         subscribeToTools();
     }
 
@@ -93,10 +96,10 @@ public class SelectEventHandler implements ToolEventHandler {
         view.getSelectionGroup().getChildren().add(selection);
         view.getSelectionGroup().getChildren().addAll(selection.getResizePoints());
         view.getSelectionGroup().getChildren().add(selection.getRotatePoint());
-        if(source instanceof Line) {
-            view.setSelectedColor((Color)((Line)source).getStroke());
-        } else if(source instanceof Shape) {
-            view.setSelectedColor((Color)((Shape)source).getFill());
+        view.setSelectedStrokeColor((Color) ((Shape) source).getStroke());
+        view.setSelectedStrokeWidth((int)((Shape) source).getStrokeWidth());
+        if(!(source instanceof Line)) {
+            view.setSelectedFillColor((Color) ((Shape) source).getFill());
         }
     }
 
@@ -141,26 +144,60 @@ public class SelectEventHandler implements ToolEventHandler {
 
             // Update movement
             rectangle.setX(selectedOriginalX+offsetX);
-            rectangle.setY(selectedOriginalY+offsetY);
+            rectangle.setY(selectedOriginalY + offsetY);
             moved = true;
         }
     }
 
     /**
-     * Listens to color changes in the color-picker and changes color of shape if one is selected
+     * Listens to color changes in the fill color-picker and changes color of shape if one is selected
      */
-    private void subscribeToColorPicker() {
-        ColorPicker colorPicker = view.getColorPicker();
+    private void subscribeToFillColorPicker() {
+        ColorPicker colorPicker = view.getFillColorPicker();
         colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
             @Override
             public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
                 if(selection != null && selection.getShape() instanceof Shape) {
                     Shape s = (Shape)selection.getShape();
+                    s.setFill(newValue);
+                }
+            }
+        });
+    }
+
+    /**
+     * Listens to color changes in the stroke color-picker and changes color of shape if one is selected
+     */
+    private void subscribeToStrokeColorPicker() {
+        ColorPicker colorPicker = view.getStrokeColorPicker();
+        colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
+            @Override
+            public void changed(ObservableValue<? extends Color> observable, Color oldValue, Color newValue) {
+                if(selection != null && selection.getShape() instanceof Shape) {
+                    Shape s = (Shape)selection.getShape();
+                    s.setStroke(newValue);
+                }
+            }
+        });
+    }
+
+    /**
+     * Listens to color changes in the color-picker and changes color of shape if one is selected
+     */
+    private void subscribeToStrokeWidth() {
+        Spinner spinner = view.getStrokeWidthSpinner();
+        spinner.valueProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                Integer newV = (Integer)newValue;
+                if(selection != null && selection.getShape() instanceof Shape) {
+                    Shape s = (Shape)selection.getShape();
                     if(s instanceof Line) {
-                        s.setStroke(newValue);
-                    } else {
-                        s.setFill(newValue);
+                        if((double)newV < 1) {
+                            return;
+                        }
                     }
+                    s.setStrokeWidth((double) newV);
                 }
             }
         });

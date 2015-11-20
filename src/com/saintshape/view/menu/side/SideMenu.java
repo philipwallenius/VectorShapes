@@ -2,7 +2,9 @@ package com.saintshape.view.menu.side;
 
 import com.saintshape.controller.Controller;
 import com.saintshape.model.Model;
+import com.saintshape.model.shape.Line;
 import com.saintshape.view.View;
+import com.saintshape.view.event.handlers.SelectEventHandler;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
@@ -23,7 +25,9 @@ public class SideMenu extends VBox {
     private final static int SIDEMENU_WIDTH = 150;
     private TitledPane titledPaneTools;
     private TitledPane titledPaneNodes;
-    private ColorPicker colorPicker;
+    private Spinner strokeWidthSpinner;
+    private ColorPicker colorPickerFill;
+    private ColorPicker colorPickerStroke;
     private ToggleGroup toggleGroup;
     private final Model model;
     private final View view;
@@ -44,9 +48,11 @@ public class SideMenu extends VBox {
      */
     private void initialize() {
         titledPaneTools = createTools();
-        colorPicker = createColorPicker();
+        colorPickerFill = createColorPicker();
+        colorPickerStroke = createColorPicker();
         titledPaneNodes = createNodesList();
-        getChildren().addAll(titledPaneTools, colorPicker, titledPaneNodes);
+        strokeWidthSpinner = createSpinner();
+        getChildren().addAll(titledPaneTools, colorPickerFill, colorPickerStroke, strokeWidthSpinner, titledPaneNodes);
         setPrefWidth(SIDEMENU_WIDTH);
     }
 
@@ -62,6 +68,25 @@ public class SideMenu extends VBox {
         vBox.getChildren().addAll(buttonImage);
 
         return vBox;
+    }
+
+    private Spinner createSpinner() {
+        Spinner spinner = new Spinner(0, 10, 1);
+        spinner.setMaxWidth(Double.MAX_VALUE);
+        spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            Integer n = (Integer)newValue;
+            if(view.getSelectedTool() == Tool.LINE) {
+                if(n < 1) {
+                    spinner.increment();
+                }
+            }
+            if(view.getSelection() != null && view.getSelection().getShape() instanceof Line) {
+                if((int)spinner.getValue() < 1) {
+                    spinner.increment();
+                }
+            }
+        });
+        return spinner;
     }
 
     private TitledPane createNodesList() {
@@ -81,6 +106,11 @@ public class SideMenu extends VBox {
 
                 if (newToggle == null) {
                     toggle.setSelected(true);
+                }
+                if(toggleGroup.getSelectedToggle().getUserData() == Tool.LINE) {
+                    if((int)strokeWidthSpinner.getValue() < 1) {
+                        strokeWidthSpinner.increment();
+                    }
                 }
             }
         });
@@ -141,16 +171,50 @@ public class SideMenu extends VBox {
         return (Tool)toggleGroup.getSelectedToggle().getUserData();
     }
 
-    public Color getSelectedColor() {
-        return colorPicker.getValue();
+    public Color getSelectedFillColor() {
+        return colorPickerFill.getValue();
     }
 
-    public ColorPicker getColorPicker() {
-        return colorPicker;
+    public Color getSelectedStrokeColor() {
+        return colorPickerStroke.getValue();
     }
 
-    public void setSelectedColor(Color color) {
-        colorPicker.setValue(color);
+    public ColorPicker getColorPickerFill() {
+        return colorPickerFill;
+    }
+
+    public ColorPicker getColorPickerStroke() {
+        return colorPickerStroke;
+    }
+
+    public Spinner getStrokeWidthSpinner() {
+        return strokeWidthSpinner;
+    }
+
+    public void setStrokeWidthSpinner(int width) {
+
+        if((int) strokeWidthSpinner.getValue() < width) {
+            while((int) strokeWidthSpinner.getValue() < width) {
+                strokeWidthSpinner.increment();
+            }
+        } else {
+            while((int) strokeWidthSpinner.getValue() > width) {
+                strokeWidthSpinner.decrement();
+            }
+        }
+
+    }
+
+    public int getStrokeWidth() {
+        return (int) strokeWidthSpinner.getValue();
+    }
+
+    public void setSelectedFillColor(Color color) {
+        colorPickerFill.setValue(color);
+    }
+
+    public void setSelectedStrokeColor(Color color) {
+        colorPickerStroke.setValue(color);
     }
 
     public ToggleGroup getTools() {
