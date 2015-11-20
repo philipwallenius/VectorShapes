@@ -231,9 +231,9 @@ class SvgExporter {
         Color fillColor = (Color)parallelogram.getFill();
         double fillOpacity = fillColor.getOpacity();
         Color strokeColor = (Color)parallelogram.getStroke();
-        double strokeOpacity = fillColor.getStrokeOpacity();
-
-        String fillString = "fill:rgb("+(int)(fillColor.getRed()*255)+","+(int)(fillColor.getGreen()*255)+","+(int)(fillColor.getBlue()*255)+");fill-opacity:"+fillOpacity;
+        double strokeOpacity = strokeColor.getOpacity();
+        double strokeWidth = parallelogram.getStrokeWidth();
+        String fillString = "fill:rgb("+(int)(fillColor.getRed()*255)+","+(int)(fillColor.getGreen()*255)+","+(int)(fillColor.getBlue()*255)+");fill-opacity:"+fillOpacity+";stroke:rgb("+(int)(strokeColor.getRed()*255)+","+(int)(strokeColor.getGreen()*255)+","+(int)(strokeColor.getBlue()*255)+");stroke-opacity:"+strokeOpacity+";stroke-width:"+strokeWidth;
         result.setAttribute("style", fillString);
 
         // apply rotation and shear
@@ -289,9 +289,12 @@ class SvgExporter {
         result.setAttribute("y", String.valueOf(rectangle.getY()));
 
         // set color
-        Color color = (Color)rectangle.getFill();
-        double opacity = color.getOpacity();
-        String fillString = "fill:rgb("+(int)(color.getRed()*255)+","+(int)(color.getGreen()*255)+","+(int)(color.getBlue()*255)+");fill-opacity:"+opacity;
+        Color fillColor = (Color)rectangle.getFill();
+        double fillOpacity = fillColor.getOpacity();
+        Color strokeColor = (Color)rectangle.getStroke();
+        double strokeOpacity = strokeColor.getOpacity();
+        double strokeWidth = rectangle.getStrokeWidth();
+        String fillString = "fill:rgb("+(int)(fillColor.getRed()*255)+","+(int)(fillColor.getGreen()*255)+","+(int)(fillColor.getBlue()*255)+");fill-opacity:"+fillOpacity+";stroke:rgb("+(int)(strokeColor.getRed()*255)+","+(int)(strokeColor.getGreen()*255)+","+(int)(strokeColor.getBlue()*255)+");stroke-opacity:"+strokeOpacity+";stroke-width:"+strokeWidth;
         result.setAttribute("style", fillString);
 
         String transformations = convertRotations(rectangle);

@@ -175,10 +175,8 @@ class SvgImporter {
 
         // set stroke color and stroke width
         String styles = element.getAttribute("style");
-        Color color = getStrokeColor(styles);
-        double strokeWidth = getStrokeWidth(styles);
-        result.setStrokeWidth(strokeWidth);
-        result.setStroke(color);
+        result.setStrokeWidth(getStrokeWidth(styles));
+        result.setStroke(getStrokeColor(styles));
         return result;
     }
 
@@ -209,8 +207,9 @@ class SvgImporter {
 
         // set color
         String styles = element.getAttribute("style");
-        Color color = getFillColor(styles);
-        result.setFill(color);
+        result.setFill(getFillColor(styles));
+        result.setStroke(getStrokeColor(styles));
+        result.setStrokeWidth(getStrokeWidth(styles));
 
         return result;
     }
@@ -271,8 +270,9 @@ class SvgImporter {
 
         // set color
         String styles = element.getAttribute("style");
-        Color color = getFillColor(styles);
-        result.setFill(color);
+        result.setFill(getFillColor(styles));
+        result.setStroke(getStrokeColor(styles));
+        result.setStrokeWidth(getStrokeWidth(styles));
 
         return result;
     }

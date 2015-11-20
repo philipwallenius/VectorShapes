@@ -96,8 +96,10 @@ public class SelectEventHandler implements ToolEventHandler {
         view.getSelectionGroup().getChildren().add(selection);
         view.getSelectionGroup().getChildren().addAll(selection.getResizePoints());
         view.getSelectionGroup().getChildren().add(selection.getRotatePoint());
-        view.setSelectedStrokeColor((Color) ((Shape) source).getStroke());
-        view.setSelectedStrokeWidth((int)((Shape) source).getStrokeWidth());
+        if(source instanceof Shape) {
+            view.setSelectedStrokeColor((Color) ((Shape) source).getStroke());
+            view.setSelectedStrokeWidth((int) ((Shape) source).getStrokeWidth());
+        }
         if(!(source instanceof Line)) {
             view.setSelectedFillColor((Color) ((Shape) source).getFill());
         }
