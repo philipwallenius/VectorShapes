@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<component inherit-compiler-output="true" inheritJdk="true">
-	<output-test url="file://$MODULE_DIR$/out/test/cs5001-150019538-practical-05"/>
-	<exclude-output/>
-	<contentEntry url="file://$MODULE_DIR$"/>
-	<lib name="resources" scope="COMPILE">
-		<relative-module-cls project-related="file://$PROJECT_DIR$/resources"/>
-	</lib>
-</component>
